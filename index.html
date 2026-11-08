@@ -1,0 +1,2171 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="both">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MY SKILLS — AI Agent Skills Gallery | معرض مهارات الذكاء الاصطناعي</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #05060b;
+      --bg-surface: rgba(14, 17, 28, 0.72);
+      --bg-surface-hover: rgba(20, 25, 42, 0.88);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-glow: rgba(212, 175, 55, 0.45);
+      --text-primary: #f5f7ff;
+      --text-secondary: #a2acc7;
+      --text-muted: #66718f;
+      --gold: #f3c969;
+      --cyan: #38efdf;
+      --violet: #a78bfa;
+      --rose: #fb7185;
+      --emerald: #34d399;
+      --amber: #fbbf24;
+      --radius-xl: 24px;
+      --radius-lg: 16px;
+      --radius-pill: 999px;
+      --font-en: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+      --font-serif: 'Instrument Serif', Georgia, serif;
+      --font-ar: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: var(--font-en);
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(167, 139, 250, 0.12), transparent 40%),
+        radial-gradient(circle at 85% 15%, rgba(56, 239, 223, 0.10), transparent 42%),
+        radial-gradient(circle at 50% 85%, rgba(243, 201, 105, 0.08), transparent 50%),
+        var(--bg-deep);
+      position: relative;
+    }
+
+    /* Interactive Generative Canvas Background */
+    #cosmos-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Subtle Nile-meets-Cyber Grid Overlay */
+    .grid-veil {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,0.022) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.022) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: radial-gradient(ellipse 80% 70% at 50% 35%, #000 35%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 35%, #000 35%, transparent 100%);
+    }
+
+    .page-shell {
+      position: relative;
+      z-index: 2;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 28px 24px 96px;
+    }
+
+    /* Top Sticky Glass Bar */
+    .topbar {
+      position: sticky;
+      top: 16px;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding: 12px 20px;
+      border-radius: var(--radius-pill);
+      background: rgba(9, 11, 19, 0.78);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+      margin-bottom: 52px;
+      animation: slideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      font-size: 1.05rem;
+    }
+
+    .brand-emblem {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: conic-gradient(from 45deg, var(--gold), var(--cyan), var(--violet), var(--gold));
+      padding: 2px;
+      animation: slowSpin 12s linear infinite;
+    }
+
+    .brand-emblem-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: var(--bg-deep);
+      display: grid;
+      place-items: center;
+      font-size: 0.95rem;
+      color: var(--gold);
+    }
+
+    @keyframes slowSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    .lang-switcher {
+      display: inline-flex;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      gap: 4px;
+    }
+
+    .lang-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      padding: 7px 15px;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-en);
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .lang-btn.ar-font {
+      font-family: var(--font-ar);
+      font-weight: 700;
+    }
+
+    .lang-btn.active {
+      background: linear-gradient(135deg, rgba(243, 201, 105, 0.22), rgba(56, 239, 223, 0.18));
+      color: #fff;
+      border: 1px solid rgba(243, 201, 105, 0.45);
+      box-shadow: 0 4px 16px rgba(243, 201, 105, 0.18);
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .install-drawer-btn {
+      border: 1px solid rgba(56, 239, 223, 0.35);
+      background: rgba(56, 239, 223, 0.09);
+      color: var(--cyan);
+      padding: 8px 16px;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .install-drawer-btn:hover {
+      background: rgba(56, 239, 223, 0.2);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(56, 239, 223, 0.22);
+    }
+
+    /* Hero Masterpiece Section */
+    .hero {
+      position: relative;
+      text-align: center;
+      padding: 28px 16px 56px;
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+
+    .hero-halo {
+      width: 150px;
+      height: 150px;
+      margin: 0 auto 24px;
+      position: relative;
+      display: grid;
+      place-items: center;
+    }
+
+    .hero-halo svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      filter: drop-shadow(0 0 24px rgba(243, 201, 105, 0.35));
+    }
+
+    .eyebrow-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 18px;
+      border-radius: var(--radius-pill);
+      background: rgba(243, 201, 105, 0.08);
+      border: 1px solid rgba(243, 201, 105, 0.3);
+      color: var(--gold);
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      animation: fadeUp 0.8s 0.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .hero-title-en {
+      font-size: clamp(2.5rem, 5.6vw, 5rem);
+      line-height: 1.03;
+      letter-spacing: -0.03em;
+      font-weight: 700;
+      margin-bottom: 14px;
+      background: linear-gradient(135deg, #ffffff 15%, #f3c969 55%, #38efdf 95%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: fadeUp 0.9s 0.18s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .hero-title-en em {
+      font-family: var(--font-serif);
+      font-weight: 400;
+      font-style: italic;
+      padding-right: 6px;
+    }
+
+    .hero-title-ar {
+      font-family: var(--font-ar);
+      font-size: clamp(1.7rem, 3.6vw, 3rem);
+      font-weight: 900;
+      line-height: 1.35;
+      direction: rtl;
+      background: linear-gradient(135deg, #f3c969 0%, #fff 50%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 20px;
+      animation: fadeUp 0.9s 0.26s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .hero-sub {
+      max-width: 780px;
+      margin: 0 auto 14px;
+      color: var(--text-secondary);
+      font-size: 1.08rem;
+      line-height: 1.65;
+      animation: fadeUp 0.9s 0.34s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .hero-sub-ar {
+      max-width: 780px;
+      margin: 0 auto 32px;
+      font-family: var(--font-ar);
+      direction: rtl;
+      color: #cbd5f0;
+      font-size: 1.08rem;
+      line-height: 1.8;
+      animation: fadeUp 0.9s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Stats Ribbon */
+    .stats-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 14px;
+      max-width: 920px;
+      margin: 0 auto 40px;
+      animation: fadeUp 0.9s 0.48s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .stat-pill {
+      padding: 16px 20px;
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      backdrop-filter: blur(12px);
+      text-align: center;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .stat-pill:hover {
+      transform: translateY(-4px);
+      border-color: rgba(243, 201, 105, 0.35);
+    }
+
+    .stat-num {
+      font-size: 1.95rem;
+      font-weight: 700;
+      color: var(--gold);
+      font-family: var(--font-mono);
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    .stat-label-ar {
+      font-family: var(--font-ar);
+      font-size: 0.82rem;
+      color: var(--cyan);
+      direction: rtl;
+    }
+
+    /* Quick Install Banner */
+    .install-panel {
+      display: none;
+      max-width: 980px;
+      margin: 0 auto 38px;
+      padding: 24px;
+      border-radius: var(--radius-xl);
+      background: linear-gradient(145deg, rgba(16, 22, 38, 0.95), rgba(10, 13, 24, 0.95));
+      border: 1px solid rgba(56, 239, 223, 0.3);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .install-panel.open { display: block; }
+
+    .install-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .cmd-box {
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .cmd-box-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--gold);
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .cmd-code {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--cyan);
+      word-break: break-all;
+      user-select: all;
+    }
+
+    /* Controls: Search & Filter Pills */
+    .controls-wrap {
+      margin-bottom: 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .search-bar-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .search-box {
+      flex: 1 1 360px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 16px 22px 16px 48px;
+      border-radius: var(--radius-pill);
+      background: rgba(14, 18, 30, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-size: 0.98rem;
+      font-family: var(--font-en), var(--font-ar);
+      outline: none;
+      transition: all 0.25s ease;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
+    }
+
+    .search-box input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 4px rgba(243, 201, 105, 0.14), inset 0 2px 8px rgba(0,0,0,0.4);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .source-filters, .category-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .filter-chip {
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-secondary);
+      padding: 8px 15px;
+      border-radius: var(--radius-pill);
+      font-size: 0.82rem;
+      font-weight: 600;
+      font-family: var(--font-en), var(--font-ar);
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .filter-chip:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .filter-chip.active {
+      background: linear-gradient(135deg, rgba(243, 201, 105, 0.2), rgba(167, 139, 250, 0.2));
+      border-color: var(--gold);
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(243, 201, 105, 0.16);
+    }
+
+    .chip-count {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      opacity: 0.75;
+      padding: 1px 6px;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* Masterpiece 3D Grid */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 24px;
+      perspective: 1200px;
+    }
+
+    .skill-card {
+      --mx: 50%;
+      --my: 50%;
+      --rx: 0deg;
+      --ry: 0deg;
+      --card-accent: #f3c969;
+      position: relative;
+      border-radius: var(--radius-xl);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      overflow: hidden;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      transform: rotateX(var(--rx)) rotateY(var(--ry));
+      transition: transform 0.18s ease-out, border-color 0.3s ease, box-shadow 0.35s ease, background 0.3s ease;
+      animation: cardReveal 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes cardReveal {
+      from { opacity: 0; transform: translateY(28px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .skill-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        480px circle at var(--mx) var(--my),
+        color-mix(in srgb, var(--card-accent) 18%, transparent),
+        transparent 60%
+      );
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .skill-card:hover {
+      border-color: color-mix(in srgb, var(--card-accent) 55%, rgba(255,255,255,0.2));
+      background: var(--bg-surface-hover);
+      box-shadow:
+        0 24px 54px rgba(0, 0, 0, 0.55),
+        0 0 32px color-mix(in srgb, var(--card-accent) 16%, transparent);
+    }
+
+    .skill-card:hover::before { opacity: 1; }
+
+    /* Generative Artwork Header inside Card */
+    .artwork-stage {
+      position: relative;
+      height: 158px;
+      width: 100%;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.04), rgba(0,0,0,0.45));
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .artwork-stage svg {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .skill-card:hover .artwork-stage svg {
+      transform: scale(1.08);
+    }
+
+    .artwork-badges {
+      position: absolute;
+      top: 12px;
+      left: 14px;
+      right: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .badge-source {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      background: rgba(6, 8, 15, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: var(--text-primary);
+      backdrop-filter: blur(8px);
+    }
+
+    .badge-cat {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      background: rgba(6, 8, 15, 0.78);
+      color: var(--card-accent);
+      border: 1px solid color-mix(in srgb, var(--card-accent) 45%, transparent);
+      backdrop-filter: blur(8px);
+    }
+
+    /* Card Content Body */
+    .card-body {
+      position: relative;
+      z-index: 2;
+      padding: 20px 22px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .slash-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .slash-pill {
+      font-family: var(--font-mono);
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--card-accent);
+      background: color-mix(in srgb, var(--card-accent) 11%, rgba(0,0,0,0.3));
+      border: 1px solid color-mix(in srgb, var(--card-accent) 30%, transparent);
+      padding: 5px 11px;
+      border-radius: 8px;
+    }
+
+    .copy-btn {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-secondary);
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 0.74rem;
+      font-family: var(--font-mono);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .copy-btn:hover {
+      background: var(--card-accent);
+      color: #05060b;
+      border-color: var(--card-accent);
+      font-weight: 700;
+    }
+
+    .en-block {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .card-title-en {
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+
+    .card-desc-en {
+      font-size: 0.9rem;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+
+    .divider-glow {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+      margin: 2px 0;
+    }
+
+    .ar-block {
+      direction: rtl;
+      text-align: right;
+      font-family: var(--font-ar);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.025);
+      border-right: 3px solid var(--card-accent);
+      padding: 10px 12px;
+      border-radius: 10px 4px 4px 10px;
+    }
+
+    .card-title-ar {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .card-desc-ar {
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: #d3dcf5;
+    }
+
+    /* Language Mode Visibility Rules */
+    html[data-lang="en"] .ar-only,
+    html[data-lang="en"] .ar-block,
+    html[data-lang="en"] .divider-glow,
+    html[data-lang="en"] .hero-title-ar,
+    html[data-lang="en"] .hero-sub-ar,
+    html[data-lang="en"] .stat-label-ar {
+      display: none !important;
+    }
+
+    html[data-lang="ar"] .en-only,
+    html[data-lang="ar"] .en-block,
+    html[data-lang="ar"] .divider-glow,
+    html[data-lang="ar"] .hero-title-en,
+    html[data-lang="ar"] .hero-sub {
+      display: none !important;
+    }
+
+    html[data-lang="ar"] .ar-block {
+      background: transparent;
+      border-right: none;
+      padding: 0;
+    }
+
+    /* Animated SVG Keyframes */
+    .orbit-slow { transform-origin: center; animation: slowSpin 24s linear infinite; }
+    .orbit-rev  { transform-origin: center; animation: slowSpinRev 18s linear infinite; }
+    .pulse-glow { animation: pulseAlpha 4s ease-in-out infinite; }
+    .dash-flow  { stroke-dasharray: 8 6; animation: dashMove 12s linear infinite; }
+
+    @keyframes slowSpinRev { to { transform: rotate(-360deg); } }
+    @keyframes pulseAlpha {
+      0%, 100% { opacity: 0.45; transform: scale(0.97); transform-origin: center; }
+      50% { opacity: 0.95; transform: scale(1.04); transform-origin: center; }
+    }
+    @keyframes dashMove { to { stroke-dashoffset: -140; } }
+
+    /* Modal Deep-Dive Showcase */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(3, 4, 9, 0.82);
+      backdrop-filter: blur(18px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal-card {
+      width: 100%;
+      max-width: 780px;
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: 28px;
+      background: linear-gradient(160deg, #101424 0%, #070912 100%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 32px 90px rgba(0, 0, 0, 0.85);
+      animation: modalPop 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+      position: relative;
+    }
+
+    @keyframes modalPop {
+      from { opacity: 0; transform: scale(0.93) translateY(16px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-art {
+      height: 230px;
+      position: relative;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .modal-art svg { width: 100%; height: 100%; }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(5, 6, 11, 0.75);
+      color: #fff;
+      font-size: 1.2rem;
+      cursor: pointer;
+      z-index: 5;
+      transition: all 0.2s ease;
+    }
+
+    .modal-close:hover { background: var(--rose); border-color: var(--rose); }
+
+    .modal-content {
+      padding: 28px 32px 34px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .modal-use-box {
+      padding: 16px 18px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.035);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .modal-use-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gold);
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(30px);
+      background: linear-gradient(135deg, #f3c969, #38efdf);
+      color: #05060b;
+      font-weight: 700;
+      padding: 12px 24px;
+      border-radius: var(--radius-pill);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.55);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 300;
+      font-size: 0.9rem;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 64px 20px;
+      border-radius: var(--radius-xl);
+      border: 1px dashed rgba(255,255,255,0.14);
+      color: var(--text-secondary);
+    }
+
+    footer {
+      margin-top: 80px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      padding-top: 28px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    @media (max-width: 720px) {
+      .skills-grid { grid-template-columns: 1fr; }
+      .topbar { border-radius: 20px; justify-content: center; }
+      .modal-content { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="cosmos-canvas"></canvas>
+  <div class="grid-veil"></div>
+
+  <div class="page-shell">
+    <!-- Top Floating Navigation -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-emblem"><div class="brand-emblem-inner">✦</div></div>
+        <div>
+          <div>MY SKILLS VAULT</div>
+          <div style="font-size:0.72rem;color:var(--text-muted);font-family:var(--font-mono);">ANTIGRAVITY · OPENCODE · CLAUDE</div>
+        </div>
+      </div>
+
+      <div class="lang-switcher" role="group" aria-label="Language Selector">
+        <button class="lang-btn active" data-set-lang="both">EN + مصري</button>
+        <button class="lang-btn" data-set-lang="en">English</button>
+        <button class="lang-btn ar-font" data-set-lang="ar">مصري بس</button>
+      </div>
+
+      <div class="top-actions">
+        <button class="install-drawer-btn" id="toggle-install-btn">⚡ install.bat &amp; OpenCode Guide</button>
+      </div>
+    </header>
+
+    <!-- Hero Masterpiece -->
+    <section class="hero">
+      <div class="hero-halo" id="hero-emblem"></div>
+      <div class="eyebrow-badge">✦ 61 Curated Agent Superpowers · ٦١ مهارة خارقة للذكاء الاصطناعي ✦</div>
+      <h1 class="hero-title-en">The Grand <em>Artisan</em> Vault of AI Agent Skills</h1>
+      <h2 class="hero-title-ar">الموسوعة الذهبية لمهارات الـ AI — بالانجليزي وبالمصري</h2>
+      <p class="hero-sub">
+        Every custom, Anthropic, and Matt Pocock engineering skill unified in one portable arsenal. Ready in one click for <strong>Antigravity</strong>, <strong>OpenCode</strong>, <strong>Claude Code</strong>, and <strong>Cursor</strong>.
+      </p>
+      <p class="hero-sub-ar">
+        كل المهارات اللي بتحوّل المساعد الذكي بتاعك لمهندس تقيل ومصمم محترف وخبير أمن سيبراني — متجمعة وجاهزة تشتغل بضغطة واحدة على أي جهاز وفي أي برنامج زي Antigravity و OpenCode و Claude Code.
+      </p>
+
+      <div class="stats-strip">
+        <div class="stat-pill">
+          <div class="stat-num" id="stat-total">61</div>
+          <div class="stat-label">Total Active Skills</div>
+          <div class="stat-label-ar">إجمالي المهارات الجاهزة</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-num">3</div>
+          <div class="stat-label">Master Collections</div>
+          <div class="stat-label-ar">مجموعات عالمية + خاصة</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-num">1-Click</div>
+          <div class="stat-label">Auto-Discovery .BAT</div>
+          <div class="stat-label-ar">تثبيت تلقائي بملف install.bat</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-num">4+</div>
+          <div class="stat-label">Supported AI Apps</div>
+          <div class="stat-label-ar">شغالة على OpenCode و Antigravity</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Collapsible Quick Installer Drawer -->
+    <section class="install-panel" id="install-panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+        <div>
+          <h3 style="font-size:1.15rem;color:#fff;">🚀 One-Click Auto-Discovery Installer (<code style="color:var(--gold);">install.bat</code>)</h3>
+          <p style="font-size:0.88rem;color:var(--text-secondary);margin-top:4px;">
+            Automatically detects any new skill folders added to this repo and installs to Antigravity, OpenCode, Claude Code, or any workspace!
+          </p>
+          <p style="font-family:var(--font-ar);direction:rtl;font-size:0.92rem;color:var(--cyan);margin-top:4px;">
+            ملف install.bat بيلقط أي مهارة جديدة تضيفها أوتوماتيك ويسطبها على Antigravity أو OpenCode أو Claude Code بضغطة دبل كليك!
+          </p>
+        </div>
+      </div>
+      <div class="install-grid">
+        <div class="cmd-box">
+          <div class="cmd-box-title"><span>Windows Interactive (.BAT)</span></div>
+          <div class="cmd-code">.\install.bat</div>
+        </div>
+        <div class="cmd-box">
+          <div class="cmd-box-title"><span>Install to OpenCode Global</span></div>
+          <div class="cmd-code">.\install.bat OpenCode</div>
+        </div>
+        <div class="cmd-box">
+          <div class="cmd-box-title"><span>Install Everywhere Globally</span></div>
+          <div class="cmd-code">.\install.bat AllGlobal</div>
+        </div>
+        <div class="cmd-box">
+          <div class="cmd-box-title"><span>Clone from GitHub</span></div>
+          <div class="cmd-code">git clone https://github.com/ozidan13/myskills.git</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Search & Filter Controls -->
+    <section class="controls-wrap">
+      <div class="search-bar-row">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="Search 61 skills in English, بالمصري, or /command (e.g. tdd, security, تصميم, كود)..." />
+        </div>
+        <div class="source-filters" id="source-filters"></div>
+      </div>
+      <div class="category-filters" id="category-filters"></div>
+    </section>
+
+    <!-- Skills Showcase Grid -->
+    <main class="skills-grid" id="skills-grid"></main>
+
+    <footer>
+      <p>Crafted with Masterpiece Generative SVG Art &amp; Kinetic Motion · <a href="https://github.com/ozidan13/myskills" target="_blank" style="color:var(--gold);text-decoration:none;">github.com/ozidan13/myskills</a></p>
+      <p style="font-family:var(--font-ar);margin-top:6px;color:var(--text-secondary);">صُنع بإتقان عشان يجمع كل مهاراتك في مكان واحد — جاهز للنقل والتشغيل على أي جهاز في ثواني ✨</p>
+    </footer>
+  </div>
+
+  <!-- Deep Dive Modal -->
+  <div class="modal-backdrop" id="skill-modal" role="dialog" aria-modal="true">
+    <div class="modal-card" id="modal-card">
+      <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+      <div class="modal-art" id="modal-art"></div>
+      <div class="modal-content" id="modal-content"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Copied to clipboard!</div>
+
+  <script>
+    /* =========================================================================
+       COMPLETE 61 SKILLS BILINGUAL DATASET (ENGLISH + EGYPTIAN ARABIC مصري)
+       ========================================================================= */
+    const SKILLS = [
+      // --- CUSTOM CORE (3) ---
+      {
+        id: "initialize-project-task",
+        source: "Custom Core",
+        cat: "Planning & Specs",
+        accent: "#f3c969",
+        enTitle: "Initialize Project Task",
+        enDesc: "Reads your repo's authoritative docs and actual code to craft a strict, phased implementation plan with validation gates under docs/ before touching code.",
+        enUse: "Starting a big feature, architectural redesign, or turning rough requirements into a rock-solid phased branch plan.",
+        arTitle: "تأسيس وتخطيط تاسك المشروع",
+        arDesc: "بتقرأ ملفات المرجع والكود الفعلي للمشروع الأول، وتطلّعلك خطة تنفيذ متقسمة مراحل واضحة بشروط فحص دقيقة قبل ما تكتب سطر كود واحد.",
+        arUse: "لما تبدأ ميزة كبيرة أو تعديل تقيل وعايز خطة شغل نضيفة على برانش مستقل من غير عك."
+      },
+      {
+        id: "install-skill",
+        source: "Custom Core",
+        cat: "Meta & Tooling",
+        accent: "#38efdf",
+        enTitle: "Universal Skill Installer",
+        enDesc: "Installs and indexes skills automatically from any GitHub repo, tree link, ZIP archive, or local file into Antigravity, OpenCode, or Claude Code.",
+        enUse: "Type /install-skill followed by any GitHub link or local folder to add new skills on the fly.",
+        arTitle: "مسطّب المهارات السريع",
+        arDesc: "بتسطّب أي مهارة جديدة أوتوماتيك من لينك جيت هاب أو ملف مضغوط أو فولدر على جهازك وتخليها تشتغل فوراً في قائمة السلاش /.",
+        arUse: "اكتب /install-skill وبعدها لينك أي ريبو أو ملف وهتلاقي المهارة نزلت واشتغلت في ثواني."
+      },
+      {
+        id: "security-audit",
+        source: "Custom Core",
+        cat: "Security & Git",
+        accent: "#fb7185",
+        enTitle: "Cloudflare Security Audit",
+        enDesc: "Six-phase defensive vulnerability harness: maps trust boundaries, hunts across attack classes, adversarially validates leads, and generates verified security reports.",
+        enUse: "Full security audits, pen-testing source code, hunting auth/injection/cloud bugs, or reviewing untrusted PRs.",
+        arTitle: "الفحص الأمني واكتشاف الثغرات",
+        arDesc: "منظومة فحص أمني احترافية من ٦ مراحل بتمسك المشروع تفصّصه، تدوّر على الثغرات الحقيقية وتراجع ورا نفسها عشان متديكش إنذارات كاذبة وتطلّعلك تقرير أمني كامل.",
+        arUse: "لما تعوز تعمل Security Audit شامل للكود أو تدور على ثغرات وتقفلها بأقل وأصح تعديل."
+      },
+
+      // --- ANTHROPIC SKILLS (19) ---
+      {
+        id: "academy-guide",
+        source: "Anthropic",
+        cat: "Learning & AI",
+        accent: "#f3c969",
+        enTitle: "Claude Academy Guide",
+        enDesc: "Recommends matching official tutorials, onboarding courses, and learning paths from Claude Academy whenever you ask how to master AI workflows.",
+        enUse: "Learning features like MCP, Artifacts, Projects, or preparing AI onboarding materials for your team.",
+        arTitle: "دليل أكاديمية كلود التعليمي",
+        arDesc: "بترشّحلك الكورسات والشروحات الرسمية المناسبة بالظبط من أكاديمية كلود لما تسأل إزاي تتعلم ميزة جديدة أو تدرّب فريقك.",
+        arUse: "لما تكون بتتعلم ميزة زي الـ MCP أو عايز مصادر تدريب محترمة ليك أو للتيم بتاعك."
+      },
+      {
+        id: "algorithmic-art",
+        source: "Anthropic",
+        cat: "Design & Art",
+        accent: "#a78bfa",
+        enTitle: "Algorithmic Generative Art",
+        enDesc: "Creates mesmerizing generative visual art using p5.js, seeded randomness, flow fields, particle physics, and live interactive parameter controls.",
+        enUse: "Generating unique interactive digital art, shader-like visuals, posters, and procedural animations.",
+        arTitle: "الفن التوليدي بالخوارزميات",
+        arDesc: "بتصنع لوحات فنية متحركة ومبهرة بالكود و p5.js فيها حركة جزيئات وموجات تفاعلية تقدر تتحكم في ألوانها وسرعتها لايف.",
+        arUse: "لو عايز تعمل خلفية تفاعلية خرافية أو عمل فني رقمي بيتغير ويتحرك بنعومة."
+      },
+      {
+        id: "brand-guidelines",
+        source: "Anthropic",
+        cat: "Design & Art",
+        accent: "#fbbf24",
+        enTitle: "Brand Styling & Identity",
+        enDesc: "Applies refined brand color palettes, typographic hierarchy, and visual polish to presentations, documents, and UI artifacts.",
+        enUse: "Making decks, landing pages, or reports adhere to cohesive, executive-grade brand styling.",
+        arTitle: "تظبيط الهوية البصرية والألوان",
+        arDesc: "بتطبّق ألوان وخطوط وهوية بصرية متناسقة وشيك جداً على أي ملف أو عرض تقديمي أو صفحة ويب عشان تطلع بمظهر احترافي فخم.",
+        arUse: "لما تحب تخلي شغل البرزنتيشن أو التقارير أو الصفحات ماشية على ستايل براند موحّد."
+      },
+      {
+        id: "canvas-design",
+        source: "Anthropic",
+        cat: "Design & Art",
+        accent: "#fb7185",
+        enTitle: "Museum-Grade Canvas Design",
+        enDesc: "Crafts striking posters, visual compositions, and high-resolution .png and .pdf artworks guided by Swiss/editorial design philosophy.",
+        enUse: "Designing posters, covers, infographics, and printable visual layouts with crisp geometry.",
+        arTitle: "تصميم البوسترات واللوحات البصرية",
+        arDesc: "بتصمملك بوسترات وأعمال بصرية عالية الجودة بملفات PNG و PDF على طريقة مدارس التصميم العالمية وبأبعاد هندسية مظبوطة بالملي.",
+        arUse: "لما تحتاج بوستر فخم، غلاف مشروع، أو تصميم بصري جاهز للطباعة والنشر."
+      },
+      {
+        id: "claude-api",
+        source: "Anthropic",
+        cat: "Learning & AI",
+        accent: "#38efdf",
+        enTitle: "Claude API & SDK Architect",
+        enDesc: "Up-to-date implementation blueprint for Anthropic SDKs: streaming, tool calling, prompt caching, extended thinking, token counting, and agents.",
+        enUse: "Writing Python/TypeScript/Go/Java code that calls LLM APIs cleanly without deprecated patterns.",
+        arTitle: "خبير بناء تطبيقات الـ AI و Claude API",
+        arDesc: "مرجع كامل وحديث لبناء تطبيقات الذكاء الاصطناعي باستخدام الـ SDK الرسمي، ويشمل الـ Streaming والـ Caching والـ Agents من غير تخمين.",
+        arUse: "لما تكتب كود بيربط مع موديلات الذكاء الاصطناعي وعايز أحدث وأصح طريقة رسمية."
+      },
+      {
+        id: "discernment-nudge",
+        source: "Anthropic",
+        cat: "Planning & Specs",
+        accent: "#34d399",
+        enTitle: "Critical Discernment Nudge",
+        enDesc: "Adds 2–3 surgical reflection questions after high-stakes plans, estimates, or advice to catch hidden assumptions and missing context early.",
+        enUse: "Stress-testing business proposals, financial estimates, architectural bets, or major decisions.",
+        arTitle: "منبّه التفكير النقدي ومراجعة القرارات",
+        arDesc: "بعد أي خطة أو نصيحة مهمة، بتحطلك سؤالين تلاتة في الجون يخلوك تكتشف أي افتراض ناقص أو نقطة غايبة قبل ما تاخد قرار كبير.",
+        arUse: "ممتازة في القرارات المهمة، تسعير المشاريع، أو الخطط اللي مبني عليها فلوس ومجهود."
+      },
+      {
+        id: "doc-coauthoring",
+        source: "Anthropic",
+        cat: "Docs & Writing",
+        accent: "#a78bfa",
+        enTitle: "Structured Doc Co-Authoring",
+        enDesc: "Guides you through context gathering, section-by-section drafting, and "fresh-reader" verification to write crystal-clear RFCs, specs, and proposals.",
+        enUse: "Co-writing technical specs, PRDs, architecture RFCs, and decision docs that actually persuade readers.",
+        arTitle: "شريك كتابة المستندات والـ Specs",
+        arDesc: "بتمشي معاك خطوة بخطوة: تجمع التفاصيل، تبني الهيكل، وتكتب مستند تقني أو مقترح مشروع متماسك وتختبره بعين القارئ الجديد.",
+        arUse: "لو بتكتب PRD أو خطة تقنية أو عرض لعميل وعايز الورق يطلع مقنع ومفهوم من أول قراءة."
+      },
+      {
+        id: "docx",
+        source: "Anthropic",
+        cat: "Office & Files",
+        accent: "#60a5fa",
+        enTitle: "Word (.DOCX) Studio",
+        enDesc: "Creates, edits, formats, and inspects rich Microsoft Word (.docx) documents with tables, headers, tracked changes, comments, and page styling.",
+        enUse: "Generating polished contracts, CVs, reports, letters, or editing existing .docx templates.",
+        arTitle: "إدارة وتصميم ملفات الوورد DOCX",
+        arDesc: "بتنشئ وتعدّل وتنسّق ملفات الوورد باحترافية كاملة — جداول، هيدر وفوتر، تعليقات، وتتبع التعديلات من غير ما التنسق يضرب.",
+        arUse: "لما تعوز تطلّع تقرير وورد شيك أو سي في أو تعدّل عقد وملف .docx جاهز."
+      },
+      {
+        id: "frontend-design",
+        source: "Anthropic",
+        cat: "Design & Art",
+        accent: "#f472b6",
+        enTitle: "Distinctive Frontend Design",
+        enDesc: "Eliminates generic 'AI slop' UI in favor of bold typography, intentional color systems, tactile micro-interactions, and memorable layouts.",
+        enUse: "Designing web apps, dashboards, SaaS landing pages, or revamping dull interfaces into showstoppers.",
+        arTitle: "تصميم واجهات ويب إبداعية غير تقليدية",
+        arDesc: "بتقضي تماماً على الشكل التقليدي الممل وبتبنيلك واجهات ويب ليها شخصية قوية، خطوط فخمة، ألوان مدروسة، وحركات تفاعلية تخطف العين.",
+        arUse: "لما تبني موقع أو لوحة تحكم أو Landing Page وعايز شكلها يبان كأن مصمم عالمي اللي عاملها."
+      },
+      {
+        id: "internal-comms",
+        source: "Anthropic",
+        cat: "Docs & Writing",
+        accent: "#fbbf24",
+        enTitle: "Internal Comms & Updates",
+        enDesc: "Drafts crisp 3P status updates (Progress, Plans, Problems), leadership newsletters, incident reports, and company FAQs.",
+        enUse: "Writing weekly engineering updates, team announcements, launch memos, or post-incident summaries.",
+        arTitle: "صياغة إيميلات وتقارير الشغل الداخلية",
+        arDesc: "بتكتبلك تحديثات الشغل الأسبوعية، إعلانات التيم، ملخصات الإنجازات والمشاكل بطريقة مرتبة ومختصرة تشرّفك قدام الإدارة.",
+        arUse: "لما تحتاج تبعت أبديت أسبوعي للتيم أو المدير أو تكتب إعلان داخلي واضح ومرتب."
+      },
+      {
+        id: "mcp-builder",
+        source: "Anthropic",
+        cat: "Meta & Tooling",
+        accent: "#38efdf",
+        enTitle: "MCP Server Builder",
+        enDesc: "End-to-end guide for architecting Model Context Protocol (MCP) servers in TypeScript or Python with clean tool schemas, pagination, and evals.",
+        enUse: "Connecting AI agents to external APIs, databases, SaaS tools, or local services via MCP.",
+        arTitle: "بناء سيرفرات الـ MCP للأدوات الخارجية",
+        arDesc: "دليل هندسي متكامل لبناء سيرفرات MCP بـ TypeScript أو Python عشان تربط الذكاء الاصطناعي بأي قاعدة بيانات أو خدمة خارجية بأمان.",
+        arUse: "لما تعوز تعمل أداة خاصة تربط المساعد الذكي بتاعك بـ API أو سيستم شركتك."
+      },
+      {
+        id: "pdf",
+        source: "Anthropic",
+        cat: "Office & Files",
+        accent: "#fb7185",
+        enTitle: "PDF Mastery Toolkit",
+        enDesc: "Extracts text and tables, merges/splits pages, fills forms, adds watermarks, OCRs scanned pages, and generates clean PDFs programmatically.",
+        enUse: "Any task reading, splitting, merging, filling, or generating PDF documents.",
+        arTitle: "التحكم الكامل في ملفات الـ PDF",
+        arDesc: "بتقرأ وتستخرج الجداول والنصوص، تدمج وتقسّم الصفحات، تملى الاستمارات، وتعمل ملفات PDF جديدة من الصفر بمنتهى الدقة.",
+        arUse: "في أي شغلانة فيها ملفات PDF سواء استخراج بيانات، تعديل، دمج، أو إنشاء فواتير وتقارير."
+      },
+      {
+        id: "pptx",
+        source: "Anthropic",
+        cat: "Office & Files",
+        accent: "#fb923c",
+        enTitle: "PowerPoint (.PPTX) Architect",
+        enDesc: "Builds, restyles, and analyzes PowerPoint slide decks with custom layouts, visual hierarchy, charts, speaker notes, and zero text-overlap QA.",
+        enUse: "Creating pitch decks, keynote presentations, lecture slides, or modernizing existing .pptx files.",
+        arTitle: "تصميم عروض بوربوينت PPTX احترافية",
+        arDesc: "بتصمّم وتعدّل عروض بوربوينت كاملة بشرايح متناسقة، رسوم بيانية، وملاحظات للمحاضر مع فحص بصري يمنع تداخل الكلام.",
+        arUse: "لما يكون عندك برزنتيشن لمشروع أو مستثمر أو محاضرة وعايز شرايح تشرح الصدر."
+      },
+      {
+        id: "skill-creator",
+        source: "Anthropic",
+        cat: "Meta & Tooling",
+        accent: "#f3c969",
+        enTitle: "Skill Creator & Benchmark Lab",
+        enDesc: "Designs new agent skills from scratch, refines trigger descriptions, bundles helper scripts, and benchmarks skill accuracy with comparative evals.",
+        enUse: "Turning your repeatable workflows into high-performing custom skills.",
+        arTitle: "مصنع ومطوّر المهارات الجديدة",
+        arDesc: "بتساعدك تبني مهارات جديدة من الصفر، تظبّط الوصف بتاعها عشان تشتغل في الوقت الصح، وكمان تختبر كفاءتها وتطوّرها.",
+        arUse: "لما يكون عندك طريقة شغل بتكررها كتير وعايز تحولها لمهارة ذكية جاهزة دايماً."
+      },
+      {
+        id: "slack-gif-creator",
+        source: "Anthropic",
+        cat: "Design & Art",
+        accent: "#c084fc",
+        enTitle: "Animated GIF & Emoji Studio",
+        enDesc: "Generates crisp, size-optimized animated GIFs and custom reaction animations with easing curves, particles, and frame-rate tuning.",
+        enUse: "Making custom Slack/Discord reaction GIFs, feature demos, or celebratory micro-animations.",
+        arTitle: "صانع الصور المتحركة والـ GIFs",
+        arDesc: "بتعملك صور GIF وإيموجي متحركة بجودة عالية وحجم خفيف جداً بحركات فيزيائية ناعمة جاهزة للشات أو لعرض المميزات.",
+        arUse: "لو عايز تعمل GIF مخصص للتيم على Slack أو Discord أو أنيميشن سريع يشرح فكرة."
+      },
+      {
+        id: "theme-factory",
+        source: "Anthropic",
+        cat: "Design & Art",
+        accent: "#2dd4bf",
+        enTitle: "Curated Theme Factory",
+        enDesc: "Provides 10 curated designer color + font pairings (Midnight Galaxy, Botanical, Golden Hour, Arctic Frost...) or generates bespoke themes on demand.",
+        enUse: "Instantly theming HTML pages, slide decks, dashboards, or reports with harmonious palettes.",
+        arTitle: "مصنع الثيمات وتنسيق الألوان",
+        arDesc: "فيها ١٠ ثيمات عالمية جاهزة (خطوط + باليتات ألوان متناغمة) وكمان بتولّد ثيم مخصوص لمشروعك بضغطة واحدة.",
+        arUse: "لما تكون محتار في اختيار الألوان والخطوط وعايز تجميعة فنية مضمونة تشتغل فوراً."
+      },
+      {
+        id: "web-artifacts-builder",
+        source: "Anthropic",
+        cat: "Design & Art",
+        accent: "#38bdf8",
+        enTitle: "Interactive Web Artifacts Builder",
+        enDesc: "Scaffolds rich multi-component React + Tailwind + shadcn/ui interactive apps and bundles them into a single portable self-contained HTML file.",
+        enUse: "Building rich interactive calculators, mini-apps, visualizations, and prototypes you can share as one file.",
+        arTitle: "بناء تطبيقات ويب تفاعلية في ملف واحد",
+        arDesc: "بتبني تطبيقات تفاعلية كاملة بـ React و Tailwind وتضغطها كلها في ملف HTML واحد يشتغل في أي مكان من غير سيرفر.",
+        arUse: "لما تعوز تبني أداة تفاعلية أو داشبورد غني وتبعته لأي حد كملف واحد يفتحه في المتصفح."
+      },
+      {
+        id: "webapp-testing",
+        source: "Anthropic",
+        cat: "Testing & Debug",
+        accent: "#34d399",
+        enTitle: "Playwright WebApp Testing",
+        enDesc: "Automates real headless browser testing with Playwright: manages local dev servers, inspects live DOM, captures screenshots, and catches console bugs.",
+        enUse: "Testing local web apps end-to-end, verifying UI flows, and debugging visual/JS errors.",
+        arTitle: "اختبار مواقع الويب أوتوماتيك بـ Playwright",
+        arDesc: "بتفتح متصفح حقيقي تختبر موقعك بنفسها، تدوس على الزراير، تصوّر الشاشة، وتلقط أي أخطاء في الـ Console أو الواجهة.",
+        arUse: "لما تخلص ميزة في الفرونت إند وعايز تتأكد إنها شغالة صح ١٠٠٪ من غير ما تجرّب بإيدك كل مرة."
+      },
+      {
+        id: "xlsx",
+        source: "Anthropic",
+        cat: "Office & Files",
+        accent: "#4ade80",
+        enTitle: "Excel (.XLSX) Financial & Data Pro",
+        enDesc: "Builds institutional-grade spreadsheets with live dynamic Excel formulas (never hardcoded), financial color coding, charts, and zero-#REF! verification.",
+        enUse: "Financial models, budgets, data analysis sheets, CSV-to-XLSX cleanup, and automated dashboards.",
+        arTitle: "خبير ملفات الإكسيل والنماذج المالية XLSX",
+        arDesc: "بتعمل شيتات إكسيل احترافية بمعادلات ديناميكية حية وألوان قياسية وتراجع على كل خلية عشان ميطلعش فيها ولا غلطة حسابية.",
+        arUse: "في الحسابات، الميزانيات، تحليل البيانات، أو تحويل أي داتا لشيت إكسيل منظم ونضيف."
+      },
+
+      // --- MATT POCOCK SKILLS: ENGINEERING, PRODUCTIVITY, IN-PROGRESS, MISC (39) ---
+      {
+        id: "ask-matt",
+        source: "Matt Pocock",
+        cat: "Meta & Tooling",
+        accent: "#f3c969",
+        enTitle: "Ask Matt (Skill Router)",
+        enDesc: "Analyzes where you are in your development lifecycle and recommends the exact right engineering or productivity skill sequence to run next.",
+        enUse: "When you aren't sure whether to grill, prototype, domain-model, write a spec, or jump to TDD.",
+        arTitle: "اسأل مات (مرشد اختيار المهارة الصح)",
+        arDesc: "بتفهم إنت واقف فين في مشروعك دلوقتي وتقولك بالظبط أنهي مهارة أو خطوة تبدأ بيها عشان متضيعش وقتك.",
+        arUse: "لما تكون محتار تبدأ بتخطيط ولا تجربة سريعة ولا كتابة تستات وتقوله وجّهني."
+      },
+      {
+        id: "code-review",
+        source: "Matt Pocock",
+        cat: "Testing & Debug",
+        accent: "#38efdf",
+        enTitle: "Two-Axis Deep Code Review",
+        enDesc: "Reviews diffs since any commit or branch across two rigorous axes: Repository Standards compliance and Architectural/Bug soundness.",
+        enUse: "Before opening a PR, merging a feature branch, or auditing recent commits.",
+        arTitle: "مراجعة الكود العميقة على محورين",
+        arDesc: "بتراجع التعديلات الجديدة بميزان دهب على محورين: التزام الكود بقواعد المشروع، وسلامة المعمارية وخلوّها من الباجات.",
+        arUse: "قبل ما ترفع PR أو تعمل Merge لأي شغل وعايز عين خبيرة تراجع وراك بضمير."
+      },
+      {
+        id: "codebase-design",
+        source: "Matt Pocock",
+        cat: "Architecture",
+        accent: "#a78bfa",
+        enTitle: "Deep Module Codebase Design",
+        enDesc: "Applies Ousterhout's 'Deep Modules' philosophy: tiny, obvious public interfaces hiding rich internal power while eliminating pass-through shallow layers.",
+        enUse: "Designing module APIs, refactoring tangled dependencies, and hiding implementation complexity.",
+        arTitle: "تصميم الموديولات العميقة والنضيفة",
+        arDesc: "بتطبّق فلسفة الـ Deep Modules: واجهة بسيطة وصغيرة من بره بتخبّي وراها كل الشغل التقيل من جوه من غير تعقيد ملوش لازمة.",
+        arUse: "لما تصمّم موديول جديد أو ترتّب كود متشابك عشان يبقى سهل الفهم والصيانة."
+      },
+      {
+        id: "diagnosing-bugs",
+        source: "Matt Pocock",
+        cat: "Testing & Debug",
+        accent: "#fb7185",
+        enTitle: "Scientific Bug Diagnosis Loop",
+        enDesc: "Runs a disciplined hypothesis-test-narrow loop for stubborn bugs and performance regressions instead of blind shotgun guessing.",
+        enUse: "Tracking down elusive race conditions, regressions, broken state, or slow queries.",
+        arTitle: "تشخيص الباجات المعقدة بطريقة علمية",
+        arDesc: "بدل التخمين العشوائي، بتمشي بدورة تشخيص دقيقة: فرضية ثم تجربة ثم تضييق النطاق لحد ما تمسك السبب الحقيقي للباج من جذوره.",
+        arUse: "لما يقابلك باج غلس أو بطء مفاجئ في الأداء ومحتاج حد يقفشه بدقة."
+      },
+      {
+        id: "domain-modeling",
+        source: "Matt Pocock",
+        cat: "Architecture",
+        accent: "#fbbf24",
+        enTitle: "Ubiquitous Domain Modeling",
+        enDesc: "Sharpens core entities, invariants, relationships, and GLOSSARY.md terminology so your code speaks the exact language of the business problem.",
+        enUse: "Starting a new domain, untangling overloaded terms, or establishing a shared project glossary.",
+        arTitle: "نمذجة البيزنس وتوحيد مصطلحات الكود",
+        arDesc: "بتظبّط مفاهيم البيزنس والعلاقات بين الكيانات وتعمل قاموس مصطلحات واضح عشان الكود يتكلم نفس لغة المشروع من غير لخبطة.",
+        arUse: "في بداية أي سيستم جديد أو لما تلاقي نفس الكلمة في الكود ليها تلات معاني مختلفة."
+      },
+      {
+        id: "grill-with-docs",
+        source: "Matt Pocock",
+        cat: "Planning & Specs",
+        accent: "#f472b6",
+        enTitle: "Grill With Live ADRs & Docs",
+        enDesc: "Conducts a relentless Socratic interview to stress-test your design while writing Architecture Decision Records (ADRs) and glossary updates as you answer.",
+        enUse: "Hardening an architectural plan AND automatically documenting every key trade-off.",
+        arTitle: "استجواب التصميم مع كتابة التوثيق لايف",
+        arDesc: "بتحاورك بأسئلة ذكية وقوية عشان تسد أي ثغرة في فكرتك، وفي نفس الوقت بتسجّل قرارات المعمارية (ADRs) أول بأول.",
+        arUse: "لما تعوز تعصر فكرتك قبل التنفيذ ويطلعلك في الآخر توثيق هندسي جاهز ومكتوب."
+      },
+      {
+        id: "implement",
+        source: "Matt Pocock",
+        cat: "Architecture",
+        accent: "#34d399",
+        enTitle: "Disciplined Spec Implementation",
+        enDesc: "Executes a scoped piece of work cleanly from a spec or ticket list, verifying each step with tests and keeping diffs tight.",
+        enUse: "Turning an approved spec or issue directly into clean, tested production code.",
+        arTitle: "التنفيذ المنظّم من الخطة للكود",
+        arDesc: "بتاخد التذكرة أو الـ Spec وتنفّذها في الكود بانضباط عالي واختبار لكل خطوة من غير ما تخرج بره المطلوب.",
+        arUse: "لما الخطة تكون جاهزة وعايز تنفيذ نضيف ومختبر على طول."
+      },
+      {
+        id: "implement-spec",
+        source: "Matt Pocock",
+        cat: "Architecture",
+        accent: "#2dd4bf",
+        enTitle: "Implement /to-spec & /to-tickets",
+        enDesc: "Picks up tracer-bullet tickets produced by /to-spec and /to-tickets in dependency order and ships them end-to-end.",
+        enUse: "Running the implementation phase right after breaking a feature into specs and tickets.",
+        arTitle: "تنفيذ مخرجات الـ Spec والتذاكر بالتسلسل",
+        arDesc: "بتمسك التذاكر المتقسمة من /to-spec و /to-tickets بترتيب الاعتمادية وتنفذها واحدة ورا التانية لحد ما الميزة تخلص كاملة.",
+        arUse: "بعد ما تقسم مشروعك لتذاكر وعايز تبدأ تقفّلهم بالترتيب الصح."
+      },
+      {
+        id: "improve-codebase-architecture",
+        source: "Matt Pocock",
+        cat: "Architecture",
+        accent: "#c084fc",
+        enTitle: "Visual Codebase Architecture Scanner",
+        enDesc: "Scans your repository for shallow modules, leaky abstractions, and coupling hotspots, renders a visual HTML report, then helps refactor your pick.",
+        enUse: "Paying down technical debt and finding the highest-leverage refactors in an existing repo.",
+        arTitle: "فاحص ومطوّر معمارية المشروع بالرسوم",
+        arDesc: "بتمسح الكود كله وتطلّعلك تقرير HTML بصري يوريك فين التشابك ونقط الضعف في المعمارية، وتساعدك تصلّح أهم نقطة تختارها.",
+        arUse: "لما المشروع يكبر منك وعايز تعرف إيه أكتر حتة محتاجة Refactor هيفرق معاك فعلاً."
+      },
+      {
+        id: "pr",
+        source: "Matt Pocock",
+        cat: "Security & Git",
+        accent: "#60a5fa",
+        enTitle: "High-Signal PR Author",
+        enDesc: "Writes concise, reviewer-friendly Pull Request descriptions explaining the 'why', architectural trade-offs, verification steps, and screenshots.",
+        enUse: "Crafting clear GitHub/GitLab PR bodies that get reviewed and approved fast.",
+        arTitle: "كتابة وصف Pull Request احترافي",
+        arDesc: "بتكتبلك وصف PR يشرح إنت عملت إيه وليه وإزاي اختبرته بطريقة تخلّي اللي بيراجع يفهم التعديل في دقيقة ويوافق بسرعة.",
+        arUse: "كل مرة تيجي تفتح PR جديد على جيت هاب وعايز شرح نضيف ومنظّم."
+      },
+      {
+        id: "prototype",
+        source: "Matt Pocock",
+        cat: "Architecture",
+        accent: "#fb923c",
+        enTitle: "Throwaway Design Prototype",
+        enDesc: "Builds a fast, isolated throwaway spike to answer a risky technical or UX question before committing your main codebase to an architecture.",
+        enUse: "Testing whether a library, state shape, or data flow feels right in practice.",
+        arTitle: "بناء نموذج تجريبي سريع Prototype",
+        arDesc: "بتعملك تجربة سريعة ومعزولة عشان تختبر فكرة أو مكتبة جديدة وتتأكد إنها شغالة تمام قبل ما تدخّلها في الكود الأساسي.",
+        arUse: "لما تكون شاكك في طريقة معينة وعايز تشوفها شغالة قدام عينك الأول في السريع."
+      },
+      {
+        id: "research",
+        source: "Matt Pocock",
+        cat: "Learning & AI",
+        accent: "#38bdf8",
+        enTitle: "Primary-Source Technical Research",
+        enDesc: "Investigates technical questions against authoritative upstream docs and source code, saving cited findings as a permanent Markdown doc in your repo.",
+        enUse: "Evaluating libraries, checking edge-case specs, or documenting deep technical investigations.",
+        arTitle: "البحث التقني الموثّق من المصادر الأصلية",
+        arDesc: "بتدور ورا أي سؤال تقني في التوثيق الرسمي والكود الأصلي (مش كلام منتديات قديم) وتحفظلك الخلاصة الموثقة في ملف Markdown.",
+        arUse: "لما تحتاج مقارنة دقيقة بين مكتبتين أو تتأكد من تفصيلة معقدة من مصدرها الرسمي."
+      },
+      {
+        id: "retro",
+        source: "Matt Pocock",
+        cat: "Meta & Tooling",
+        accent: "#f3c969",
+        enTitle: "Coding Session Retrospective",
+        enDesc: "Reviews a completed coding session to extract what went smoothly, where friction happened, and how to upgrade your rules, tests, or skills.",
+        enUse: "End of a tough feature or debugging session to compound workflow improvements.",
+        arTitle: "مراجعة وتقييم جلسة البرمجة Retro",
+        arDesc: "في آخر الشغل بتقعد معاك دقيقتين تشوف إيه اللي مشي حلاوة وإيه اللي عطّلك، وتقترح تحسينات لقواعد المشروع عشان المرة الجاية تبقى أسرع.",
+        arUse: "بعد ما تخلص ميزة تقيلة وعايز تطلع منها بدروس تطوّر بيها أسلوب شغلك."
+      },
+      {
+        id: "setup-matt-pocock-skills",
+        source: "Matt Pocock",
+        cat: "Meta & Tooling",
+        accent: "#a78bfa",
+        enTitle: "Repo Engineering Setup",
+        enDesc: "Bootstraps your repository's issue tracker conventions, triage label vocabulary, and domain docs structure for seamless multi-skill workflows.",
+        enUse: "Initializing a repo to use spec, ticket, triage, and domain-modeling workflows smoothly.",
+        arTitle: "تجهيز الريبو لمنظومة المهارات الهندسية",
+        arDesc: "بتظبّط هيكل التوثيق وتصنيفات التيكتات في المشروع عشان كل مهارات التخطيط والتنفيذ تشتغل مع بعض بتناغم تام.",
+        arUse: "لما تبدأ تطبّق نظام التذاكر والمواصفات الهندسية في ريبو جديد."
+      },
+      {
+        id: "tdd",
+        source: "Matt Pocock",
+        cat: "Testing & Debug",
+        accent: "#4ade80",
+        enTitle: "Red-Green-Refactor TDD",
+        enDesc: "Enforces strict Test-Driven Development: write one failing behavioral test (Red), write minimal passing code (Green), then clean up (Refactor).",
+        enUse: "Building features or fixing bugs with rock-solid test coverage and zero over-engineering.",
+        arTitle: "التطوير الموجه بالاختبارات TDD",
+        arDesc: "بتمشيك على قانون Red-Green-Refactor الأصلي: نكتب تست يفشل الأول، نكتب أبسط كود ينجّحه، وبعدين ننضّف الكود بثقة تامة.",
+        arUse: "لما تبني لوجيك حساس أو تصلّح باج وعايز تضمن إنه مستحيل يرجع يضرب تاني."
+      },
+      {
+        id: "to-spec",
+        source: "Matt Pocock",
+        cat: "Planning & Specs",
+        accent: "#38efdf",
+        enTitle: "Conversation to Spec",
+        enDesc: "Synthesizes everything agreed upon in your current chat into a crisp, unambiguous engineering specification ready for your issue tracker.",
+        enUse: "Capturing a design discussion or grilling session into a formal actionable spec.",
+        arTitle: "تحويل المناقشة لوثيقة مواصفات Spec",
+        arDesc: "بتلمّ كل اللي اتفقتوا عليه في الشات وتصيغه في وثيقة مواصفات هندسية واضحة ومحددة جاهزة للتنفيذ أو النشر.",
+        arUse: "بعد ما تناقش فكرة وتستقروا على التفاصيل وعايز تحول الكلام لوثيقة رسمية."
+      },
+      {
+        id: "to-tickets",
+        source: "Matt Pocock",
+        cat: "Planning & Specs",
+        accent: "#fbbf24",
+        enTitle: "Tracer-Bullet Ticket Slicer",
+        enDesc: "Slices a spec or plan into vertical 'tracer-bullet' tickets with explicit blocking dependencies and verification criteria.",
+        enUse: "Breaking big features into small, shippable vertical slices rather than horizontal layers.",
+        arTitle: "تقطيع الخطة لتذاكر تنفيذية ذكية",
+        arDesc: "بتقطّع أي خطة كبيرة لتذاكر صغيرة بطول السيستم (من الداتابيز للواجهة) وتوضح مين معتمد على مين وشروط قبول كل تذكرة.",
+        arUse: "عشان تقسّم شغل أسابيع لمهام صغيرة كل مهمة فيهم بتطلّع نتيجة شغالة وملموسة."
+      },
+      {
+        id: "triage",
+        source: "Matt Pocock",
+        cat: "Planning & Specs",
+        accent: "#fb7185",
+        enTitle: "Issue & PR State-Machine Triage",
+        enDesc: "Categorizes, reproduces, verifies, and prepares incoming GitHub issues and external PRs into agent-ready or human-decision states.",
+        enUse: "Managing busy issue backlogs and external contributor PRs systematically.",
+        arTitle: "فرز وتصنيف المشاكل والـ Issues",
+        arDesc: "بتمسك البلاغات والـ PRs الخارجية تصنّفها، تتأكد من صحتها، وتجهزها بحيث تبقى واضحة ومترتبة حسب الأولوية.",
+        arUse: "لما يكون عندك Issues كتير متراكمة في المشروع وعايز تفرز الغث من السمين بسرعة."
+      },
+      {
+        id: "wayfinder",
+        source: "Matt Pocock",
+        cat: "Planning & Specs",
+        accent: "#c084fc",
+        enTitle: "Wayfinder Multi-Session Mapper",
+        enDesc: "Maps massive multi-day initiatives across linked decision and implementation tickets so multiple agent sessions never lose the big picture.",
+        enUse: "Planning epics too large for a single context window or single day of coding.",
+        arTitle: "بوصلة المشاريع الضخمة متعددة الجلسات",
+        arDesc: "بترسم خريطة طريق للمشاريع العملاقة اللي بتاخد أيام وجلسات كتير، عشان المساعد الذكي يفضل فاكر الصورة الكبيرة وميتوهش.",
+        arUse: "في الملاحم البرمجية الكبيرة اللي مستحيل تخلص في قعدة شات واحدة."
+      },
+      {
+        id: "wizard",
+        source: "Matt Pocock",
+        cat: "Meta & Tooling",
+        accent: "#2dd4bf",
+        enTitle: "Interactive Bash Human Wizard",
+        enDesc: "Generates a step-by-step interactive CLI script guiding a human through manual steps only humans can do (OAuth consoles, DNS, secret keys).",
+        enUse: "Cloud provisioning, API key setup, deployment checklists, and developer onboarding.",
+        arTitle: "صانع معالج الإعداد التفاعلي Wizard",
+        arDesc: "بتعملك سكريبت تفاعلي يمشي معاك خطوة بخطوة في الحاجات اللي لازم إنت تعملها بإيدك زي تظبيط الـ DNS أو مفاتيح الـ OAuth.",
+        arUse: "لما ترفّع مشروع على السيرفر أو تجهّز حسابات خارجية ومش عايز تنسى ولا خطوة."
+      },
+      {
+        id: "chief-of-staff",
+        source: "Matt Pocock",
+        cat: "Agent Orchestration",
+        accent: "#f3c969",
+        enTitle: "Chief of Staff Subagent Coordinator",
+        enDesc: "Acts as an executive orchestrator delegating research, coding, and verification across specialized subagents to complete ambitious goals.",
+        enUse: "Pursuing complex multi-part objectives within one coordinated session.",
+        arTitle: "مدير العمليات وتنسيق الوكلاء المساعدين",
+        arDesc: "بيشتغل زي رئيس أركان يوزّع المهام (بحث، كود، مراجعة) على كذا Subagent في نفس الوقت ويجمعلك النتيجة النهائية مظبوطة.",
+        arUse: "لما تطلب هدف كبير متشعب ومحتاج فريق مساعدين يشتغلوا بالتوازي تحت إدارة واحدة."
+      },
+      {
+        id: "claude-handoff",
+        source: "Matt Pocock",
+        cat: "Agent Orchestration",
+        accent: "#38bdf8",
+        enTitle: "Instant Fresh-Agent Handoff",
+        enDesc: "Packages active context, modified files, and next actions cleanly and hands off execution immediately to a fresh uncluttered agent.",
+        enUse: "When your chat context gets long and you want a fresh, sharp context window to continue seamlessly.",
+        arTitle: "تسليم الشغل الفوري لوكيل جديد فايق",
+        arDesc: "لما الشات يطوّل، بتلخّص كل اللي وصلتله والملفات المفتوحة وتسلّم الراية فوراً لجلسة جديدة فايقة تكمل من نفس النقطة.",
+        arUse: "أول ما تحس إن المحادثة كبرت وعايز تكمل الشغل بنشاط وتركيز ١٠٠٪ من غير ما تعيد الشرح."
+      },
+      {
+        id: "loop-me",
+        source: "Matt Pocock",
+        cat: "Planning & Specs",
+        accent: "#f472b6",
+        enTitle: "Workflow Spec Loop",
+        enDesc: "Iteratively interviews you to design automated agent workflows and repeatable loops tailored specifically to your workspace.",
+        enUse: "Designing custom automation loops and multi-step agent routines.",
+        arTitle: "حلقة تصميم الأتمتة ومسارات العمل",
+        arDesc: "بتقعد تسألك وتظبّط معاك تفاصيل أي Workflow أوتوماتيك عايز تبنيه جوه مشروعك لحد ما يطلع محبوك بالظبط على مقاسك.",
+        arUse: "لما تحب تصمّم روتين أوتوماتيك يتكرر في مشروعك لتوفير الوقت."
+      },
+      {
+        id: "setup-ts-deep-modules",
+        source: "Matt Pocock",
+        cat: "Architecture",
+        accent: "#60a5fa",
+        enTitle: "TypeScript Deep Modules Enforcer",
+        enDesc: "Configures dependency-cruiser rules in TypeScript repos so internal subfolders stay private and modules only import public entrypoints.",
+        enUse: "Preventing spaghetti imports and enforcing clean architectural boundaries in TS monorepos.",
+        arTitle: "فرض حدود الموديولات في TypeScript",
+        arDesc: "بتركّب قواعد أوتوماتيك تمنع الـ Imports العشوائية في مشاريع TypeScript وتجبر الكود يحترم الواجهات الرسمية لكل موديول.",
+        arUse: "عشان تحافظ على نضافة مشاريع الـ TypeScript وتمنع الكود الاسباجيتي مع الوقت."
+      },
+      {
+        id: "software-factory",
+        source: "Matt Pocock",
+        cat: "Agent Orchestration",
+        accent: "#a78bfa",
+        enTitle: "Software Factory Blueprint",
+        enDesc: "Provides the architectural vocabulary and patterns for wiring autonomous coding tasks, CI gates, issue trackers, and review loops into a software factory.",
+        enUse: "Designing autonomous dev pipelines where agents pick up tickets, test, and open PRs.",
+        arTitle: "تصميم مصنع البرمجيات الذكي",
+        arDesc: "بتحطلك التصميم الهندسي لربط التذاكر والاختبارات والوكلاء مع بعض بحيث يشتغلوا كخط إنتاج برمجي متكامل ومنظّم.",
+        arUse: "لما تعوز تبني منظومة تطوير مؤتمتة تستلم التيكت وتطلّع PR مفحوص وجاهز."
+      },
+      {
+        id: "writing-beats",
+        source: "Matt Pocock",
+        cat: "Docs & Writing",
+        accent: "#fbbf24",
+        enTitle: "Narrative Beats Sequencer",
+        enDesc: "Organizes raw technical ideas into a compelling sequence of narrative 'beats', ensuring every concept is grounded before the next beat builds on it.",
+        enUse: "Structuring blog posts, technical talks, tutorials, and deep-dive essays.",
+        arTitle: "ترتيب إيقاع وتسلسل المقالات التقنية",
+        arDesc: "بترتّب أفكارك الخام في تسلسل قصصي مشوّق بحيث كل فكرة تمهّد للي بعدها والقارئ يكمل المقال للآخر من غير ما يتوه.",
+        arUse: "لما تكتب مقال تقني أو سكريبت فيديو أو شرح وعايز تسلسل الأفكار يشد الناس."
+      },
+      {
+        id: "writing-fragments",
+        source: "Matt Pocock",
+        cat: "Docs & Writing",
+        accent: "#fb923c",
+        enTitle: "Raw Idea Fragment Miner",
+        enDesc: "Exploratory brainstorming partner that mines vivid insights, examples, and raw fragments from your head without premature structure.",
+        enUse: "Overcoming blank-page syndrome when starting an article, talk, or manifesto.",
+        arTitle: "استخراج شذرات الأفكار الخام للكتابة",
+        arDesc: "بتكسر رهبة الصفحة الفاضية وتطلّع من دماغك أحلى الأفكار والأمثلة الخام بحرية تامة قبل ما تشغل بالك بالترتيب والصياغة.",
+        arUse: "في أول مرحلة كتابة لما يكون عندك كلام كتير في دماغك ومش عارف تبدأ منين."
+      },
+      {
+        id: "writing-shape",
+        source: "Matt Pocock",
+        cat: "Docs & Writing",
+        accent: "#f472b6",
+        enTitle: "Paragraph-by-Paragraph Prose Shaper",
+        enDesc: "Transforms sequenced beats and fragments into crisp, rhythmic, human-sounding prose paragraph by paragraph.",
+        enUse: "Polishing technical articles and documentation into engaging, publication-ready writing.",
+        arTitle: "صياغة ونحت المقال فقرة بفقرة",
+        arDesc: "بتاخد تسلسل أفكارك وتصيغها فقرة ورا فقرة بأسلوب سلس وطبيعي وممتع في القراءة بعيداً عن أسلوب الروبوتات الممل.",
+        arUse: "لما تكون جمّعت أفكارك ورتبتها وجا وقت كتابة النص النهائي الجاهز للنشر."
+      },
+      {
+        id: "git-guardrails-claude-code",
+        source: "Matt Pocock",
+        cat: "Security & Git",
+        accent: "#fb7185",
+        enTitle: "Git Destructive Command Guardrails",
+        enDesc: "Installs pre-execution safety hooks blocking dangerous Git commands (reset --hard, clean -fd, push --force, branch -D) before accidents happen.",
+        enUse: "Protecting your working tree and remote branches when running autonomous coding agents.",
+        arTitle: "حارس الأمان ضد أوامر Git الخطيرة",
+        arDesc: "بتركّب صمام أمان يمنع أي أمر Git مدمّر (زي مسح الشغل بـ reset --hard أو force push) قبل ما يتنفذ ويضيّع تعبك.",
+        arUse: "ضرورية جداً عشان تشتغل مع الوكلاء الذكيين وإنت مطمّن على الكود والبرانشات."
+      },
+      {
+        id: "migrate-to-shoehorn",
+        source: "Matt Pocock",
+        cat: "Testing & Debug",
+        accent: "#38efdf",
+        enTitle: "Migrate Unsafe 'as' to Shoehorn",
+        enDesc: "Replaces brittle `as any` / `as MyType` assertions in TypeScript test files with type-safe partial mocks via @total-typescript/shoehorn.",
+        enUse: "Cleaning up TypeScript unit test suites so mocks stay honest when types evolve.",
+        arTitle: "تنضيف اختبارات TypeScript من الـ as الخطيرة",
+        arDesc: "بتستبدل التحويلات الغشيمة زي as any في ملفات التستات بطريقة آمنة ونضيفة تخلي التستات تكشف أي تغيير في الأنواع فوراً.",
+        arUse: "لو عندك تستات TypeScript مليانة as وعايز تخلّي الـ Type Safety فيها حديد."
+      },
+      {
+        id: "scaffold-exercises",
+        source: "Matt Pocock",
+        cat: "Learning & AI",
+        accent: "#34d399",
+        enTitle: "Coding Exercises Scaffolder",
+        enDesc: "Scaffolds structured coding workshop directories complete with numbered sections, broken problem files, passing solutions, and explainers.",
+        enUse: "Creating programming courses, team workshops, interview katas, or tutorials.",
+        arTitle: "بناء تمارين وتحديات برمجية تعليمية",
+        arDesc: "بتجهّزلك فولدرات تمارين برمجية متكاملة فيها ملف المشكلة وملف الحل النموذجي والشرح، جاهزة للكورسات أو تدريب الفريق.",
+        arUse: "لما تكون بتعمل كورس برمجة أو ورشة عمل أو تمارين عملية للمطورين."
+      },
+      {
+        id: "setup-pre-commit",
+        source: "Matt Pocock",
+        cat: "Security & Git",
+        accent: "#4ade80",
+        enTitle: "Husky Pre-Commit Quality Gate",
+        enDesc: "Wires up Husky + lint-staged + Prettier + TypeScript typechecking + fast tests so broken or unformatted code never enters Git history.",
+        enUse: "Setting up automated quality checks on any JS/TS repository in minutes.",
+        arTitle: "بوابة فحص الكود التلقائية قبل الـ Commit",
+        arDesc: "بتظبّط Husky و Prettier وفحص الأنواع والتستات أوتوماتيك مع كل Commit عشان مستحيل كود بايظ أو مش مترتب يدخل الريبو.",
+        arUse: "في بداية أي مشروع عشان تضمن نضافة الكود أوتوماتيك من أول يوم."
+      },
+      {
+        id: "grill-me",
+        source: "Matt Pocock",
+        cat: "Planning & Specs",
+        accent: "#fb7185",
+        enTitle: "Grill Me (Design Stress-Tester)",
+        enDesc: "Walks down every branch of your design tree one focused question at a time, challenging assumptions until shared understanding is rock solid.",
+        enUse: "Before coding any complex feature — exposes edge cases in 5 minutes that would cost 5 hours later.",
+        arTitle: "اعصر فكرتي بالأسئلة (Grill Me)",
+        arDesc: "بتقعد تسألك سؤال ورا سؤال في كل تفصيلة وحالة خاصة في خطتك لحد ما تكتشف كل الثغرات وتوصل لتصميم مخرّمش المية.",
+        arUse: "قبل ما تكتب كود أي ميزة معقدة — ٥ دقايق أسئلة هنا بيوفّروا ساعات تصليح قدام!"
+      },
+      {
+        id: "grilling",
+        source: "Matt Pocock",
+        cat: "Planning & Specs",
+        accent: "#f97316",
+        enTitle: "Relentless Idea & Decision Grilling",
+        enDesc: "Pushes back hard on vague thinking, hidden trade-offs, and optimistic assumptions across product, strategy, or engineering choices.",
+        enUse: "Stress-testing product ideas, architecture bets, or tough trade-off decisions.",
+        arTitle: "اختبار الضغط للأفكار والقرارات الصعبة",
+        arDesc: "بتلعب دور المحامي الشاطر اللي بيختبر قوة فكرتك أو قرارك من كل الزوايا عشان تتأكد إن مفيش نقطة ضعف مستخبية.",
+        arUse: "لما تكون مقبل على قرار تقني أو بيزنس مهم وعايز حد يناقشك بعمق وصراحة."
+      },
+      {
+        id: "handoff",
+        source: "Matt Pocock",
+        cat: "Agent Orchestration",
+        accent: "#38efdf",
+        enTitle: "Conversation Handoff Document",
+        enDesc: "Compacts your entire session state—decisions, dead ends avoided, file paths, and exact next steps—into a crisp handoff brief.",
+        enUse: "Pausing work for tomorrow, switching AI tools, or passing context to a teammate/agent.",
+        arTitle: "تجهيز ملخص تسليم الشغل Handoff",
+        arDesc: "بتلخّص كل اللي عملتوه، القرارات اللي اتخدت، الطرق الغلط اللي اتجنبتوها، والخطوة الجاية بالظبط في ملف تسليم مرتب جداً.",
+        arUse: "لما تقفل شغل النهارده أو تنقل التذكرة لزميلك أو لمساعد ذكي تاني يكمل وراك."
+      },
+      {
+        id: "teach",
+        source: "Matt Pocock",
+        cat: "Learning & AI",
+        accent: "#f3c969",
+        enTitle: "Interactive Workspace Tutor",
+        enDesc: "Teaches you any unfamiliar concept, pattern, or library using real examples grounded directly inside your own codebase.",
+        enUse: "Understanding tricky code in a repo or mastering a new framework hands-on.",
+        arTitle: "المعلّم الخصوصي من جوه كود مشروعك",
+        arDesc: "بيشرحلك أي مفهوم جديد أو مكتبة صعبة بأمثلة حية متاخدة من ملفات مشروعك إنت شخصياً عشان المعلومة تثبت فوراً.",
+        arUse: "لما تدخل على كود جديد أو تحب تفهم تكنولوجيا معينة بالتطبيق العملي على مشروعك."
+      },
+      {
+        id: "to-questionnaire",
+        source: "Matt Pocock",
+        cat: "Docs & Writing",
+        accent: "#a78bfa",
+        enTitle: "Stakeholder Decision Questionnaire",
+        enDesc: "Turns blocked product or domain questions into a clear, multiple-choice/structured questionnaire you can send to a PM, client, or teammate.",
+        enUse: "Unblocking ambiguous requirements when the answer lives in a client's or stakeholder's head.",
+        arTitle: "تحويل النقط الغامضة لاستبيان واضح للعميل",
+        arDesc: "لو فيه قرار واقف على العميل أو مدير المنتج، بتحوّله لأسئلة واضحة ومحددة باختيارات تبعتهالهم يجاوبوا عليها في دقيقتين.",
+        arUse: "لما متطلبات المشروع تكون عايمة وعايز تاخد إجابات قاطعة وسريعة من العميل."
+      },
+      {
+        id: "wait-what",
+        source: "Matt Pocock",
+        cat: "Docs & Writing",
+        accent: "#fb7185",
+        enTitle: "Wait, What? (Clarity Re-Pitch)",
+        enDesc: "Stops cryptic, overly dense AI explanations in their tracks and re-pitches the idea simply from concrete ground truth.",
+        enUse: "Whenever the last explanation felt confusing, abstract, or missed the point.",
+        arTitle: "استنى إيه ده؟! (إعادة الشرح ببساطة)",
+        arDesc: "أول ما تحس إن آخر رد كان معقد أو طلاسم، شغلها وهتخلي الذكاء الاصطناعي يفرمل ويعيد شرح الفكرة من الصفر ببساطة ووضوح.",
+        arUse: "لما الرد اللي فات ميكونش داخل دماغك وعايز شرح بلدي ومباشر يجيب من الآخر."
+      },
+      {
+        id: "writing-for-agents",
+        source: "Matt Pocock",
+        cat: "Meta & Tooling",
+        accent: "#34d399",
+        enTitle: "Writing AGENTS.md & Skills",
+        enDesc: "Crafts high-leverage, token-efficient AGENTS.md, CLAUDE.md, and SKILL.md instructions that steer coding agents reliably without bloat.",
+        enUse: "Authoring or pruning repository rules and custom agent instructions.",
+        arTitle: "فن كتابة التعليمات للوكلاء AGENTS.md",
+        arDesc: "بتكتب وتختصر ملفات القواعد زي AGENTS.md و SKILL.md بأسلوب ذكي ومختصر يخلّي الذكاء الاصطناعي ينفذ التعليمات بالحرف من غير حشو.",
+        arUse: "لما تظبّط قوانين المشروع أو تكتب مهارة جديدة وعايز أعلى دقة بأقل استهلاك توكنز."
+      }
+    ];
+
+    /* =========================================================================
+       PROCEDURAL GENERATIVE SVG MASTERPIECE ART ENGINE (UNIQUE PER SKILL!)
+       ========================================================================= */
+    function hashStr(str) {
+      let h = 2166136261;
+      for (let i = 0; i < str.length; i++) {
+        h ^= str.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return h >>> 0;
+    }
+
+    function createSkillArtworkSVG(skill, isLarge = false) {
+      const seed = hashStr(skill.id);
+      const c1 = skill.accent;
+      const palette = ["#f3c969", "#38efdf", "#a78bfa", "#fb7185", "#34d399", "#60a5fa"];
+      const c2 = palette[(seed >> 3) % palette.length];
+      const c3 = palette[(seed >> 7) % palette.length];
+      const uid = `art-${skill.id}-${isLarge ? 'lg' : 'sm'}`;
+
+      const rays = 6 + (seed % 8);
+      const ringR1 = 36 + (seed % 18);
+      const ringR2 = 58 + ((seed >> 4) % 16);
+      const polySides = 3 + (seed % 6);
+
+      // Build polygon points
+      let polyPts = [];
+      for (let i = 0; i < polySides; i++) {
+        const ang = (i / polySides) * Math.PI * 2 - Math.PI / 2;
+        const r = 28 + ((seed >> (i % 8)) % 14);
+        polyPts.push(`${(200 + Math.cos(ang) * r).toFixed(1)},${(90 + Math.sin(ang) * r).toFixed(1)}`);
+      }
+
+      // Build sacred petals / spirograph curves
+      let petals = "";
+      for (let i = 0; i < rays; i++) {
+        const deg = (360 / rays) * i;
+        petals += `<ellipse cx="200" cy="90" rx="${ringR1}" ry="${12 + (seed % 12)}" fill="none" stroke="url(#${uid}-g1)" stroke-width="1.15" opacity="0.55" transform="rotate(${deg} 200 90)" />`;
+      }
+
+      // Category-specific centerpiece motif
+      let motif = "";
+      if (skill.cat === "Security & Git") {
+        motif = `
+          <path d="M200 54 L228 66 L228 94 C228 114 215 126 200 132 C185 126 172 114 172 94 L172 66 Z" fill="rgba(5,6,11,0.65)" stroke="${c1}" stroke-width="2" class="pulse-glow"/>
+          <circle cx="200" cy="91" r="9" fill="none" stroke="${c2}" stroke-width="1.8"/>
+        `;
+      } else if (skill.cat === "Design & Art") {
+        motif = `
+          <circle cx="200" cy="90" r="22" fill="none" stroke="${c1}" stroke-width="2" class="pulse-glow"/>
+          <path d="M174 90 Q200 52 226 90 Q200 128 174 90 Z" fill="none" stroke="${c2}" stroke-width="1.8"/>
+          <circle cx="200" cy="90" r="6" fill="${c1}"/>
+        `;
+      } else if (skill.cat === "Architecture") {
+        motif = `
+          <polygon points="200,56 232,74 232,108 200,126 168,108 168,74" fill="rgba(5,6,11,0.6)" stroke="${c1}" stroke-width="2"/>
+          <line x1="200" y1="56" x2="200" y2="126" stroke="${c2}" stroke-width="1.2" opacity="0.7"/>
+          <line x1="168" y1="74" x2="232" y2="108" stroke="${c2}" stroke-width="1.2" opacity="0.7"/>
+          <line x1="232" y1="74" x2="168" y2="108" stroke="${c2}" stroke-width="1.2" opacity="0.7"/>
+        `;
+      } else if (skill.cat === "Testing & Debug") {
+        motif = `
+          <polyline points="160,94 178,94 188,68 202,114 214,80 224,94 242,94" fill="none" stroke="${c1}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="pulse-glow"/>
+          <circle cx="200" cy="90" r="34" fill="none" stroke="${c2}" stroke-width="1.2" class="dash-flow"/>
+        `;
+      } else {
+        motif = `
+          <polygon points="${polyPts.join(' ')}" fill="rgba(5,6,11,0.55)" stroke="${c1}" stroke-width="2" class="pulse-glow"/>
+          <circle cx="200" cy="90" r="7" fill="${c2}"/>
+        `;
+      }
+
+      // Orbital nodes
+      let nodes = "";
+      for (let i = 0; i < 4; i++) {
+        const a = ((seed % 90) + i * 90) * (Math.PI / 180);
+        const nx = (200 + Math.cos(a) * ringR2).toFixed(1);
+        const ny = (90 + Math.sin(a) * ringR2).toFixed(1);
+        nodes += `<circle cx="${nx}" cy="${ny}" r="3.2" fill="${i % 2 === 0 ? c1 : c2}" />`;
+      }
+
+      return `
+        <svg viewBox="0 0 400 180" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="${uid}-g1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="${c1}" stop-opacity="0.95"/>
+              <stop offset="50%" stop-color="${c2}" stop-opacity="0.7"/>
+              <stop offset="100%" stop-color="${c3}" stop-opacity="0.9"/>
+            </linearGradient>
+            <radialGradient id="${uid}-glow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="${c1}" stop-opacity="0.28"/>
+              <stop offset="65%" stop-color="${c2}" stop-opacity="0.06"/>
+              <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect width="400" height="180" fill="url(#${uid}-glow)"/>
+          <g class="orbit-slow">
+            ${petals}
+            <circle cx="200" cy="90" r="${ringR2}" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1" class="dash-flow"/>
+            ${nodes}
+          </g>
+          <g class="orbit-rev">
+            <circle cx="200" cy="90" r="${ringR1 + 10}" fill="none" stroke="${c2}" stroke-opacity="0.25" stroke-width="1" stroke-dasharray="3 7"/>
+          </g>
+          ${motif}
+        </svg>
+      `;
+    }
+
+    // Hero Sacred Star Emblem
+    document.getElementById("hero-emblem").innerHTML = `
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="heroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#f3c969"/>
+            <stop offset="50%" stop-color="#38efdf"/>
+            <stop offset="100%" stop-color="#a78bfa"/>
+          </linearGradient>
+        </defs>
+        <g class="orbit-slow">
+          <polygon points="100,14 122,78 186,100 122,122 100,186 78,122 14,100 78,78" fill="none" stroke="url(#heroGrad)" stroke-width="1.8"/>
+          <polygon points="100,26 118,82 174,100 118,118 100,174 82,118 26,100 82,82" fill="none" stroke="url(#heroGrad)" stroke-width="1.2" transform="rotate(45 100 100)" opacity="0.75"/>
+          <circle cx="100" cy="100" r="68" fill="none" stroke="rgba(243,201,105,0.35)" stroke-dasharray="4 6"/>
+        </g>
+        <g class="orbit-rev">
+          <circle cx="100" cy="100" r="44" fill="none" stroke="#38efdf" stroke-opacity="0.45" stroke-width="1.4"/>
+        </g>
+        <circle cx="100" cy="100" r="14" fill="url(#heroGrad)" class="pulse-glow"/>
+      </svg>
+    `;
+
+    /* =========================================================================
+       STATE, FILTERING, RENDERING & 3D TILT INTERACTIONS
+       ========================================================================= */
+    let activeSource = "All";
+    let activeCat = "All";
+    let searchQuery = "";
+    let currentFiltered = [...SKILLS];
+    let modalIndex = -1;
+
+    const gridEl = document.getElementById("skills-grid");
+    const sourceFiltersEl = document.getElementById("source-filters");
+    const catFiltersEl = document.getElementById("category-filters");
+    const toastEl = document.getElementById("toast");
+
+    function showToast(msg) {
+      toastEl.textContent = msg;
+      toastEl.classList.add("show");
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => toastEl.classList.remove("show"), 2200);
+    }
+
+    function copyCommand(cmd, e) {
+      if (e) e.stopPropagation();
+      navigator.clipboard.writeText(cmd).then(() => {
+        showToast(`Copied ${cmd} — جاهز للنسخ!`);
+      });
+    }
+
+    function renderFilters() {
+      const sources = ["All", "Custom Core", "Anthropic", "Matt Pocock"];
+      sourceFiltersEl.innerHTML = sources.map(src => {
+        const count = src === "All" ? SKILLS.length : SKILLS.filter(s => s.source === src).length;
+        return `<button class="filter-chip ${activeSource === src ? 'active' : ''}" data-src="${src}">
+          <span>${src === "All" ? "All Sources · الكل" : src}</span>
+          <span class="chip-count">${count}</span>
+        </button>`;
+      }).join("");
+
+      const cats = ["All", ...Array.from(new Set(SKILLS.map(s => s.cat)))];
+      catFiltersEl.innerHTML = cats.map(cat => {
+        const count = cat === "All" ? SKILLS.length : SKILLS.filter(s => s.cat === cat).length;
+        return `<button class="filter-chip ${activeCat === cat ? 'active' : ''}" data-cat="${cat}">
+          <span>${cat}</span>
+          <span class="chip-count">${count}</span>
+        </button>`;
+      }).join("");
+
+      sourceFiltersEl.querySelectorAll("[data-src]").forEach(btn => {
+        btn.onclick = () => { activeSource = btn.dataset.src; renderFilters(); renderGrid(); };
+      });
+      catFiltersEl.querySelectorAll("[data-cat]").forEach(btn => {
+        btn.onclick = () => { activeCat = btn.dataset.cat; renderFilters(); renderGrid(); };
+      });
+    }
+
+    function renderGrid() {
+      const q = searchQuery.trim().toLowerCase();
+      currentFiltered = SKILLS.filter(s => {
+        if (activeSource !== "All" && s.source !== activeSource) return false;
+        if (activeCat !== "All" && s.cat !== activeCat) return false;
+        if (!q) return true;
+        return (
+          s.id.toLowerCase().includes(q) ||
+          s.enTitle.toLowerCase().includes(q) ||
+          s.enDesc.toLowerCase().includes(q) ||
+          s.arTitle.includes(q) ||
+          s.arDesc.includes(q) ||
+          s.cat.toLowerCase().includes(q) ||
+          s.source.toLowerCase().includes(q)
+        );
+      });
+
+      document.getElementById("stat-total").textContent = currentFiltered.length;
+
+      if (currentFiltered.length === 0) {
+        gridEl.innerHTML = `
+          <div class="empty-state">
+            <h3 style="color:#fff;margin-bottom:8px;">No matching skills found · مفيش مهارة مطابقة للبحث ده</h3>
+            <p>Try clearing filters or searching another keyword.</p>
+          </div>`;
+        return;
+      }
+
+      gridEl.innerHTML = currentFiltered.map((skill, idx) => `
+        <article class="skill-card" data-idx="${idx}" style="--card-accent:${skill.accent}; animation-delay:${Math.min(idx * 0.03, 0.45)}s">
+          <div class="artwork-stage">
+            <div class="artwork-badges">
+              <span class="badge-source">${skill.source}</span>
+              <span class="badge-cat">${skill.cat}</span>
+            </div>
+            ${createSkillArtworkSVG(skill, false)}
+          </div>
+          <div class="card-body">
+            <div class="slash-row">
+              <code class="slash-pill">/${skill.id}</code>
+              <button class="copy-btn" onclick="copyCommand('/${skill.id}', event)">Copy /نسخ</button>
+            </div>
+            <div class="en-block">
+              <h3 class="card-title-en">${skill.enTitle}</h3>
+              <p class="card-desc-en">${skill.enDesc}</p>
+            </div>
+            <div class="divider-glow"></div>
+            <div class="ar-block">
+              <h4 class="card-title-ar">${skill.arTitle}</h4>
+              <p class="card-desc-ar">${skill.arDesc}</p>
+            </div>
+          </div>
+        </article>
+      `).join("");
+
+      // Attach 3D Perspective Tilt + Spotlight + Click Modal
+      gridEl.querySelectorAll(".skill-card").forEach(card => {
+        card.addEventListener("mousemove", e => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const px = (x / rect.width) * 100;
+          const py = (y / rect.height) * 100;
+          const ry = ((x / rect.width) - 0.5) * 9;
+          const rx = (0.5 - (y / rect.height)) * 9;
+          card.style.setProperty("--mx", `${px}%`);
+          card.style.setProperty("--my", `${py}%`);
+          card.style.setProperty("--rx", `${rx.toFixed(2)}deg`);
+          card.style.setProperty("--ry", `${ry.toFixed(2)}deg`);
+        });
+        card.addEventListener("mouseleave", () => {
+          card.style.setProperty("--rx", "0deg");
+          card.style.setProperty("--ry", "0deg");
+        });
+        card.addEventListener("click", () => openModal(Number(card.dataset.idx)));
+      });
+    }
+
+    /* =========================================================================
+       MODAL DEEP-DIVE LOGIC
+       ========================================================================= */
+    const modalEl = document.getElementById("skill-modal");
+    const modalArtEl = document.getElementById("modal-art");
+    const modalContentEl = document.getElementById("modal-content");
+
+    function openModal(idx) {
+      if (idx < 0 || idx >= currentFiltered.length) return;
+      modalIndex = idx;
+      const s = currentFiltered[idx];
+      modalArtEl.innerHTML = createSkillArtworkSVG(s, true);
+      modalContentEl.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+          <div style="display:flex;gap:10px;align-items:center;">
+            <code class="slash-pill" style="--card-accent:${s.accent};font-size:1rem;padding:7px 14px;">/${s.id}</code>
+            <span class="badge-source">${s.source}</span>
+            <span class="badge-cat" style="--card-accent:${s.accent}">${s.cat}</span>
+          </div>
+          <button class="install-drawer-btn" onclick="copyCommand('/${s.id}', event)">📋 Copy /${s.id}</button>
+        </div>
+
+        <div class="en-block" style="gap:8px;">
+          <h2 style="font-size:1.65rem;color:#fff;">${s.enTitle}</h2>
+          <p style="font-size:1rem;line-height:1.65;color:var(--text-secondary);">${s.enDesc}</p>
+          <div class="modal-use-box" style="margin-top:6px;">
+            <div class="modal-use-label">When to Trigger (English)</div>
+            <p style="font-size:0.93rem;color:#e2e8f0;line-height:1.55;">${s.enUse}</p>
+          </div>
+        </div>
+
+        <div class="ar-block" style="--card-accent:${s.accent};padding:16px 18px;gap:8px;">
+          <h3 style="font-size:1.45rem;color:#fff;">${s.arTitle}</h3>
+          <p style="font-size:1.02rem;line-height:1.8;color:#dbe4ff;">${s.arDesc}</p>
+          <div class="modal-use-box" style="margin-top:6px;background:rgba(0,0,0,0.28);">
+            <div class="modal-use-label" style="font-family:var(--font-ar);">تستخدمها امتى؟ (بالمصري)</div>
+            <p style="font-size:0.96rem;color:#fff;line-height:1.75;">${s.arUse}</p>
+          </div>
+        </div>
+
+        <div class="cmd-box">
+          <div class="cmd-box-title"><span>Install only this skill via install.bat</span></div>
+          <div class="cmd-code">.\install.bat &nbsp;# (Select target, then type: ${s.id})</div>
+        </div>
+      `;
+      modalEl.classList.add("open");
+    }
+
+    document.getElementById("modal-close").onclick = () => modalEl.classList.remove("open");
+    modalEl.addEventListener("click", e => { if (e.target === modalEl) modalEl.classList.remove("open"); });
+    window.addEventListener("keydown", e => {
+      if (!modalEl.classList.contains("open")) return;
+      if (e.key === "Escape") modalEl.classList.remove("open");
+      if (e.key === "ArrowRight") openModal((modalIndex + 1) % currentFiltered.length);
+      if (e.key === "ArrowLeft") openModal((modalIndex - 1 + currentFiltered.length) % currentFiltered.length);
+    });
+
+    /* =========================================================================
+       CONTROLS & LANGUAGE SWITCHER
+       ========================================================================= */
+    document.getElementById("search-input").addEventListener("input", e => {
+      searchQuery = e.target.value;
+      renderGrid();
+    });
+
+    document.querySelectorAll("[data-set-lang]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("[data-set-lang]").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        document.documentElement.setAttribute("data-lang", btn.dataset.setLang);
+      });
+    });
+
+    document.getElementById("toggle-install-btn").addEventListener("click", () => {
+      document.getElementById("install-panel").classList.toggle("open");
+    });
+
+    /* =========================================================================
+       INTERACTIVE 60FPS COSMIC CONSTELLATION CANVAS
+       ========================================================================= */
+    (function initCosmos() {
+      const canvas = document.getElementById("cosmos-canvas");
+      const ctx = canvas.getContext("2d");
+      let w = (canvas.width = window.innerWidth);
+      let h = (canvas.height = window.innerHeight);
+      const mouse = { x: w / 2, y: h / 2 };
+
+      const count = Math.min(75, Math.floor((w * h) / 22000));
+      const stars = Array.from({ length: count }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: (Math.random() - 0.5) * 0.35,
+        r: Math.random() * 1.8 + 0.6,
+        c: ["#f3c969", "#38efdf", "#a78bfa"][Math.floor(Math.random() * 3)]
+      }));
+
+      window.addEventListener("resize", () => {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      });
+      window.addEventListener("mousemove", e => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+      });
+
+      function frame() {
+        ctx.clearRect(0, 0, w, h);
+        for (let i = 0; i < stars.length; i++) {
+          const s = stars[i];
+          s.x += s.vx;
+          s.y += s.vy;
+          if (s.x < 0 || s.x > w) s.vx *= -1;
+          if (s.y < 0 || s.y > h) s.vy *= -1;
+
+          const dxm = mouse.x - s.x;
+          const dym = mouse.y - s.y;
+          const dm = Math.hypot(dxm, dym);
+          if (dm < 180) {
+            ctx.beginPath();
+            ctx.moveTo(s.x, s.y);
+            ctx.lineTo(mouse.x, mouse.y);
+            ctx.strokeStyle = `rgba(243, 201, 105, ${(1 - dm / 180) * 0.22})`;
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+          }
+
+          for (let j = i + 1; j < stars.length; j++) {
+            const s2 = stars[j];
+            const d = Math.hypot(s.x - s2.x, s.y - s2.y);
+            if (d < 130) {
+              ctx.beginPath();
+              ctx.moveTo(s.x, s.y);
+              ctx.lineTo(s2.x, s2.y);
+              ctx.strokeStyle = `rgba(162, 172, 199, ${(1 - d / 130) * 0.12})`;
+              ctx.lineWidth = 0.6;
+              ctx.stroke();
+            }
+          }
+
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fillStyle = s.c;
+          ctx.globalAlpha = 0.75;
+          ctx.fill();
+          ctx.globalAlpha = 1;
+        }
+        requestAnimationFrame(frame);
+      }
+      frame();
+    })();
+
+    renderFilters();
+    renderGrid();
+  </script>
+</body>
+</html>
