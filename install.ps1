@@ -4,5 +4,5 @@
 #>
 $batPath = Join-Path $PSScriptRoot "install.bat"
 $env:SKILLS_BUNDLE_ROOT = $PSScriptRoot
-$scriptText = Get-Content -LiteralPath $batPath -Raw -Encoding UTF8
+$scriptText = [IO.File]::ReadAllText($batPath, [Text.Encoding]::UTF8).TrimStart([char]0xFEFF)
 & ([ScriptBlock]::Create($scriptText)) @args

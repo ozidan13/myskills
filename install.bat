@@ -1,10 +1,15 @@
 <# :
 @echo off
-setlocal
-title Universal AI Skills Installer (Antigravity / OpenCode / Claude / Workspace)
+setlocal EnableExtensions
+title Universal AI Agent Skills Installer
 cd /d "%~dp0"
 set "SKILLS_BUNDLE_ROOT=%~dp0"
-powershell -NoProfile -ExecutionPolicy Bypass -Command "$s = Get-Content -LiteralPath '%~f0' -Raw -Encoding UTF8; & ([ScriptBlock]::Create($s)) @args" %*
+set "INSTALL_BAT_SELF=%~f0"
+set "INSTALL_ARG1=%~1"
+set "INSTALL_ARG2=%~2"
+set "PS_EXE=%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe"
+if not exist "%PS_EXE%" set "PS_EXE=powershell.exe"
+"%PS_EXE%" -NoProfile -ExecutionPolicy Bypass -Command "$s = [IO.File]::ReadAllText($env:INSTALL_BAT_SELF, [Text.Encoding]::UTF8).TrimStart([char]0xFEFF); & ([ScriptBlock]::Create($s))"
 set "EXIT_CODE=%ERRORLEVEL%"
 if "%~1"=="" (
     echo.
@@ -15,7 +20,22 @@ exit /b %EXIT_CODE%
 
 param(
     [Parameter(Position = 0)]
-    [ValidateSet("Interactive", "Global", "OpenCode", "OpenCodeWorkspace", "ClaudeCode", "Workspace", "AllGlobal", "Custom")]
+    [ValidateSet(
+        "Interactive",
+        "AllGlobal",
+        "Antigravity",
+        "Global",
+        "OpenCode",
+        "ClaudeCode",
+        "Cursor",
+        "Codex",
+        "Windsurf",
+        "Agents",
+        "OpenCodeWorkspace",
+        "Workspace",
+        "AllWorkspace",
+        "Custom"
+    )]
     [string]$Target = "Interactive",
 
     [Parameter(Position = 1)]
@@ -23,6 +43,14 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+$Utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+
+if ($Target -eq "Interactive" -and $env:INSTALL_ARG1) {
+    $Target = $env:INSTALL_ARG1.Trim()
+}
+if (-not $CustomOrProjectPath -and $env:INSTALL_ARG2) {
+    $CustomOrProjectPath = $env:INSTALL_ARG2.Trim()
+}
 
 function Write-Cyan($msg)   { Write-Host $msg -ForegroundColor Cyan }
 function Write-Green($msg)  { Write-Host $msg -ForegroundColor Green }
@@ -30,15 +58,90 @@ function Write-Yellow($msg) { Write-Host $msg -ForegroundColor Yellow }
 function Write-Red($msg)    { Write-Host $msg -ForegroundColor Red }
 function Write-Gray($msg)   { Write-Host $msg -ForegroundColor DarkGray }
 
+function Get-SkillMetadata([string]$skillMdPath, [string]$fallbackName) {
+    $resolvedName = $fallbackName
+    $resolvedDesc = ""
+
+    if (Test-Path -LiteralPath $skillMdPath) {
+        try {
+            $raw = [IO.File]::ReadAllText($skillMdPath, [Text.Encoding]::UTF8).TrimStart([char]0xFEFF)
+            if ($raw -match "(?ms)^---\s*\r?\n(.*?)\r?\n---") {
+                $fm = $Matches[1]
+                if ($fm -match "(?m)^name:\s*['""]?([a-zA-Z0-9_\-\.]+)['""]?") {
+                    $resolvedName = $Matches[1].Trim()
+                }
+                $lines = $fm -split "\r?\n"
+                $inDesc = $false
+                $descParts = @()
+                foreach ($ln in $lines) {
+                    if (-not $inDesc) {
+                        if ($ln -match "^description:\s*(.*)$") {
+                            $val = $Matches[1].Trim()
+                            if ($val -eq "" -or $val -match "^[>|][-+]?$") {
+                                $inDesc = $true
+                            } else {
+                                if (($val.StartsWith('"') -and $val.EndsWith('"')) -or ($val.StartsWith("'") -and $val.EndsWith("'"))) {
+                                    $val = $val.Substring(1, $val.Length - 2)
+                                }
+                                $descParts += $val
+                                $inDesc = $true
+                            }
+                        }
+                    } else {
+                        if ($ln -match "^\s+\S") {
+                            $descParts += $ln.Trim()
+                        } elseif ($ln -match "^\s*$") {
+                            continue
+                        } else {
+                            break
+                        }
+                    }
+                }
+                $resolvedDesc = (($descParts -join " ") -replace "\s+", " ").Trim()
+            }
+        } catch {}
+    }
+
+    if (-not $resolvedDesc) {
+        $resolvedDesc = "Load and follow the $resolvedName skill instructions"
+    }
+    if ($resolvedDesc.Length -gt 220) {
+        $resolvedDesc = $resolvedDesc.Substring(0, 217).TrimEnd() + "..."
+    }
+
+    return [PSCustomObject]@{
+        Name        = $resolvedName
+        Description = $resolvedDesc
+    }
+}
+
+function Find-OpenCodeCli {
+    foreach ($cmdName in @("opencode", "opencode-cli")) {
+        $found = Get-Command $cmdName -ErrorAction SilentlyContinue
+        if ($found -and $found.Source) { return $found.Source }
+    }
+    $binCache = Join-Path $env:USERPROFILE ".cache\opencode\bin\opencode.exe"
+    if (Test-Path -LiteralPath $binCache) { return $binCache }
+
+    $desktopCliRoot = Join-Path $env:APPDATA "ai.opencode.desktop\cli"
+    if (Test-Path -LiteralPath $desktopCliRoot) {
+        $foundExes = @(Get-ChildItem -LiteralPath $desktopCliRoot -Filter "opencode-cli.exe" -Recurse -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending)
+        if ($foundExes.Count -gt 0) {
+            return $foundExes[0].FullName
+        }
+    }
+    return $null
+}
+
 # Resolve root folder where install.bat lives
 $bundleRoot = $env:SKILLS_BUNDLE_ROOT
 if (-not $bundleRoot) { $bundleRoot = $PSScriptRoot }
 if (-not $bundleRoot) { $bundleRoot = (Get-Item ".").FullName }
 $bundleRoot = $bundleRoot.TrimEnd('\', '/')
 
-# Automatically discover ALL skills (flat or nested) containing SKILL.md, skipping .git / node_modules
+# Auto-discover ALL skills containing SKILL.md recursively
 $skillFiles = @(
-    Get-ChildItem -Path $bundleRoot -Filter "SKILL.md" -Recurse -File -ErrorAction SilentlyContinue |
+    Get-ChildItem -LiteralPath $bundleRoot -Filter "SKILL.md" -Recurse -File -ErrorAction SilentlyContinue |
     Where-Object {
         $_.FullName -notmatch "[\\/](\.git|node_modules)[\\/]"
     }
@@ -49,23 +152,16 @@ $seenNames = @{}
 
 foreach ($sf in ($skillFiles | Sort-Object { $_.Directory.Name })) {
     $dir = $sf.Directory
-    $resolvedName = $dir.Name
-    try {
-        $raw = Get-Content -LiteralPath $sf.FullName -Raw -Encoding UTF8
-        if ($raw -match "(?ms)^---\s*\r?\n(.*?)\r?\n---") {
-            $fm = $Matches[1]
-            if ($fm -match "(?m)^name:\s*['""]?([a-zA-Z0-9_\-\.]+)['""]?") {
-                $resolvedName = $Matches[1].Trim()
-            }
-        }
-    } catch {}
+    $meta = Get-SkillMetadata -skillMdPath $sf.FullName -fallbackName $dir.Name
+    $resolvedName = $meta.Name
 
     if (-not $seenNames.ContainsKey($resolvedName)) {
         $seenNames[$resolvedName] = $true
         $discoveredSkills += [PSCustomObject]@{
-            Index    = $discoveredSkills.Count + 1
-            Name     = $resolvedName
-            FullPath = $dir.FullName
+            Index       = $discoveredSkills.Count + 1
+            Name        = $resolvedName
+            Description = $meta.Description
+            FullPath    = $dir.FullName
         }
     }
 }
@@ -75,14 +171,14 @@ if ($discoveredSkills.Count -eq 0) {
     exit 1
 }
 
-Write-Cyan "=========================================================================="
-Write-Cyan "        UNIVERSAL AI AGENT SKILLS INSTALLER (AUTO-DISCOVERY .BAT)         "
-Write-Cyan "=========================================================================="
+Write-Cyan "=============================================================================="
+Write-Cyan "      UNIVERSAL AI AGENT SKILLS INSTALLER (ALL APPS + SLASH COMMANDS)         "
+Write-Cyan "=============================================================================="
 Write-Host "Bundle Path : " -NoNewline; Write-Yellow $bundleRoot
 Write-Host "Auto-Found  : " -NoNewline; Write-Green "$($discoveredSkills.Count) skills ready to install!"
 Write-Host ""
 
-# Display discovered skills neatly in 2 wide columns
+# Display discovered skills neatly in 2 columns
 $cols = 2
 for ($i = 0; $i -lt $discoveredSkills.Count; $i += $cols) {
     $line = "  "
@@ -100,34 +196,53 @@ Write-Host ""
 
 $selectedSkills = $discoveredSkills
 
+# Detect installed AI coding apps on this PC
+$hasAntigravity = Test-Path -LiteralPath (Join-Path $env:USERPROFILE ".gemini")
+$hasOpenCode    = (Test-Path -LiteralPath (Join-Path $env:USERPROFILE ".config\opencode")) -or ($null -ne (Find-OpenCodeCli))
+$hasClaude      = Test-Path -LiteralPath (Join-Path $env:USERPROFILE ".claude")
+$hasCursor      = Test-Path -LiteralPath (Join-Path $env:USERPROFILE ".cursor")
+$hasCodex       = Test-Path -LiteralPath (Join-Path $env:USERPROFILE ".codex")
+$hasWindsurf    = Test-Path -LiteralPath (Join-Path $env:USERPROFILE ".codeium\windsurf")
+
+function Format-Badge([bool]$detected) {
+    if ($detected) { return " [DETECTED]" }
+    return ""
+}
+
 if ($Target -eq "Interactive") {
     Write-Cyan "Where do you want to install?"
-    Write-Host "  1) Antigravity Global      (~/.gemini/config/skills)" -ForegroundColor White
-    Write-Host "  2) OpenCode Global         (~/.config/opencode/skills)" -ForegroundColor Green
-    Write-Host "  3) OpenCode Project Folder (<project>/.opencode/skills)" -ForegroundColor Green
-    Write-Host "  4) Claude Code Global      (~/.claude/skills)" -ForegroundColor White
-    Write-Host "  5) Project Workspace       (<project>/.agents/skills - Cursor/Windsurf/Antigravity)" -ForegroundColor White
-    Write-Host "  6) ALL Global Apps         (Antigravity + OpenCode + Claude Code at once!)" -ForegroundColor Yellow
-    Write-Host "  7) Custom Directory Path" -ForegroundColor White
-    Write-Host "  Q) Quit" -ForegroundColor DarkGray
+    Write-Host "  [1] ALL Global AI Apps      (Antigravity + OpenCode + Claude + Cursor + Codex + Windsurf) [DEFAULT]" -ForegroundColor Yellow
+    Write-Host ("  [2] Antigravity Global      (~/.gemini/config/skills)" + (Format-Badge $hasAntigravity)) -ForegroundColor White
+    Write-Host ("  [3] OpenCode Global         (~/.config/opencode/skills + /slash commands)" + (Format-Badge $hasOpenCode)) -ForegroundColor Green
+    Write-Host ("  [4] Claude Code Global      (~/.claude/skills)" + (Format-Badge $hasClaude)) -ForegroundColor White
+    Write-Host ("  [5] Cursor IDE Global       (~/.cursor/skills)" + (Format-Badge $hasCursor)) -ForegroundColor White
+    Write-Host ("  [6] OpenAI Codex Global     (~/.codex/skills)" + (Format-Badge $hasCodex)) -ForegroundColor White
+    Write-Host ("  [7] Windsurf & .agents      (~/.codeium/windsurf/skills + ~/.agents/skills)" + (Format-Badge $hasWindsurf)) -ForegroundColor White
+    Write-Host "  [8] OpenCode Project Folder (<project>/.opencode/skills + /slash commands)" -ForegroundColor Green
+    Write-Host "  [9] Project Workspace (All) (<project>/.agents + .opencode + .claude + .cursor + .codex)" -ForegroundColor Cyan
+    Write-Host "  [0] Custom Directory Path" -ForegroundColor White
+    Write-Host "  [Q] Quit" -ForegroundColor DarkGray
     Write-Host ""
-    $choice = (Read-Host "Select target [1-7, default=6 (ALL Global), Q=Quit]").Trim()
-    if ($choice -eq "") { $choice = "6" }
+    $choice = (Read-Host "Select target [1-9, 0=Custom, Enter=1 (ALL Global), Q=Quit]").Trim()
+    if ($choice -eq "") { $choice = "1" }
 
     switch ($choice.ToUpper()) {
-        "1" { $Target = "Global" }
-        "2" { $Target = "OpenCode" }
-        "3" {
+        "1" { $Target = "AllGlobal" }
+        "2" { $Target = "Antigravity" }
+        "3" { $Target = "OpenCode" }
+        "4" { $Target = "ClaudeCode" }
+        "5" { $Target = "Cursor" }
+        "6" { $Target = "Codex" }
+        "7" { $Target = "Windsurf" }
+        "8" {
             $Target = "OpenCodeWorkspace"
             $CustomOrProjectPath = (Read-Host "Enter project folder path (leave empty for current folder)").Trim().Trim('"')
         }
-        "4" { $Target = "ClaudeCode" }
-        "5" {
-            $Target = "Workspace"
+        "9" {
+            $Target = "AllWorkspace"
             $CustomOrProjectPath = (Read-Host "Enter project folder path (leave empty for current folder)").Trim().Trim('"')
         }
-        "6" { $Target = "AllGlobal" }
-        "7" {
+        "0" {
             $Target = "Custom"
             $CustomOrProjectPath = (Read-Host "Enter full custom destination folder path").Trim().Trim('"')
         }
@@ -163,55 +278,185 @@ if ($Target -eq "Interactive") {
 }
 
 $projectBase = if ($CustomOrProjectPath) { $CustomOrProjectPath } else { (Get-Item ".").FullName }
-$destinations = @()
+$installJobs = New-Object System.Collections.Generic.List[object]
+
+function Add-JobEntry([string]$appLabel, [string]$skillsDir, [string]$commandsDir = "", [bool]$isOpenCode = $false) {
+    $installJobs.Add([PSCustomObject]@{
+        AppLabel    = $appLabel
+        SkillsDir   = $skillsDir
+        CommandsDir = $commandsDir
+        IsOpenCode  = $isOpenCode
+    })
+}
 
 switch ($Target) {
+    "Antigravity" {
+        Add-JobEntry "Antigravity Global" (Join-Path $env:USERPROFILE ".gemini\config\skills")
+    }
     "Global" {
-        $destinations += (Join-Path $env:USERPROFILE ".gemini\config\skills")
+        Add-JobEntry "Antigravity Global" (Join-Path $env:USERPROFILE ".gemini\config\skills")
     }
     "OpenCode" {
-        $destinations += (Join-Path $env:USERPROFILE ".config\opencode\skills")
-    }
-    "OpenCodeWorkspace" {
-        $destinations += (Join-Path $projectBase ".opencode\skills")
+        Add-JobEntry "OpenCode Global" `
+            (Join-Path $env:USERPROFILE ".config\opencode\skills") `
+            (Join-Path $env:USERPROFILE ".config\opencode\commands") `
+            $true
     }
     "ClaudeCode" {
-        $destinations += (Join-Path $env:USERPROFILE ".claude\skills")
+        Add-JobEntry "Claude Code Global" (Join-Path $env:USERPROFILE ".claude\skills")
     }
-    "Workspace" {
-        $destinations += (Join-Path $projectBase ".agents\skills")
+    "Cursor" {
+        Add-JobEntry "Cursor IDE Global" (Join-Path $env:USERPROFILE ".cursor\skills")
+    }
+    "Codex" {
+        Add-JobEntry "OpenAI Codex Global" (Join-Path $env:USERPROFILE ".codex\skills")
+    }
+    "Windsurf" {
+        Add-JobEntry "Windsurf Global" (Join-Path $env:USERPROFILE ".codeium\windsurf\skills")
+        Add-JobEntry "Universal .agents Global" (Join-Path $env:USERPROFILE ".agents\skills")
+    }
+    "Agents" {
+        Add-JobEntry "Universal .agents Global" (Join-Path $env:USERPROFILE ".agents\skills")
     }
     "AllGlobal" {
-        $destinations += (Join-Path $env:USERPROFILE ".gemini\config\skills")
-        $destinations += (Join-Path $env:USERPROFILE ".config\opencode\skills")
-        $destinations += (Join-Path $env:USERPROFILE ".claude\skills")
+        Add-JobEntry "Antigravity Global" (Join-Path $env:USERPROFILE ".gemini\config\skills")
+        Add-JobEntry "OpenCode Global" `
+            (Join-Path $env:USERPROFILE ".config\opencode\skills") `
+            (Join-Path $env:USERPROFILE ".config\opencode\commands") `
+            $true
+        Add-JobEntry "Claude Code Global" (Join-Path $env:USERPROFILE ".claude\skills")
+        Add-JobEntry "Cursor IDE Global" (Join-Path $env:USERPROFILE ".cursor\skills")
+        Add-JobEntry "OpenAI Codex Global" (Join-Path $env:USERPROFILE ".codex\skills")
+        Add-JobEntry "Windsurf Global" (Join-Path $env:USERPROFILE ".codeium\windsurf\skills")
+        Add-JobEntry "Universal .agents Global" (Join-Path $env:USERPROFILE ".agents\skills")
+    }
+    "OpenCodeWorkspace" {
+        Add-JobEntry "OpenCode Project Workspace" `
+            (Join-Path $projectBase ".opencode\skills") `
+            (Join-Path $projectBase ".opencode\commands") `
+            $true
+    }
+    "Workspace" {
+        Add-JobEntry "Project .agents Workspace" (Join-Path $projectBase ".agents\skills")
+    }
+    "AllWorkspace" {
+        Add-JobEntry "Project .agents (Antigravity/Universal)" (Join-Path $projectBase ".agents\skills")
+        Add-JobEntry "Project OpenCode" `
+            (Join-Path $projectBase ".opencode\skills") `
+            (Join-Path $projectBase ".opencode\commands") `
+            $true
+        Add-JobEntry "Project Claude Code" (Join-Path $projectBase ".claude\skills")
+        Add-JobEntry "Project Cursor IDE" (Join-Path $projectBase ".cursor\skills")
+        Add-JobEntry "Project OpenAI Codex" (Join-Path $projectBase ".codex\skills")
     }
     "Custom" {
         if (-not $CustomOrProjectPath) {
             Write-Red "[ERROR] Custom destination path is required when Target is 'Custom'."
             exit 1
         }
-        $destinations += $CustomOrProjectPath
+        # If user points Custom to an opencode folder, also generate commands beside skills
+        $customNorm = $CustomOrProjectPath.TrimEnd('\', '/')
+        $inferredCmdDir = ""
+        $inferredOpenCode = $false
+        if ($customNorm -match "(?i)[\\/]\.?opencode[\\/]skills$") {
+            $parentOc = Split-Path -Parent $customNorm
+            $inferredCmdDir = Join-Path $parentOc "commands"
+            $inferredOpenCode = $true
+        } elseif ($customNorm -match "(?i)[\\/]\.?opencode$") {
+            $inferredCmdDir = Join-Path $customNorm "commands"
+            $CustomOrProjectPath = Join-Path $customNorm "skills"
+            $inferredOpenCode = $true
+        }
+        Add-JobEntry "Custom Destination" $CustomOrProjectPath $inferredCmdDir $inferredOpenCode
     }
 }
 
-foreach ($destBase in $destinations) {
-    Write-Cyan "`n>>> Installing $($selectedSkills.Count) skill(s) to: $destBase"
-    New-Item -ItemType Directory -Force -Path $destBase | Out-Null
+$installedOpenCode = $false
+$jobIndex = 0
 
-    $installedCount = 0
+foreach ($job in $installJobs) {
+    $jobIndex++
+    Write-Cyan ("`n[{0}/{1}] {2}" -f $jobIndex, $installJobs.Count, $job.AppLabel)
+    New-Item -ItemType Directory -Force -Path $job.SkillsDir | Out-Null
+
+    $copiedCount = 0
     foreach ($skill in $selectedSkills) {
-        $targetDir = Join-Path $destBase $skill.Name
+        $targetDir = Join-Path $job.SkillsDir $skill.Name
+        $srcNorm = [IO.Path]::GetFullPath($skill.FullPath).TrimEnd('\', '/')
+        $dstNorm = [IO.Path]::GetFullPath($targetDir).TrimEnd('\', '/')
+
+        if ($srcNorm -ieq $dstNorm) {
+            $copiedCount++
+            continue
+        }
+
         New-Item -ItemType Directory -Force -Path $targetDir | Out-Null
         Get-ChildItem -LiteralPath $skill.FullPath -Force | Where-Object { $_.Name -ne ".git" } | ForEach-Object {
             Copy-Item -LiteralPath $_.FullName -Destination $targetDir -Recurse -Force
         }
-        $installedCount++
-        Write-Green ("  [OK] ({0}/{1}) {2}" -f $installedCount, $selectedSkills.Count, $skill.Name)
+        $copiedCount++
+        if ($installJobs.Count -eq 1) {
+            Write-Green ("  [OK] ({0}/{1}) {2}" -f $copiedCount, $selectedSkills.Count, $skill.Name)
+        }
+    }
+
+    if ($installJobs.Count -gt 1) {
+        Write-Green ("  [OK] Installed {0} skill folder(s)   -> {1}" -f $copiedCount, $job.SkillsDir)
+    } else {
+        Write-Green ("  [OK] Folder destination              -> {0}" -f $job.SkillsDir)
+    }
+
+    # OpenCode requires ~/.config/opencode/commands/<name>.md (or .opencode/commands/<name>.md)
+    # so that typing /<skill-name> appears in OpenCode's slash command menu!
+    if ($job.CommandsDir) {
+        New-Item -ItemType Directory -Force -Path $job.CommandsDir | Out-Null
+        $cmdCount = 0
+        foreach ($skill in $selectedSkills) {
+            $safeDesc = $skill.Description.Replace('\', '\\').Replace('"', '\"')
+            $cmdLines = @(
+                "---",
+                "description: `"$safeDesc`"",
+                "---",
+                "",
+                "Use the ``skill`` tool to load the ``$($skill.Name)`` skill, then follow its instructions.",
+                "",
+                "`$ARGUMENTS"
+            )
+            $cmdText = ($cmdLines -join "`n") + "`n"
+            $cmdFile = Join-Path $job.CommandsDir ($skill.Name + ".md")
+            [IO.File]::WriteAllText($cmdFile, $cmdText, $Utf8NoBom)
+            $cmdCount++
+        }
+        Write-Green ("  [OK] Generated {0} /slash command(s) -> {1}" -f $cmdCount, $job.CommandsDir)
+    }
+
+    if ($job.IsOpenCode) {
+        $installedOpenCode = $true
     }
 }
 
-# Verify Antigravity live indexing if running inside Antigravity
+# Live Verification for OpenCode if background service is running
+if ($installedOpenCode) {
+    $ocCli = Find-OpenCodeCli
+    if ($ocCli) {
+        try {
+            $svcState = (& $ocCli service status 2>$null | Out-String).Trim()
+            if ($svcState -match "(?i)^running") {
+                $cmdParsed = (& $ocCli api command.list 2>$null | Out-String | ConvertFrom-Json)
+                if ($cmdParsed -and $cmdParsed.data -and $cmdParsed.data.Count -le 3) {
+                    Start-Sleep -Milliseconds 1500
+                    $cmdParsed = (& $ocCli api command.list 2>$null | Out-String | ConvertFrom-Json)
+                }
+                if ($cmdParsed -and $cmdParsed.data -and $cmdParsed.data.Count -gt 3) {
+                    Write-Green "  [LIVE VERIFIED] OpenCode Server exposes $($cmdParsed.data.Count) /slash commands live!"
+                }
+            }
+        } catch {}
+    }
+    Write-Yellow "  [READY] OpenCode auto-reloads ~/.config/opencode/commands live — type / in OpenCode right now!"
+}
+
+# Live Verification for Antigravity if running inside Antigravity
 if ($env:ANTIGRAVITY_LS_ADDRESS -and $env:ANTIGRAVITY_CSRF_TOKEN) {
     try {
         $headers = @{
@@ -220,11 +465,11 @@ if ($env:ANTIGRAVITY_LS_ADDRESS -and $env:ANTIGRAVITY_CSRF_TOKEN) {
         }
         $response = Invoke-RestMethod -Uri "http://$($env:ANTIGRAVITY_LS_ADDRESS)/exa.language_server_pb.LanguageServerService/GetAllSkills" -Method Post -Headers $headers -Body '{"workspaceUris":[]}' -ErrorAction SilentlyContinue
         if ($response -and $response.skills) {
-            Write-Cyan "`nLive Antigravity Language Server Check: $($response.skills.Count) total active skills indexed."
+            Write-Green "  [LIVE VERIFIED] Antigravity Language Server indexed $($response.skills.Count) active skills!"
         }
     } catch {}
 }
 
-Write-Cyan "`n=========================================================================="
-Write-Green "  SUCCESS! Installed $($selectedSkills.Count) skill(s) to $($destinations.Count) destination(s)."
-Write-Cyan "=========================================================================="
+Write-Cyan "`n=============================================================================="
+Write-Green "  SUCCESS! Installed $($selectedSkills.Count) skill(s) across $($installJobs.Count) app target(s)."
+Write-Cyan "=============================================================================="

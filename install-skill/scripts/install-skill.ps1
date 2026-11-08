@@ -1,18 +1,7 @@
 <#
 .SYNOPSIS
-    Installs an Antigravity skill from a Git URL, GitHub link, direct web link, local directory, or ZIP archive.
-
-.PARAMETER Source
-    The source repository URL, direct file link, local folder, or ZIP archive.
-
-.PARAMETER Scope
-    Where to install: "Global" (~/.gemini/config/skills), "Workspace" (.agents/skills), or "Both" (default).
-
-.PARAMETER SkillName
-    Optional override for the skill name. If omitted, the name is extracted from SKILL.md frontmatter.
-
-.PARAMETER WorkspaceDir
-    Optional workspace directory. Defaults to current directory or active Antigravity workspace.
+    Installs an AI agent skill from a Git URL, GitHub link, direct web link, local directory, or ZIP archive
+    across Antigravity, OpenCode (skills + /slash commands), Claude Code, Cursor, Codex, Windsurf, and Workspace.
 #>
 [CmdletBinding()]
 param(
@@ -20,7 +9,7 @@ param(
     [string]$Source,
 
     [Parameter(Position = 1)]
-    [ValidateSet("Global", "Workspace", "Both", "OpenCode", "ClaudeCode")]
+    [ValidateSet("Both", "AllGlobal", "Global", "Workspace", "OpenCode", "ClaudeCode", "Cursor", "Codex", "Windsurf")]
     [string]$Scope = "Both",
 
     [Parameter(Position = 2)]
@@ -30,36 +19,94 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+$Utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 
-function Write-Info($msg) { Write-Host "[INFO] $msg" -ForegroundColor Cyan }
+function Write-Info($msg)    { Write-Host "[INFO] $msg" -ForegroundColor Cyan }
 function Write-Success($msg) { Write-Host "[SUCCESS] $msg" -ForegroundColor Green }
 function Write-WarnMsg($msg) { Write-Host "[WARN] $msg" -ForegroundColor Yellow }
-function Write-ErrMsg($msg) { Write-Host "[ERROR] $msg" -ForegroundColor Red }
 
-# Determine workspace root
+function Find-OpenCodeCli {
+    foreach ($cmdName in @("opencode", "opencode-cli")) {
+        $found = Get-Command $cmdName -ErrorAction SilentlyContinue
+        if ($found -and $found.Source) { return $found.Source }
+    }
+    $binCache = Join-Path $env:USERPROFILE ".cache\opencode\bin\opencode.exe"
+    if (Test-Path -LiteralPath $binCache) { return $binCache }
+
+    $desktopCliRoot = Join-Path $env:APPDATA "ai.opencode.desktop\cli"
+    if (Test-Path -LiteralPath $desktopCliRoot) {
+        $foundExes = @(Get-ChildItem -LiteralPath $desktopCliRoot -Filter "opencode-cli.exe" -Recurse -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending)
+        if ($foundExes.Count -gt 0) { return $foundExes[0].FullName }
+    }
+    return $null
+}
+
+function Parse-SkillMeta([string]$skillMdPath, [string]$fallbackName) {
+    $resolvedName = $fallbackName
+    $resolvedDesc = ""
+    if (Test-Path -LiteralPath $skillMdPath) {
+        $raw = [IO.File]::ReadAllText($skillMdPath, [Text.Encoding]::UTF8).TrimStart([char]0xFEFF)
+        if ($raw -match "(?ms)^---\s*\r?\n(.*?)\r?\n---") {
+            $fm = $Matches[1]
+            if ($fm -match "(?m)^name:\s*['""]?([a-zA-Z0-9_\-\.]+)['""]?") {
+                $resolvedName = $Matches[1].Trim()
+            }
+            $lines = $fm -split "\r?\n"
+            $inDesc = $false
+            $descParts = @()
+            foreach ($ln in $lines) {
+                if (-not $inDesc) {
+                    if ($ln -match "^description:\s*(.*)$") {
+                        $val = $Matches[1].Trim()
+                        if ($val -eq "" -or $val -match "^[>|][-+]?$") {
+                            $inDesc = $true
+                        } else {
+                            if (($val.StartsWith('"') -and $val.EndsWith('"')) -or ($val.StartsWith("'") -and $val.EndsWith("'"))) {
+                                $val = $val.Substring(1, $val.Length - 2)
+                            }
+                            $descParts += $val
+                            $inDesc = $true
+                        }
+                    }
+                } else {
+                    if ($ln -match "^\s+\S") {
+                        $descParts += $ln.Trim()
+                    } elseif ($ln -match "^\s*$") {
+                        continue
+                    } else {
+                        break
+                    }
+                }
+            }
+            $resolvedDesc = (($descParts -join " ") -replace "\s+", " ").Trim()
+        }
+    }
+    if (-not $resolvedDesc) {
+        $resolvedDesc = "Load and follow the $resolvedName skill instructions"
+    }
+    if ($resolvedDesc.Length -gt 220) {
+        $resolvedDesc = $resolvedDesc.Substring(0, 217).TrimEnd() + "..."
+    }
+    return [PSCustomObject]@{ Name = $resolvedName; Description = $resolvedDesc }
+}
+
 if (-not $WorkspaceDir) {
     if ($env:WORKSPACE_ROOT) {
         $WorkspaceDir = $env:WORKSPACE_ROOT
-    } elseif ((Test-Path ".\.agents") -or (Test-Path ".\.git")) {
-        $WorkspaceDir = (Get-Item ".").FullName
     } else {
         $WorkspaceDir = (Get-Item ".").FullName
     }
 }
 
-$globalSkillsBase = Join-Path $env:USERPROFILE ".gemini\config\skills"
-$wsSkillsBase = Join-Path $WorkspaceDir ".agents\skills"
-
-$tempWorkingDir = Join-Path $env:TEMP ("antigravity-skill-install-" + [Guid]::NewGuid().ToString("N"))
+$tempWorkingDir = Join-Path $env:TEMP ("ai-skill-install-" + [Guid]::NewGuid().ToString("N"))
 New-Item -ItemType Directory -Force -Path $tempWorkingDir | Out-Null
 
 try {
-    $skillDirsToInstall = @()
+    $skillDirsToInstall = New-Object System.Collections.Generic.List[object]
     $cleanSource = $Source.Trim().Trim('"').Trim("'")
 
     Write-Info "Processing source: $cleanSource"
 
-    # Check if Git URL or GitHub URL
     $isGitUrl = ($cleanSource -match "^https?://.+(\.git)?$" -and ($cleanSource -match "github\.com|gitlab\.com|bitbucket\.org|\.git$"))
     $isGitHubTree = ($cleanSource -match "^https?://github\.com/([^/]+)/([^/]+)/tree/([^/]+)/(.+)$")
 
@@ -73,13 +120,11 @@ try {
         Write-Info "Detected GitHub tree URL. Cloning repo $cloneUrl (branch: $branch, subpath: $subPath)..."
         $cloneDir = Join-Path $tempWorkingDir "repo"
         cmd /c "git clone --depth 1 --branch `"$branch`" --quiet `"$cloneUrl`" `"$cloneDir`""
-        if ($LASTEXITCODE -ne 0) {
-            throw "Failed to clone repository: $cloneUrl"
-        }
+        if ($LASTEXITCODE -ne 0) { throw "Failed to clone repository: $cloneUrl" }
 
         $targetSubDir = Join-Path $cloneDir ($subPath.Replace("/", "\"))
-        if (Test-Path $targetSubDir) {
-            $skillDirsToInstall += (Get-Item $targetSubDir)
+        if (Test-Path -LiteralPath $targetSubDir) {
+            $skillDirsToInstall.Add((Get-Item -LiteralPath $targetSubDir))
         } else {
             throw "Specified subpath '$subPath' not found in repository."
         }
@@ -87,93 +132,72 @@ try {
         Write-Info "Cloning Git repository..."
         $cloneDir = Join-Path $tempWorkingDir "repo"
         cmd /c "git clone --depth 1 --quiet `"$cleanSource`" `"$cloneDir`""
-        if ($LASTEXITCODE -ne 0) {
-            throw "Failed to clone repository: $cleanSource"
-        }
+        if ($LASTEXITCODE -ne 0) { throw "Failed to clone repository: $cleanSource" }
 
-        # Look for skills directory (supports both flat skills/<name> and categorized skills/<cat>/<name>)
         $skillsFolder = Join-Path $cloneDir "skills"
-        if (Test-Path $skillsFolder) {
-            $nestedSkillFiles = @(Get-ChildItem -Path $skillsFolder -Filter "SKILL.md" -Recurse)
-            foreach ($sf in $nestedSkillFiles) {
-                $skillDirsToInstall += $sf.Directory
+        if (Test-Path -LiteralPath $skillsFolder) {
+            foreach ($sf in @(Get-ChildItem -LiteralPath $skillsFolder -Filter "SKILL.md" -Recurse -File)) {
+                $skillDirsToInstall.Add($sf.Directory)
             }
         }
-
-        # If no skills in skills/, check root
         if ($skillDirsToInstall.Count -eq 0) {
-            if (Test-Path (Join-Path $cloneDir "SKILL.md")) {
-                $skillDirsToInstall += (Get-Item $cloneDir)
+            if (Test-Path -LiteralPath (Join-Path $cloneDir "SKILL.md")) {
+                $skillDirsToInstall.Add((Get-Item -LiteralPath $cloneDir))
             } else {
-                # Look recursively for any SKILL.md
-                $allSkillFiles = Get-ChildItem -Path $cloneDir -Filter "SKILL.md" -Recurse
-                foreach ($sf in $allSkillFiles) {
-                    $skillDirsToInstall += $sf.Directory
+                foreach ($sf in @(Get-ChildItem -LiteralPath $cloneDir -Filter "SKILL.md" -Recurse -File)) {
+                    $skillDirsToInstall.Add($sf.Directory)
                 }
             }
         }
-
         if ($skillDirsToInstall.Count -eq 0) {
             throw "No SKILL.md file found in repository $cleanSource."
         }
     } elseif ($cleanSource -match "^https?://") {
-        # Direct URL (could be raw SKILL.md or .zip archive)
         if ($cleanSource -match "\.zip($|\?)") {
             Write-Info "Downloading ZIP archive..."
             $zipFile = Join-Path $tempWorkingDir "skill.zip"
             Invoke-WebRequest -Uri $cleanSource -OutFile $zipFile -UseBasicParsing
             $extractedDir = Join-Path $tempWorkingDir "extracted"
             Expand-Archive -Path $zipFile -DestinationPath $extractedDir -Force
-            $skillFiles = Get-ChildItem -Path $extractedDir -Filter "SKILL.md" -Recurse
+            $skillFiles = @(Get-ChildItem -LiteralPath $extractedDir -Filter "SKILL.md" -Recurse -File)
             if ($skillFiles.Count -gt 0) {
-                foreach ($sf in $skillFiles) { $skillDirsToInstall += $sf.Directory }
+                foreach ($sf in $skillFiles) { $skillDirsToInstall.Add($sf.Directory) }
             } else {
-                $skillDirsToInstall += (Get-Item $extractedDir)
+                $skillDirsToInstall.Add((Get-Item -LiteralPath $extractedDir))
             }
         } else {
-            # Single raw markdown / SKILL.md file
             Write-Info "Downloading raw SKILL.md file..."
             $singleSkillDir = Join-Path $tempWorkingDir "custom-skill"
             New-Item -ItemType Directory -Force -Path $singleSkillDir | Out-Null
             $destFile = Join-Path $singleSkillDir "SKILL.md"
             Invoke-WebRequest -Uri $cleanSource -OutFile $destFile -UseBasicParsing
-            $skillDirsToInstall += (Get-Item $singleSkillDir)
+            $skillDirsToInstall.Add((Get-Item -LiteralPath $singleSkillDir))
         }
-    } elseif (Test-Path $cleanSource) {
-        # Local path
-        $item = Get-Item $cleanSource
+    } elseif (Test-Path -LiteralPath $cleanSource) {
+        $item = Get-Item -LiteralPath $cleanSource
         if ($item.PSIsContainer) {
-            if (Test-Path (Join-Path $item.FullName "SKILL.md")) {
-                $skillDirsToInstall += $item
+            if (Test-Path -LiteralPath (Join-Path $item.FullName "SKILL.md")) {
+                $skillDirsToInstall.Add($item)
             } else {
-                $skillsFolder = Join-Path $item.FullName "skills"
-                if (Test-Path $skillsFolder) {
-                    $childSkills = Get-ChildItem -Path $skillsFolder -Directory
-                    foreach ($dir in $childSkills) {
-                        if (Test-Path (Join-Path $dir.FullName "SKILL.md")) {
-                            $skillDirsToInstall += $dir
-                        }
-                    }
-                } else {
-                    $found = Get-ChildItem -Path $item.FullName -Filter "SKILL.md" -Recurse
-                    foreach ($sf in $found) { $skillDirsToInstall += $sf.Directory }
+                foreach ($sf in @(Get-ChildItem -LiteralPath $item.FullName -Filter "SKILL.md" -Recurse -File)) {
+                    $skillDirsToInstall.Add($sf.Directory)
                 }
             }
         } elseif ($item.Extension -eq ".zip") {
             Write-Info "Extracting local ZIP archive..."
             $extractedDir = Join-Path $tempWorkingDir "extracted"
             Expand-Archive -Path $item.FullName -DestinationPath $extractedDir -Force
-            $skillFiles = Get-ChildItem -Path $extractedDir -Filter "SKILL.md" -Recurse
+            $skillFiles = @(Get-ChildItem -LiteralPath $extractedDir -Filter "SKILL.md" -Recurse -File)
             if ($skillFiles.Count -gt 0) {
-                foreach ($sf in $skillFiles) { $skillDirsToInstall += $sf.Directory }
+                foreach ($sf in $skillFiles) { $skillDirsToInstall.Add($sf.Directory) }
             } else {
-                $skillDirsToInstall += (Get-Item $extractedDir)
+                $skillDirsToInstall.Add((Get-Item -LiteralPath $extractedDir))
             }
         } elseif ($item.Name -like "*.md") {
             $singleSkillDir = Join-Path $tempWorkingDir "custom-skill"
             New-Item -ItemType Directory -Force -Path $singleSkillDir | Out-Null
-            Copy-Item -Path $item.FullName -Destination (Join-Path $singleSkillDir "SKILL.md") -Force
-            $skillDirsToInstall += (Get-Item $singleSkillDir)
+            Copy-Item -LiteralPath $item.FullName -Destination (Join-Path $singleSkillDir "SKILL.md") -Force
+            $skillDirsToInstall.Add((Get-Item -LiteralPath $singleSkillDir))
         }
     } else {
         throw "Could not resolve source: '$cleanSource' is not a valid URL, Git repo, or local path."
@@ -183,73 +207,100 @@ try {
         throw "No installable skills found in source."
     }
 
-    $installedSkills = @()
+    $installedSkills = New-Object System.Collections.Generic.List[object]
+    $touchedOpenCode = $false
 
     foreach ($skillDir in $skillDirsToInstall) {
         $skillMdPath = Join-Path $skillDir.FullName "SKILL.md"
-        $resolvedName = ""
-        $resolvedDesc = ""
+        $fallback = ($skillDir.Name.ToLower() -replace "[^a-z0-9_\-]", "-")
+        $meta = Parse-SkillMeta -skillMdPath $skillMdPath -fallbackName $fallback
+        $resolvedName = $meta.Name
+        $resolvedDesc = $meta.Description
 
-        if (Test-Path $skillMdPath) {
-            $content = Get-Content -Path $skillMdPath -Raw -Encoding utf8
-            if ($content -match "(?m)^name:\s*['""]?([a-zA-Z0-9_\-\.]+)['""]?") {
-                $resolvedName = $Matches[1].Trim()
-            }
-            if ($content -match "(?ms)^description:\s*>-?\s*(.*?)(^---|\Z)") {
-                $resolvedDesc = $Matches[1].Trim()
-            }
-        }
-
-        # Override name if explicitly passed for single-skill install
         if ($SkillName -and ($skillDirsToInstall.Count -eq 1)) {
             $resolvedName = $SkillName
         }
 
-        if (-not $resolvedName) {
-            $resolvedName = $skillDir.Name.ToLower() -replace "[^a-z0-9_\-]", "-"
-        }
-
-        # Ensure SKILL.md has valid frontmatter
-        if (Test-Path $skillMdPath) {
-            $content = Get-Content -Path $skillMdPath -Raw -Encoding utf8
+        if (Test-Path -LiteralPath $skillMdPath) {
+            $content = [IO.File]::ReadAllText($skillMdPath, [Text.Encoding]::UTF8).TrimStart([char]0xFEFF)
             if ($content -notmatch "^---") {
                 Write-WarnMsg "Adding missing frontmatter to SKILL.md for $resolvedName..."
-                $frontmatter = "---`nname: $resolvedName`ndescription: $resolvedName skill installed via install-skill.`n---`n`n"
-                Set-Content -Path $skillMdPath -Value ($frontmatter + $content) -Encoding utf8
+                $frontmatter = "---`nname: $resolvedName`ndescription: `"$resolvedName skill installed via install-skill.`"`n---`n`n"
+                [IO.File]::WriteAllText($skillMdPath, ($frontmatter + $content), $Utf8NoBom)
             }
         }
 
-        $targets = @()
-        if ($Scope -eq "Global" -or $Scope -eq "Both") {
-            $targets += (Join-Path $globalSkillsBase $resolvedName)
-        }
-        if ($Scope -eq "Workspace" -or $Scope -eq "Both") {
-            $targets += (Join-Path $wsSkillsBase $resolvedName)
-        }
-        if ($Scope -eq "OpenCode") {
-            $targets += (Join-Path $env:USERPROFILE ".config\opencode\skills\$resolvedName")
-        }
-        if ($Scope -eq "ClaudeCode") {
-            $targets += (Join-Path $env:USERPROFILE ".claude\skills\$resolvedName")
+        $targets = New-Object System.Collections.Generic.List[string]
+        $openCodeCmdDirs = New-Object System.Collections.Generic.List[string]
+
+        switch ($Scope) {
+            "Both" {
+                $targets.Add((Join-Path $env:USERPROFILE ".gemini\config\skills\$resolvedName"))
+                $targets.Add((Join-Path $WorkspaceDir ".agents\skills\$resolvedName"))
+            }
+            "Global" {
+                $targets.Add((Join-Path $env:USERPROFILE ".gemini\config\skills\$resolvedName"))
+            }
+            "Workspace" {
+                $targets.Add((Join-Path $WorkspaceDir ".agents\skills\$resolvedName"))
+            }
+            "OpenCode" {
+                $targets.Add((Join-Path $env:USERPROFILE ".config\opencode\skills\$resolvedName"))
+                $openCodeCmdDirs.Add((Join-Path $env:USERPROFILE ".config\opencode\commands"))
+            }
+            "ClaudeCode" {
+                $targets.Add((Join-Path $env:USERPROFILE ".claude\skills\$resolvedName"))
+            }
+            "Cursor" {
+                $targets.Add((Join-Path $env:USERPROFILE ".cursor\skills\$resolvedName"))
+            }
+            "Codex" {
+                $targets.Add((Join-Path $env:USERPROFILE ".codex\skills\$resolvedName"))
+            }
+            "Windsurf" {
+                $targets.Add((Join-Path $env:USERPROFILE ".codeium\windsurf\skills\$resolvedName"))
+                $targets.Add((Join-Path $env:USERPROFILE ".agents\skills\$resolvedName"))
+            }
+            "AllGlobal" {
+                $targets.Add((Join-Path $env:USERPROFILE ".gemini\config\skills\$resolvedName"))
+                $targets.Add((Join-Path $env:USERPROFILE ".config\opencode\skills\$resolvedName"))
+                $targets.Add((Join-Path $env:USERPROFILE ".claude\skills\$resolvedName"))
+                $targets.Add((Join-Path $env:USERPROFILE ".cursor\skills\$resolvedName"))
+                $targets.Add((Join-Path $env:USERPROFILE ".codex\skills\$resolvedName"))
+                $targets.Add((Join-Path $env:USERPROFILE ".codeium\windsurf\skills\$resolvedName"))
+                $targets.Add((Join-Path $env:USERPROFILE ".agents\skills\$resolvedName"))
+                $openCodeCmdDirs.Add((Join-Path $env:USERPROFILE ".config\opencode\commands"))
+            }
         }
 
         foreach ($target in $targets) {
             New-Item -ItemType Directory -Force -Path $target | Out-Null
-            
-            # Copy all files from skill directory, excluding .git
-            Get-ChildItem -Path $skillDir.FullName | Where-Object { $_.Name -ne ".git" } | ForEach-Object {
-                Copy-Item -Path $_.FullName -Destination $target -Recurse -Force
+            Get-ChildItem -LiteralPath $skillDir.FullName -Force | Where-Object { $_.Name -ne ".git" } | ForEach-Object {
+                Copy-Item -LiteralPath $_.FullName -Destination $target -Recurse -Force
             }
             Write-Success "Installed '$resolvedName' -> $target"
         }
 
-        $installedSkills += [PSCustomObject]@{
-            Name = $resolvedName
-            Targets = $targets
+        foreach ($cmdDir in $openCodeCmdDirs) {
+            New-Item -ItemType Directory -Force -Path $cmdDir | Out-Null
+            $safeDesc = $resolvedDesc.Replace('\', '\\').Replace('"', '\"')
+            $cmdText = "---`ndescription: `"$safeDesc`"`n---`n`nUse the ``skill`` tool to load the ``$resolvedName`` skill, then follow its instructions.`n`n`$ARGUMENTS`n"
+            $cmdFile = Join-Path $cmdDir ($resolvedName + ".md")
+            [IO.File]::WriteAllText($cmdFile, $cmdText, $Utf8NoBom)
+            Write-Success "Registered OpenCode slash command '/$resolvedName' -> $cmdFile"
+            $touchedOpenCode = $true
         }
+
+        $installedSkills.Add([PSCustomObject]@{
+            Name    = $resolvedName
+            Targets = $targets.ToArray()
+        })
     }
 
-    # Verify discovery via Language Server if active
+    if ($touchedOpenCode) {
+        Write-Info "OpenCode slash command(s) registered in ~/.config/opencode/commands (live-watched automatically)."
+    }
+
     if ($env:ANTIGRAVITY_LS_ADDRESS -and $env:ANTIGRAVITY_CSRF_TOKEN) {
         try {
             $headers = @{
@@ -259,26 +310,17 @@ try {
             $wsUri = "file:///" + $WorkspaceDir.Replace("\", "/")
             $body = (@{ workspaceUris = @($wsUri) } | ConvertTo-Json)
             $response = Invoke-RestMethod -Uri "http://$($env:ANTIGRAVITY_LS_ADDRESS)/exa.language_server_pb.LanguageServerService/GetAllSkills" -Method Post -Headers $headers -Body $body -ErrorAction SilentlyContinue
-            
-            Write-Host "`nLive verification with Language Server:" -ForegroundColor Cyan
-            foreach ($s in $installedSkills) {
-                $found = $response.skills | Where-Object { $_.name -eq $s.Name }
-                if ($found) {
-                    Write-Success "  [OK] $($s.Name) is actively indexed and ready to use via /"
-                } else {
-                    Write-WarnMsg "  [PENDING] $($s.Name) installed; will be loaded on next prompt."
-                }
+            if ($response -and $response.skills) {
+                Write-Info "Antigravity Language Server active skills count: $($response.skills.Count)"
             }
-        } catch {
-            # Non-fatal if LS ping fails
-        }
+        } catch {}
     }
 
     Write-Host "`nAll skills installed successfully!" -ForegroundColor Green
-    return $installedSkills
+    return $installedSkills.ToArray()
 
 } finally {
-    if (Test-Path $tempWorkingDir) {
-        Remove-Item -Path $tempWorkingDir -Recurse -Force -ErrorAction SilentlyContinue
+    if (Test-Path -LiteralPath $tempWorkingDir) {
+        Remove-Item -LiteralPath $tempWorkingDir -Recurse -Force -ErrorAction SilentlyContinue
     }
 }
