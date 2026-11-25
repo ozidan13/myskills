@@ -1,0 +1,1096 @@
+{
+  "id": "basics-lect02",
+  "title": "HTML من الألف للياء",
+  "subtitle": "المحاضرة التانية — شرح تفاعلي + لعبة تطبيق بالعامية المصرية",
+  "accent": "#f97316",
+  "lang": "html",
+  "readUrl": "lect02.read.html",
+  "summary": [
+    "هيكل ملف HTML5 الأساسي (DOCTYPE, html lang/dir, head و meta tags زي UTF-8 و viewport, و body).",
+    "الفرق بين Elements (Opening + Content + Closing) و Block vs Inline والـ Void Elements.",
+    "الـ Attributes (id vs class، Global و Boolean و data-* للتعامل مع JavaScript).",
+    "العناوين h1–h6، النصوص الدلالية (strong vs b)، الروابط الآمنة (noopener)، الصور (alt)، القوائم (ul/ol/dl)، الجداول (scope/colspan)، والـ Forms مع HTML5 Validation.",
+    "Semantic HTML (header, nav, main, article, section, aside, footer, details/summary) و Accessibility (a11y + القاعدة الأولى في ARIA)."
+  ],
+  "levels": [
+    {
+      "id": "lvl-1",
+      "num": 1,
+      "title": "ليه HTML مهمة؟",
+      "en": "Why HTML & How the Browser Works",
+      "docs": [
+        {
+          "tab": "ليه HTML مهمة؟",
+          "heading": "ليه HTML هي أساس كل موقع في العالم؟",
+          "body": [
+            "<strong>HTML</strong> (HyperText Markup Language) هي اللغة الأساسية اللي كل صفحة ويب في العالم مبنية بيها — مفيش موقع واحد على الإنترنت، لا فيسبوك ولا جوجل ولا يوتيوب، إلا وبيستخدم HTML.",
+            "لما بتفتح أي صفحة، الـ <bdi>browser</bdi> بياخد ملف HTML من الـ <bdi>server</bdi> ويحوله لصفحة مرئية قدامك: «هنا عنوان، وهنا فقرة، وده لينك، ودي صورة»."
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "فكّر فيها زي العمارة 🏗️",
+            "text": "لو الموقع عمارة، <strong>HTML</strong> هي الخرسانة والطوب (الهيكل). <strong>CSS</strong> هي الدهان والديكور (الشكل)، و <strong>JavaScript</strong> هي الكهربا والأجهزة (الحركة والتفاعل). من غير HTML مفيش عمارة أصلاً!"
+          },
+          "filename": "hello.html",
+          "code": "[[0|<h1>أهلاً بيك في الويب</h1>]]\n[[1|<p>HTML بتوصف هيكل ومحتوى الصفحة.</p>]]\n[[2|<a href=\"https://codehub.eg\">زور موقعنا</a>]]",
+          "spots": [
+            { "title": "<h1> عنوان رئيسي", "say": "بيقول للـ browser: ده العنوان الأهم في الصفحة." },
+            { "title": "<p> فقرة نص", "say": "بيوصف إن الكلام ده فقرة مستقلة." },
+            { "title": "<a> رابط", "say": "بيعمل hyperlink ينقلك لصفحة تانية." }
+          ],
+          "preview": "<div dir='rtl'><h1 style='margin:0 0 6px'>أهلاً بيك في الويب</h1><p style='margin:0 0 6px'>HTML بتوصف هيكل ومحتوى الصفحة.</p><a href='#'>زور موقعنا</a></div>",
+          "previewUrl": "file:///hello.html"
+        },
+        {
+          "tab": "إزاي الـ Browser بيشتغل؟",
+          "heading": "رحلة الصفحة في أجزاء من الثانية",
+          "body": [
+            "أول ما تكتب عنوان موقع في شريط الـ <bdi>browser</bdi> وتضغط Enter، بيحصل ٤ خطوات ورا بعض بسرعة رهيبة في ملي ثانية!"
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "اللي بيحصل في الخلفية",
+            "text": "الـ browser بيروح للـ server يقوله «عايز الصفحة دي»، الـ server يبعتله ملف HTML، الـ browser يقراه سطر سطر ويحوله للشكل اللي بتشوفه قدامك."
+          },
+          "cards": [
+            { "title": "١. User types URL", "desc": "المستخدم يكتب رابط الموقع في الـ browser." },
+            { "title": "٢. Server sends HTML", "desc": "السيرفر يرد ويبعت ملف الـ HTML المطلوب." },
+            { "title": "٣. Browser parses HTML", "desc": "المتصفح يقرا التاجات سطر سطر ويفهم الهيكل." },
+            { "title": "٤. Page rendered", "desc": "الصفحة تترسم وتظهر قدامك بألوانها وعناصرها." }
+          ]
+        }
+      ],
+      "stages": [
+        {
+          "id": "s1-1",
+          "type": "buckets",
+          "layout": "columns",
+          "prompt": "اسحب كل دور لمكانه الصح في تشبيه العمارة (HTML vs CSS vs JS):",
+          "coach": "الخرسانة هيكل، الدهان شكل، والكهربا حركة وتفاعل!",
+          "buckets": [
+            { "id": "html", "label": "HTML (هيكل)" },
+            { "id": "css", "label": "CSS (شكل)" },
+            { "id": "js", "label": "JavaScript (حركة)" }
+          ],
+          "items": [
+            { "t": "الخرسانة والطوب", "b": "html", "why": "HTML هي الهيكل اللي كل حاجة بتتبني عليه." },
+            { "t": "الدهان والديكور", "b": "css", "why": "CSS هي الألوان والتنسيق والديكور." },
+            { "t": "الكهربا والأجهزة", "b": "js", "why": "JavaScript بتخلي الصفحة تتحرك وتتفاعل." },
+            { "t": "العناوين والفقرات والصور", "b": "html", "why": "وصف المحتوى والهيكل شغل HTML." },
+            { "t": "الألوان وحجم الخط", "b": "css", "why": "تجميل الشكل والخطوط شغل CSS." },
+            { "t": "زرار بيفتح قائمة لما تضغطه", "b": "js", "why": "التفاعل لما المستخدم يضغط شغل JavaScript." }
+          ],
+          "hint": "اسأل نفسك: ده هيكل أساسي ولا شكل ودهان ولا حركة وتفاعل؟"
+        },
+        {
+          "id": "s1-2",
+          "type": "order",
+          "prompt": "رتّب خطوات شغل الـ Browser من أول ما تكتب الرابط لحد ما الصفحة تظهر:",
+          "items": [
+            "المستخدم يكتب عنوان الموقع (URL)",
+            "الـ Server يبعت ملف الـ HTML",
+            "الـ Browser يقرا الكود سطر سطر (Parse)",
+            "الصفحة تترسم وتظهر قدامك (Render)"
+          ],
+          "why": "الرحلة دايماً: تكتب URL ← السيرفر يبعت HTML ← البراوزر يقراه ← الصفحة تتعرض.",
+          "hint": "ابدأ بالخطوة اللي المستخدم بيعملها بنفسه، واختم بظهور الصفحة."
+        }
+      ]
+    },
+    {
+      "id": "lvl-2",
+      "num": 2,
+      "title": "الهيكل الأساسي والـ Meta",
+      "en": "HTML5 Document Structure & Meta Tags",
+      "docs": [
+        {
+          "tab": "أول ملف HTML",
+          "heading": "الهيكل الثابت لأي ملف HTML5",
+          "body": [
+            "أي ملف HTML لازم يبدأ بـ <code>&lt;!DOCTYPE html&gt;</code> — ده مش tag عادي، ده تعليمات للـ <bdi>browser</bdi> إن الملف مكتوب بأحدث إصدار HTML5.",
+            "جوا <code>&lt;html&gt;</code> بنقسم الصفحة لجزئين: <code>&lt;head&gt;</code> للمعلومات الوصفية (metadata) و <code>&lt;body&gt;</code> لكل المحتوى المرئي."
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "كده ببساطة 🪪",
+            "text": "الـ <code>&lt;head&gt;</code> زي بطاقة الهوية بتاعتك — معلومات عنك بس الناس مش بتشوفها أول ما تقابلك. الـ <code>&lt;body&gt;</code> هو إنت نفسك — اللي الناس بتشوفه وبتتعامل معاه."
+          },
+          "cards": [
+            { "title": "<!DOCTYPE html>", "desc": "أول سطر إجباري — بيقول للـ browser أنا HTML5." },
+            { "title": "<html lang=\"ar\" dir=\"rtl\">", "desc": "الـ root element — بيحدد اللغة والاتجاه." },
+            { "title": "<head>", "desc": "فيه metadata (العنوان، الوصف، CSS) مش بتظهر في الصفحة." },
+            { "title": "<body>", "desc": "كل حاجة المستخدم بيشوفها: عناوين، فقرات، صور، لينكات." }
+          ],
+          "filename": "index.html",
+          "code": "[[0|<!DOCTYPE html>]]\n<html [[1|lang=\"ar\" dir=\"rtl\"]]>\n  [[2|<head>]]\n    <meta [[3|charset=\"UTF-8\"]]>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>أول صفحة ويب</title>\n  </head>\n  [[4|<body>]]\n    <h1>أهلاً بيك في أول صفحة!</h1>\n    <p>دي أول فقرة في صفحتي.</p>\n  </body>\n</html>",
+          "spots": [
+            { "title": "DOCTYPE", "say": "لازم يكون أول سطر عشان المتصفح يشتغل بوضع HTML5 الحديث." },
+            { "title": "lang & dir", "say": "لغة الصفحة عربي (ar) والاتجاه يمين لشمال (rtl)." },
+            { "title": "<head>", "say": "معلومات وإعدادات عن الصفحة مش بتتعرض جوا التصميم." },
+            { "title": "UTF-8", "say": "الترميز اللي بيضمن إن الحروف العربية تظهر صح." },
+            { "title": "<body>", "say": "مساحة العرض الحقيقية لكل محتوى الصفحة." }
+          ],
+          "preview": "<div dir='rtl'><h1 style='margin:0 0 6px'>أهلاً بيك في أول صفحة!</h1><p style='margin:0'>دي أول فقرة في صفحتي.</p></div>",
+          "previewUrl": "file:///index.html"
+        },
+        {
+          "tab": "الـ Meta Tags المهمة",
+          "heading": "الـ Meta Tags للـ SEO والموبايل والسوشيال",
+          "body": [
+            "الـ <bdi>meta tags</bdi> بتتحط جوا الـ <code>&lt;head&gt;</code> ومهمة جداً لظهور موقعك في جوجل (SEO)، وظبط المقاس على الموبايل (Responsive)، وشكل اللينك لما حد يشيره على فيسبوك أو واتساب (Open Graph)."
+          ],
+          "tip": "لو بتعمل موقع بالعربي، لازم تحط <code>charset=\"UTF-8\"</code> عشان الحروف العربية متبوظش. ولو نسيت الـ <code>viewport</code> موقعك هيبان صغير أوي على الموبايل.",
+          "filename": "meta-tags.html",
+          "code": "<head>\n  <!-- ❶ الترميز عشان العربي يظهر صح -->\n  [[0|<meta charset=\"UTF-8\">]]\n\n  <!-- ❷ ظبط الصفحة على الموبايل -->\n  [[1|<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">]]\n\n  <!-- ❸ الوصف اللي بيظهر في نتائج جوجل -->\n  [[2|<meta name=\"description\" content=\"تعلم HTML من الصفر\">]]\n\n  <!-- ❹ أيقونة الـ Tab -->\n  [[3|<link rel=\"icon\" href=\"favicon.ico\">]]\n\n  <!-- ❺ Open Graph لما حد يشير على فيسبوك -->\n  [[4|<meta property=\"og:title\" content=\"تعلم HTML\">]]\n  <meta property=\"og:image\" content=\"preview.jpg\">\n</head>",
+          "spots": [
+            { "title": "charset=\"UTF-8\"", "say": "بيمنع الحروف العربية إنها تتلخبط لرموز غريبة." },
+            { "title": "viewport", "say": "بيخلي عرض الصفحة يساوي عرض شاشة الموبايل." },
+            { "title": "description", "say": "النص المختصر اللي جوجل بيعرضه تحت رابط موقعك." },
+            { "title": "favicon", "say": "الأيقونة الصغيرة جنب عنوان الصفحة في التاب." },
+            { "title": "Open Graph (og:)", "say": "العنوان والصورة اللي بيظهروا لما تشير الرابط على السوشيال." }
+          ]
+        }
+      ],
+      "stages": [
+        {
+          "id": "s2-1",
+          "type": "order",
+          "prompt": "رتّب أجزاء ملف HTML5 الأساسي من فوق لتحت:",
+          "items": [
+            "<!DOCTYPE html>",
+            "<html lang=\"ar\" dir=\"rtl\">",
+            "<head><title>موقعي</title></head>",
+            "<body><h1>أهلاً</h1></body>",
+            "</html>"
+          ],
+          "why": "أي ملف HTML5 يبدأ بـ DOCTYPE ثم html ثم head ثم body ثم إغلاق html.",
+          "hint": "الـ DOCTYPE دايماً فوق، والـ head قبل الـ body."
+        },
+        {
+          "id": "s2-2",
+          "type": "choice",
+          "prompt": "صاحبك عمل موقع بالعربي بس الحروف طلعت رموز غريبة! نسى يحط إيه في الـ <head>؟",
+          "options": [
+            { "t": "<meta charset=\"UTF-8\">", "preview": "<div dir='rtl'><strong>أهلاً بيك في موقعي!</strong></div>", "why": "بالظبط! UTF-8 هو الترميز اللي بيظهر الحروف العربية صح." },
+            { "t": "<meta name=\"viewport\">", "preview": "<div dir='rtl'>Ø£Ù‡Ù„Ø§Ù‹ Ø¨ÙŠÙƒ!</div>", "why": "الـ viewport بيظبط مقاس الموقع على الموبايل، مش ترميز العربي." },
+            { "t": "<link rel=\"icon\" href=\"favicon.ico\">", "preview": "<div dir='rtl'>Ø£Ù‡Ù„Ø§Ù‹ Ø¨ÙŠÙƒ!</div>", "why": "ده بيضيف أيقونة الـ Tab فوق، ومش بيحل مشكلة الحروف العربية." }
+          ],
+          "answer": 0,
+          "hint": "دور على الـ meta الخاصة بترميز الحروف (charset)."
+        },
+        {
+          "id": "s2-3",
+          "type": "match",
+          "prompt": "وصّل كل Tag جوا الـ <head> بالوظيفة بتاعته:",
+          "pairs": [
+            ["viewport", "يخلي الموقع يظهر بمقاس مظبوط على الموبايل"],
+            ["description", "الوصف اللي بيظهر تحت رابط موقعك في جوجل"],
+            ["og:title & og:image", "الشكل اللي بيظهر لما حد يشير اللينك على فيسبوك"],
+            ["rel=\"icon\"", "الأيقونة الصغيرة اللي بتظهر في الـ Tab فوق"]
+          ],
+          "hint": "Open Graph (og:) بتاعة السوشيال، و viewport بتاعة شاشة الموبايل."
+        }
+      ]
+    },
+    {
+      "id": "lvl-3",
+      "num": 3,
+      "title": "العناصر والتاجات",
+      "en": "Elements, Block vs Inline & Void Tags",
+      "docs": [
+        {
+          "tab": "يعني إيه Element؟",
+          "heading": "تشريح الـ HTML Element",
+          "body": [
+            "الـ <strong>Element</strong> هو الوحدة الأساسية في HTML. كل element بيتكون من ٣ أجزاء رئيسية: <strong>Opening Tag</strong> + <strong>Content</strong> + <strong>Closing Tag</strong> (وأحياناً جوا تاج الفتح Attributes)."
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "فكّر فيها زي الساندويتش 🥪",
+            "text": "العيشة الفوقانية هي الـ opening tag، الحشو هو الـ content، والعيشة التحتانية هي الـ closing tag. بعض الـ tags زي <code>&lt;img&gt;</code> مبيحتاجوش closing tag — ودول اسمهم Void Elements."
+          },
+          "filename": "element-anatomy.html",
+          "code": "[[0|<p]] [[1|class=\"intro\"]]>[[2|Hello World]][[3|</p>]]",
+          "spots": [
+            { "title": "Opening Tag", "say": "بداية العنصر وبيحدد نوعه (هنا فقرة p)." },
+            { "title": "Attribute", "say": "معلومة إضافية جوا تاج الفتح (name=\"value\")." },
+            { "title": "Content", "say": "المحتوى الحقيقي اللي بيظهر جوا العنصر." },
+            { "title": "Closing Tag", "say": "نهاية العنصر — نفس الاسم مع علامة / قبله." }
+          ]
+        },
+        {
+          "tab": "Block vs Inline",
+          "heading": "الفرق بين Block و Inline Elements",
+          "body": [
+            "عناصر HTML بتتقسم لنوعين أساسيين في طريقة أخذ المساحة على الشاشة: <strong>Block</strong> بياخد السطر كله ويبدأ سطر جديد، و <strong>Inline</strong> بياخد مساحة محتواه بس ويمشي جوا السطر."
+          ],
+          "warning": "متحطش Block Element جوا Inline Element! يعني <code>&lt;span&gt;&lt;div&gt;...&lt;/div&gt;&lt;/span&gt;</code> ده غلط. الـ Inline بيكون جوا الـ Block مش العكس.",
+          "cards": [
+            { "title": "Block Elements", "code": "div, p, h1, section, ul", "desc": "بياخد العرض كله ويبدأ في سطر جديد زي الصناديق فوق بعض." },
+            { "title": "Inline Elements", "code": "span, a, strong, em, img", "desc": "بياخد مساحة محتواه بس ومش بيعمل سطر جديد." }
+          ],
+          "filename": "block-vs-inline.html",
+          "code": "<!-- Block: كل واحد في سطر لوحده -->\n<div>صندوق أول</div>\n<p>فقرة بتاخد السطر كله</p>\n\n<!-- Inline: جوا نفس السطر -->\n<p>دي كلمة <strong>مهمة</strong> وده <a href=\"#\">لينك</a></p>"
+        },
+        {
+          "tab": "Void Elements",
+          "heading": "الـ Void Elements (Self-Closing)",
+          "body": [
+            "فيه عناصر معندهاش content ومش محتاجة closing tag خالص. دول اسمهم <strong>Void Elements</strong> — عناصر «مكتفية بذاتها»."
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "ليه ملهمش إغلاق؟",
+            "text": "الـ <code>&lt;img&gt;</code> مثلاً مش منطقي تكتب جواها نص — هي نفسها المحتوى!"
+          },
+          "table": {
+            "headers": ["Element", "الوظيفة", "مثال"],
+            "rows": [
+              ["<code>&lt;img&gt;</code>", "صورة", "<code>&lt;img src=\"photo.jpg\" alt=\"وصف\"&gt;</code>"],
+              ["<code>&lt;br&gt;</code>", "سطر جديد", "<code>سطر&lt;br&gt;سطر تاني</code>"],
+              ["<code>&lt;hr&gt;</code>", "خط فاصل", "<code>&lt;hr&gt;</code>"],
+              ["<code>&lt;input&gt;</code>", "حقل إدخال", "<code>&lt;input type=\"text\"&gt;</code>"],
+              ["<code>&lt;meta&gt;</code>", "بيانات وصفية", "<code>&lt;meta charset=\"UTF-8\"&gt;</code>"],
+              ["<code>&lt;link&gt;</code>", "ربط ملفات", "<code>&lt;link rel=\"stylesheet\" href=\"style.css\"&gt;</code>"]
+            ]
+          }
+        }
+      ],
+      "stages": [
+        {
+          "id": "s3-1",
+          "type": "slot",
+          "prompt": "اسحب القطع عشان تكوّن Element كامل بـ Opening Tag و Attribute و Closing Tag:",
+          "coach": "فكّر في الـ element زي ساندويتش: عيشة فوق opening، حشو content، عيشة تحت closing!",
+          "code": "[[0]] [[1]]=\"intro\">Hello World[[2]]",
+          "tokens": ["<p", "class", "</p>", "<div>", "</span"],
+          "answer": ["<p", "class", "</p>"],
+          "why": "الـ element بيفتح بـ <p، جواه attribute اسمه class، وبيقفل بـ </p>.",
+          "hint": "اللي بيفتح بـ <p لازم يقفل بنفس الاسم </p>."
+        },
+        {
+          "id": "s3-2",
+          "type": "buckets",
+          "layout": "columns",
+          "prompt": "صنّف كل Element: بياخد السطر كله (Block) ولا على قد محتواه (Inline)؟",
+          "buckets": [
+            { "id": "block", "label": "Block (صندوق كامل)" },
+            { "id": "inline", "label": "Inline (جوا السطر)" }
+          ],
+          "items": [
+            { "t": "<div>", "b": "block", "why": "div صندوق block بياخد العرض كله." },
+            { "t": "<p>", "b": "block", "why": "الفقرة p دايماً بتبدأ سطر جديد (block)." },
+            { "t": "<section>", "b": "block", "why": "section قسم block بياخد العرض كله." },
+            { "t": "<span>", "b": "inline", "why": "span عنصر inline بياخد مساحة كلامه بس." },
+            { "t": "<a>", "b": "inline", "why": "اللينك a بيمشي جوا السطر عادي (inline)." },
+            { "t": "<strong>", "b": "inline", "why": "strong بيميز كلمة جوا السطر (inline)." }
+          ],
+          "hint": "الـ div و p و section صناديق كبيرة؛ الـ span و a و strong جوا النص."
+        },
+        {
+          "id": "s3-3",
+          "type": "bughunt",
+          "prompt": "في غلطة Nesting مشهورة في الكود ده! اضغط عليها عشان تصيدها:",
+          "code": "[[ok|<section class=\"hero\">]]\n  [[0|<span><div>مرحباً بكم</div></span>]]\n  [[ok|<p>دي <em>كلمة</em> جوا فقرة</p>]]\n</section>",
+          "bugs": [
+            { "why": "ممنوع تحط block element (<div>) جوا inline element (<span>)! الـ inline هو اللي جوا الـ block مش العكس." }
+          ],
+          "hint": "دوّر على block element محبوس جوا inline element!"
+        },
+        {
+          "id": "s3-4",
+          "type": "buckets",
+          "layout": "columns",
+          "prompt": "صنّف التاجات: مين Void Element (مكتفي بذاته من غير إغلاق) ومين محتاج Closing Tag؟",
+          "buckets": [
+            { "id": "void", "label": "Void (من غير إغلاق)" },
+            { "id": "pair", "label": "محتاج Closing Tag" }
+          ],
+          "items": [
+            { "t": "<img>", "b": "void", "why": "img هي نفسها الصورة — ملهاش content فمش بتتقفل." },
+            { "t": "<br>", "b": "void", "why": "br بينزل سطر جديد بس — void element." },
+            { "t": "<hr>", "b": "void", "why": "hr خط فاصل — void element." },
+            { "t": "<input>", "b": "void", "why": "input حقل إدخال — void element." },
+            { "t": "<p>", "b": "pair", "why": "الفقرة جواها نص فلازم تقفل بـ </p>." },
+            { "t": "<ul>", "b": "pair", "why": "القائمة جواها عناصر <li> فلازم تقفل بـ </ul>." }
+          ],
+          "hint": "اسأل نفسك: ينفع أكتب كلام جوا التاج ده؟ لو لأ، يبقى Void."
+        }
+      ]
+    },
+    {
+      "id": "lvl-4",
+      "num": 4,
+      "title": "الـ Attributes بالتفصيل",
+      "en": "Global, Boolean & Data Attributes",
+      "docs": [
+        {
+          "tab": "يعني إيه Attribute؟",
+          "heading": "الـ Global Attributes الأساسية",
+          "body": [
+            "الـ <strong>Attributes</strong> هي معلومات إضافية بتحطها جوا الـ opening tag بشكل <code>name=\"value\"</code> عشان تتحكم في سلوك أو شكل العنصر.",
+            "الـ <strong>Global Attributes</strong> ينفع تستخدمها مع <strong>أي</strong> عنصر HTML في الصفحة."
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "القاعدة الذهبية 🔑",
+            "text": "الـ <code>id</code> زي <strong>رقم البطاقة</strong> — فريد لكل عنصر ومينفعش يتكرر. الـ <code>class</code> زي <strong>اسم المدرسة</strong> — عناصر كتير ممكن تاخد نفس الـ class عادي!"
+          },
+          "cards": [
+            { "title": "id", "code": "id=\"main\"", "desc": "اسم فريد مش بيتكرر في الصفحة (للـ CSS و JS)." },
+            { "title": "class", "code": "class=\"card active\"", "desc": "تصنيف يتكرر وينفع تحط أكتر من class." },
+            { "title": "style", "code": "style=\"color:red\"", "desc": "Inline CSS — مش مستحب في الشغل الحقيقي." },
+            { "title": "title", "code": "title=\"توضيح\"", "desc": "رسالة tooltip تظهر لما تحط الماوس فوق العنصر." },
+            { "title": "data-*", "code": "data-price=\"299\"", "desc": "بيانات مخصصة بتخزنها في HTML وتقراها بـ JS." },
+            { "title": "hidden", "code": "hidden", "desc": "Boolean attribute بيخفي العنصر من غير ما يحتاج قيمة." }
+          ]
+        },
+        {
+          "tab": "Data Attributes عملياً",
+          "heading": "الـ Data Attributes في مواقع التسوق الحقيقية",
+          "body": [
+            "الـ <code>data-*</code> attributes مفيدة جداً لربط HTML بـ JavaScript في مشاريع زي الـ e-commerce. بتخزن رقم المنتج والسعر في الكارت نفسه وتقراهم بـ <code>element.dataset</code>."
+          ],
+          "tip": "ده pattern شائع جداً في الشغل الحقيقي: بدل ما تعمل API call كل مرة، بتخزن الـ data في الـ HTML وتقراها بـ JS وقت ما تحتاجها (الشرطة بتتحول لـ camelCase زي <code>dataset.productId</code>).",
+          "filename": "product-card.html",
+          "code": "<div class=\"product-card\"\n     [[0|data-product-id=\"12345\"]]\n     [[1|data-price=\"299.99\"]]\n     data-category=\"electronics\">\n  <h3>Samsung Galaxy S24</h3>\n  <button class=\"add-to-cart\">أضف للسلة</button>\n</div>\n\n<!-- في JavaScript بتقراهم كده: -->\n// card.dataset.productId => \"12345\"\n// card.dataset.price     => \"299.99\"",
+          "spots": [
+            { "title": "data-product-id", "say": "يتقرا في JS عن طريق card.dataset.productId (camelCase)." },
+            { "title": "data-price", "say": "يتقرا في JS عن طريق card.dataset.price." }
+          ]
+        }
+      ],
+      "stages": [
+        {
+          "id": "s4-1",
+          "type": "match",
+          "prompt": "وصّل كل Global Attribute بالوظيفة أو التشبيه بتاعه:",
+          "coach": "القاعدة الذهبية: الـ id زي رقم البطاقة (فريد)، والـ class زي اسم المدرسة (يتكرر عادي)!",
+          "pairs": [
+            ["id", "زي رقم البطاقة — فريد لكل عنصر في الصفحة"],
+            ["class", "زي اسم المدرسة — يتكرر ويتحط أكتر من واحد"],
+            ["title", "نص tooltip يظهر لما تحط الماوس فوق العنصر"],
+            ["hidden", "Boolean attribute يخفي العنصر من غير ما يطلب قيمة"]
+          ],
+          "hint": "مين فريد؟ ومين بيظهر لما تقف بالماوس؟"
+        },
+        {
+          "id": "s4-2",
+          "type": "patch",
+          "prompt": "زي مواقع التسوق الحقيقية: ضيف data-product-id=\"12345\" و data-price=\"299\" على كارت المنتج:",
+          "start": "<div class=\"product-card\">\n  <h3>Samsung Galaxy S24</h3>\n  <button>أضف للسلة</button>\n</div>",
+          "chips": ["data-product-id=\"12345\"", "data-price=\"299\""],
+          "checks": [
+            { "selector": "div.product-card[data-product-id='12345']", "fail": "ضيف data-product-id=\"12345\" جوا تاج الـ <div>." },
+            { "selector": "div.product-card[data-price='299']", "fail": "عاش! لسه ناقص data-price=\"299\" جوا نفس الـ <div>." }
+          ],
+          "solution": "<div class=\"product-card\" data-product-id=\"12345\" data-price=\"299\">\n  <h3>Samsung Galaxy S24</h3>\n  <button>أضف للسلة</button>\n</div>",
+          "why": "الله ينوّر! كده JavaScript تقدر تقرا البيانات مباشرة من card.dataset.",
+          "hint": "حط المؤشر قبل علامة > في السطر الأول واضغط على الـ chips فوق المحرر."
+        },
+        {
+          "id": "s4-3",
+          "type": "choice",
+          "prompt": "في JavaScript، إزاي تقرا قيمة data-product-id من الكارت card؟",
+          "code": "<div class=\"product-card\" data-product-id=\"12345\"></div>",
+          "options": [
+            { "t": "card.dataset.productId", "why": "بالظبط! JS بتحول الشرط لـ camelCase جوا dataset." },
+            { "t": "card.data.product-id", "why": "الخاصية اسمها dataset مش data، ومينفعش شرطة في اسم property." },
+            { "t": "card.style.productId", "why": "style دي للـ CSS inline بس، ملهاش علاقة بـ data-*." }
+          ],
+          "answer": 0,
+          "hint": "في JS بنستخدم خاصية اسمها dataset مع camelCase."
+        }
+      ]
+    },
+    {
+      "id": "lvl-5",
+      "num": 5,
+      "title": "النصوص والعناوين",
+      "en": "Headings, Formatting & Quotes",
+      "docs": [
+        {
+          "tab": "العناوين h1–h6",
+          "heading": "التسلسل الهرمي للعناوين وقواعد الـ SEO",
+          "body": [
+            "HTML فيها ٦ مستويات عناوين من <code>&lt;h1&gt;</code> (الأكبر والأهم) لحد <code>&lt;h6&gt;</code> (الأصغر). الترتيب ده مش مجرد حجم خط — ده هيكل (hierarchy) بيفهم جوجل والقارئ ترتيب المحتوى."
+          ],
+          "warning": "قاعدة مهمة للـ SEO: متستخدمش <code>&lt;h1&gt;</code> أكتر من مرة في الصفحة! لازم يكون فيه <code>&lt;h1&gt;</code> واحد بس كعنوان رئيسي للصفحة.",
+          "filename": "headings.html",
+          "code": "<h1>عنوان الصفحة الرئيسي</h1> <!-- واحد بس! -->\n<h2>عنوان القسم</h2>\n<h3>عنوان فرعي</h3>\n<h4>عنوان فرعي أصغر</h4>\n<h5>عنوان صغير</h5>\n<h6>أصغر عنوان</h6>",
+          "preview": "<div dir='rtl'><h1 style='margin:2px 0;font-size:1.5em'>عنوان الصفحة الرئيسي</h1><h2 style='margin:2px 0;font-size:1.25em'>عنوان القسم</h2><h3 style='margin:2px 0;font-size:1.05em'>عنوان فرعي</h3><h4 style='margin:2px 0;font-size:.95em'>عنوان فرعي أصغر</h4><h6 style='margin:2px 0;font-size:.75em;color:#64748b'>أصغر عنوان</h6></div>",
+          "previewUrl": "file:///headings.html"
+        },
+        {
+          "tab": "تنسيق النصوص والاقتباسات",
+          "heading": "التنسيق الدلالي (Semantic) والاقتباسات",
+          "body": [
+            "كل tag لتنسيق النص ليه <strong>معنى دلالي</strong> مش مجرد شكل. وللاقتباسات عندنا <code>&lt;blockquote&gt;</code> للاقتباس الطويل مع <code>&lt;cite&gt;</code>، و <code>&lt;q&gt;</code> للاقتباس القصير جوا السطر."
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "الفرق بين <strong> و <b>",
+            "text": "الاتنين شكلهم bold، بس <code>&lt;strong&gt;</code> بيقول للـ screen reader «ده كلام مهم اقراه بتركيز»، إنما <code>&lt;b&gt;</code> مجرد شكل بس. دايماً اختار الـ semantic tag!"
+          },
+          "table": {
+            "headers": ["Tag", "المعنى الدلالي", "مثال"],
+            "rows": [
+              ["<code>&lt;strong&gt;</code>", "أهمية قوية (Bold)", "تحذير: <strong>ممنوع</strong> الدخول"],
+              ["<code>&lt;em&gt;</code>", "تأكيد / stress (Italic)", "ده <em>مش</em> اختياري"],
+              ["<code>&lt;mark&gt;</code>", "نص مميز / Highlight", "ابحث عن <mark style='background:#fbbf24;color:#000;padding:0 4px;border-radius:3px'>HTML</mark>"],
+              ["<code>&lt;del&gt;</code>", "نص محذوف", "السعر: <del>500</del> 300 جنيه"],
+              ["<code>&lt;code&gt;</code>", "كود برمجي", "<code>console.log()</code>"],
+              ["<code>&lt;abbr&gt;</code>", "اختصار مع tooltip", "<abbr title='Application Programming Interface'>API</abbr>"],
+              ["<code>&lt;blockquote&gt;</code> / <code>&lt;q&gt;</code>", "اقتباس طويل / قصير", "اقتباس من مصدر مع <code>&lt;cite&gt;</code>"]
+            ]
+          },
+          "preview": "<div dir='rtl'><blockquote><p style='margin:0'>HTML is the most basic building block of the Web.</p><small>— <cite>MDN Web Docs</cite></small></blockquote><p style='margin:6px 0 0'>قال Tim Berners-Lee: <q>الويب بيربط الناس ببعض.</q></p></div>",
+          "previewUrl": "file:///quotes.html"
+        }
+      ],
+      "stages": [
+        {
+          "id": "s5-1",
+          "type": "order",
+          "prompt": "رتّب هيكل العناوين من الأهم (عنوان الصفحة) للأصغر:",
+          "items": [
+            "<h1>عنوان الصفحة الرئيسي</h1>",
+            "<h2>عنوان القسم الرئيسي</h2>",
+            "<h3>عنوان فرعي جوا القسم</h3>",
+            "<h6>أصغر عنوان فرعي</h6>"
+          ],
+          "why": "دايماً نبدأ بـ h1 واحد فوق وبعده h2 ثم h3 لحد h6.",
+          "hint": "كل ما الرقم يكبر، العنوان يصغر في الأهمية."
+        },
+        {
+          "id": "s5-2",
+          "type": "bughunt",
+          "prompt": "غلطة SEO مشهورة! اضغط على السطر اللي بيكسر قاعدة العناوين:",
+          "code": "[[ok|<h1>تعلم HTML من الصفر</h1>]]\n[[ok|<p>أهلاً بيك في المحاضرة التانية.</p>]]\n[[0|<h1>العناوين والفقرات</h1>]]\n[[ok|<h3>أمثلة عملية</h3>]]",
+          "bugs": [
+            { "why": "متستخدمش <h1> أكتر من مرة في الصفحة! العنوان التاني لازم يبقى <h2> عشان جوجل يفهم الهيكل صح." }
+          ],
+          "hint": "كم <h1> مسموح في الصفحة الواحدة؟"
+        },
+        {
+          "id": "s5-3",
+          "type": "match",
+          "prompt": "وصّل كل Tag لتنسيق النص بالمعنى الدلالي بتاعه:",
+          "pairs": [
+            ["<strong>", "أهمية قوية (مش مجرد شكل bold)"],
+            ["<em>", "تأكيد ونبرة stress على الكلمة"],
+            ["<mark>", "تمييز نص (Highlight أصفر)"],
+            ["<del>", "نص محذوف زي السعر القديم قبل الخصم"]
+          ],
+          "hint": "mark للـ highlight، و del اختصار deleted."
+        },
+        {
+          "id": "s5-4",
+          "type": "choice",
+          "prompt": "شوف كود الاقتباس ده — توقّع هيظهر إزاي في الـ Browser؟",
+          "code": "<blockquote cite=\"https://mdn.io\">\n  <p>HTML builds the Web.</p>\n  <footer>— <cite>MDN</cite></footer>\n</blockquote>\n<p>قال تيم: <q>الويب للجميع</q></p>",
+          "options": [
+            {
+              "t": "اقتباس طويل بمسافة جانبية + اقتباس قصير بين علامتي تنصيص",
+              "preview": "<blockquote style='border-right:3px solid #94a3b8;padding:2px 6px;margin:0 0 4px'>HTML builds the Web. <small>— <i>MDN</i></small></blockquote><p style='margin:0'>قال تيم: «الويب للجميع»</p>",
+              "why": "عاش! blockquote بيعمل كتلة اقتباس منفصلة، و q بيحط تنصيص جوا السطر."
+            },
+            {
+              "t": "سطر واحد كله من غير تنسيق ولا تنصيص",
+              "preview": "<p style='margin:0'>HTML builds the Web. — MDN قال تيم: الويب للجميع</p>",
+              "why": "blockquote عنصر block بيفصل الاقتباس ويديله مسافة، و q بيضيف علامات تنصيص."
+            }
+          ],
+          "answer": 0,
+          "hint": "blockquote بيعمل صندوق اقتباس، و q بيحط علامات تنصيص تلقائياً."
+        }
+      ]
+    },
+    {
+      "id": "lvl-6",
+      "num": 6,
+      "title": "الروابط والصور والميديا",
+      "en": "Links, Images, Audio & Video",
+      "docs": [
+        {
+          "tab": "الروابط <a>",
+          "heading": "الـ Anchor Tag — أساس الويب كله",
+          "body": [
+            "كلمة <strong>HyperText</strong> في HTML معناها «نص مرتبط بنصوص تانية». والـ <code>&lt;a&gt;</code> tag مع attribute الـ <code>href</code> هو اللي بيعمل كل أنواع الروابط: مواقع خارجية، صفحات داخلية، أقسام في نفس الصفحة (<code>#id</code>)، إيميل (<code>mailto:</code>)، وتحميل ملفات (<code>download</code>)."
+          ],
+          "tip": "<strong>أمان مهم:</strong> لما تفتح لينك خارجي بـ <code>target=\"_blank\"</code>، دايماً حط <code>rel=\"noopener\"</code> عشان تمنع الصفحة الجديدة إنها تتحكم في صفحتك!",
+          "filename": "links.html",
+          "code": "[[0|<a href=\"https://google.com\" target=\"_blank\" rel=\"noopener\">جوجل</a>]]\n[[1|<a href=\"about.html\">من نحن</a>]]\n[[2|<a href=\"#contact\">قسم الاتصال</a>]]\n[[3|<a href=\"mailto:info@example.com\">ابعتلنا إيميل</a>]]\n[[4|<a href=\"notes.pdf\" download>حمل المذكرة</a>]]",
+          "spots": [
+            { "title": "رابط خارجي آمن", "say": "يفتح في تاب جديد ومؤمّن بـ rel=\"noopener\"." },
+            { "title": "رابط داخلي", "say": "ينقلك لصفحة تانية في نفس الموقع." },
+            { "title": "Anchor (#contact)", "say": "ينط لقسم معين في نفس الصفحة." },
+            { "title": "mailto:", "say": "يفتح تطبيق الإيميل مباشرة." },
+            { "title": "download", "say": "يحمل الملف بدل ما يفتحه." }
+          ]
+        },
+        {
+          "tab": "الصور والميديا",
+          "heading": "الصور الاحترافية + Video و Audio في HTML5",
+          "body": [
+            "الصور مش مجرد <code>&lt;img&gt;</code>! عندك <code>loading=\"lazy\"</code> عشان التحميل السريع، و <code>&lt;figure&gt;</code> مع <code>&lt;figcaption&gt;</code> للصور اللي لها وصف، و <code>&lt;picture&gt;</code> للصور الـ responsive على الشاشات المختلفة.",
+            "و HTML5 جابت <code>&lt;video&gt;</code> (مع <code>controls</code> و <code>poster</code> و <code>&lt;track&gt;</code> للترجمة) و <code>&lt;audio&gt;</code> بدل ما كنا بنحتاج Flash زمان، بالإضافة لـ <code>&lt;iframe&gt;</code> لتضمين يوتيوب."
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "الـ alt مش اختياري! 👁",
+            "text": "لو مكتبتش <code>alt</code>، المكفوفين اللي بيستخدموا screen readers مش هيعرفوا إيه في الصورة، وجوجل مش هيفهمها. اكتب وصف مفيد مش مجرد «صورة»."
+          },
+          "filename": "media.html",
+          "code": "<!-- صورة مع وصف وتحميل ذكي -->\n<figure>\n  <img src=\"chart.png\" [[0|alt=\"رسم بياني للمبيعات\"]] [[1|loading=\"lazy\"]]>\n  <figcaption>مبيعات الربع الرابع</figcaption>\n</figure>\n\n<!-- فيديو HTML5 بترجمة وغلاف -->\n<video controls [[2|poster=\"thumbnail.jpg\"]]>\n  <source src=\"lecture.mp4\" type=\"video/mp4\">\n  [[3|<track src=\"subs-ar.vtt\" kind=\"subtitles\" srclang=\"ar\">]]\n</video>",
+          "spots": [
+            { "title": "alt", "say": "وصف دقيق للـ screen reader والـ SEO ولو الصورة محمّلتش." },
+            { "title": "loading=\"lazy\"", "say": "بيأجل تحميل الصورة لحد ما المستخدم يقرب منها." },
+            { "title": "poster", "say": "صورة الغلاف اللي بتظهر قبل ما الفيديو يشتغل." },
+            { "title": "<track>", "say": "بيضيف ملف ترجمة (Subtitles) للفيديو." }
+          ]
+        }
+      ],
+      "stages": [
+        {
+          "id": "s6-1",
+          "type": "patch",
+          "prompt": "خلي لينك جوجل يفتح في تاب جديد بأمان كامل (ضيف target و rel):",
+          "coach": "أمان مهم: من غير rel=\"noopener\" الصفحة الجديدة تقدر تتحكم في صفحتك الأصلية!",
+          "start": "<a href=\"https://google.com\">فتح جوجل</a>",
+          "chips": ["target=\"_blank\"", "rel=\"noopener\""],
+          "checks": [
+            { "selector": "a[target='_blank']", "fail": "لسه ناقص target=\"_blank\" عشان يفتح في تاب جديد." },
+            { "selector": "a[rel~='noopener']", "fail": "عاش! بس ناقص rel=\"noopener\" عشان الأمان." }
+          ],
+          "solution": "<a href=\"https://google.com\" target=\"_blank\" rel=\"noopener\">فتح جوجل</a>",
+          "why": "معلّم! كده اللينك بيفتح في تاب جديد ومأمن ١٠٠٪.",
+          "hint": "اضغط على الـ chips فوق المحرر وحطهم جوا تاج الفتح <a>."
+        },
+        {
+          "id": "s6-2",
+          "type": "choice",
+          "prompt": "في تاج <video> في HTML5، إيه وظيفة الـ attribute اللي اسمه poster؟",
+          "code": "<video controls width=\"640\" poster=\"thumb.jpg\">\n  <source src=\"lecture.mp4\" type=\"video/mp4\">\n  <track src=\"subs-ar.vtt\" kind=\"subtitles\" srclang=\"ar\">\n</video>",
+          "options": [
+            { "t": "الصورة اللي بتظهر كغلاف قبل ما الفيديو يشتغل", "why": "صح الصح! والـ <track> بيضيف الترجمة (subtitles)." },
+            { "t": "بيشغّل الفيديو تلقائياً من غير صوت", "why": "التشغيل التلقائي ده autoplay و muted، مش poster." },
+            { "t": "بيحمل ملف الترجمة العربي", "why": "الترجمة دي شغل تاج <track kind=\"subtitles\">." }
+          ],
+          "answer": 0,
+          "hint": "فكّر في معنى كلمة Poster (بوستر الفيلم قبل ما يبدأ)."
+        },
+        {
+          "id": "s6-3",
+          "type": "patch",
+          "prompt": "صلّح الصورة دي: ضيف لها alt مفيد (مش فاضي) و loading=\"lazy\" للأداء:",
+          "start": "<img src=\"chart.png\" width=\"400\">",
+          "chips": ["alt=\"رسم بياني للمبيعات\"", "loading=\"lazy\""],
+          "checks": [
+            { "selector": "img[alt]:not([alt=''])", "fail": "لازم تحط alt فيه وصف حقيقي للصورة مش فاضي!" },
+            { "selector": "img[loading='lazy']", "fail": "ضيف loading=\"lazy\" عشان الصورة تحمّل وقت ما تحتاجها بس." }
+          ],
+          "solution": "<img src=\"chart.png\" width=\"400\" alt=\"رسم بياني للمبيعات\" loading=\"lazy\">",
+          "why": "تمام التمام! صورة سريعة ومفهومة للناس ومحركات البحث.",
+          "hint": "استخدم الـ chips فوق المحرر جوا تاج <img>."
+        }
+      ]
+    },
+    {
+      "id": "lvl-7",
+      "num": 7,
+      "title": "القوائم والجداول",
+      "en": "Lists (ul, ol, dl) & Data Tables",
+      "docs": [
+        {
+          "tab": "أنواع القوائم",
+          "heading": "إمتى تستخدم <ul> ولا <ol> ولا <dl>؟",
+          "body": [
+            "HTML فيها ٣ أنواع قوائم، وكل نوع ليه استخدامه الواضح حسب هل الترتيب مهم ولا لأ:"
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "القاعدة السريعة 📝",
+            "text": "الترتيب مش مهم (قائمة مشتريات) ← <code>&lt;ul&gt;</code>. الترتيب مهم (خطوات وصفة أكل) ← <code>&lt;ol&gt;</code>. مصطلح وتعريفه (قاموس) ← <code>&lt;dl&gt;</code> مع <code>&lt;dt&gt;</code> و <code>&lt;dd&gt;</code>."
+          },
+          "filename": "lists.html",
+          "code": "<!-- بدون ترتيب -->\n<ul><li>HTML</li><li>CSS</li></ul>\n\n<!-- مرتبة بأرقام -->\n<ol><li>افتح VS Code</li><li>اكتب الكود</li></ol>\n\n<!-- مصطلح + تعريف -->\n<dl><dt>HTML</dt><dd>لغة توصيف</dd></dl>",
+          "preview": "<div dir='rtl' style='display:flex;gap:24px;flex-wrap:wrap'><div><strong>Unordered:</strong><ul style='margin:4px 0;padding-right:18px'><li>HTML</li><li>CSS</li></ul></div><div><strong>Ordered:</strong><ol style='margin:4px 0;padding-right:18px'><li>افتح VS Code</li><li>اكتب الكود</li></ol></div><div><strong>Description:</strong><dl style='margin:4px 0'><dt><strong>HTML</strong></dt><dd style='margin:0;color:#64748b'>لغة توصيف</dd></dl></div></div>",
+          "previewUrl": "file:///lists.html"
+        },
+        {
+          "tab": "الجداول Tables",
+          "heading": "بناء جداول منظمة و Accessible",
+          "body": [
+            "الجداول للبيانات المنظمة بس — <strong>مش للـ Page Layout!</strong> زمان كان الناس بتعمل layout بـ tables وده كان غلط كبير.",
+            "الجدول الاحترافي بيتقسم لـ <code>&lt;caption&gt;</code> (وصف الجدول)، <code>&lt;thead&gt;</code> (عناوين الأعمدة <code>&lt;th scope=\"col\"&gt;</code>)، <code>&lt;tbody&gt;</code> (صفوف البيانات <code>&lt;td&gt;</code>)، و <code>&lt;tfoot&gt;</code> (المتوسط أو المجموع مع <code>colspan</code>)."
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "ليه scope و colspan مهمين؟",
+            "text": "الـ <code>scope=\"col\"</code> بيقول للـ screen reader ده عنوان عمود ولا صف، والـ <code>colspan</code> بيدمج خلايا جنب بعض في صف الملخص."
+          },
+          "filename": "table.html",
+          "code": "<table>\n  [[0|<caption>درجات الطلاب</caption>]]\n  <thead>\n    <tr><th [[1|scope=\"col\"]]>الطالب</th><th scope=\"col\">HTML</th><th scope=\"col\">CSS</th></tr>\n  </thead>\n  <tbody>\n    <tr><td>أحمد</td><td>95</td><td>88</td></tr>\n    <tr><td>سارة</td><td>92</td><td>97</td></tr>\n  </tbody>\n  <tfoot>\n    <tr><td [[2|colspan=\"2\"]]>المتوسط</td><td>93</td></tr>\n  </tfoot>\n</table>",
+          "spots": [
+            { "title": "<caption>", "say": "عنوان ووصف الجدول كله من فوق." },
+            { "title": "scope=\"col\"", "say": "بيوضح للـ screen reader إن الـ th ده عنوان عمود." },
+            { "title": "colspan=\"2\"", "say": "بيدمج عمودين في خلية واحدة." }
+          ],
+          "preview": "<div dir='rtl'><table><caption style='font-weight:bold;margin-bottom:4px'>درجات الطلاب</caption><thead><tr><th>الطالب</th><th>HTML</th><th>CSS</th></tr></thead><tbody><tr><td>أحمد</td><td>95</td><td>88</td></tr><tr><td>سارة</td><td>92</td><td>97</td></tr></tbody><tfoot><tr><td colspan='2'><strong>المتوسط</strong></td><td><strong>93</strong></td></tr></tfoot></table></div>",
+          "previewUrl": "file:///table.html"
+        }
+      ],
+      "stages": [
+        {
+          "id": "s7-1",
+          "type": "match",
+          "prompt": "وصّل كل نوع قائمة في HTML بالاستخدام الصح بتاعه:",
+          "pairs": [
+            ["<ul>", "قائمة بدون ترتيب (نقط) زي قائمة مشتريات"],
+            ["<ol>", "قائمة مرتبة بأرقام زي خطوات وصفة أكل"],
+            ["<dl>", "قائمة وصفية زي قاموس مصطلحات (<dt> و <dd>)"],
+            ["<li>", "عنصر واحد جوا قائمة <ul> أو <ol>"]
+          ],
+          "hint": "اسأل: لو بدّلنا الترتيب المعنى هيبوظ؟ لو آه يبقى <ol>."
+        },
+        {
+          "id": "s7-2",
+          "type": "buckets",
+          "layout": "wireframe",
+          "prompt": "ابني هيكل الجدول الصح: اسحب كل جزء لمكانه في مخطط الـ <table>:",
+          "buckets": [
+            { "id": "cap", "label": "وصف الجدول فوق", "area": "caption" },
+            { "id": "head", "label": "رأس الجدول (العناوين)", "area": "thead" },
+            { "id": "body", "label": "جسم الجدول (صفوف البيانات)", "area": "tbody" },
+            { "id": "foot", "label": "ملخص الجدول (المتوسط/المجموع)", "area": "tfoot" }
+          ],
+          "items": [
+            { "t": "<caption>", "b": "cap", "why": "caption بيوصف الجدول كله من فوق." },
+            { "t": "<thead>", "b": "head", "why": "thead بيشيل صف عناوين الأعمدة <th>." },
+            { "t": "<tbody>", "b": "body", "why": "tbody بيشيل صفوف البيانات <td>." },
+            { "t": "<tfoot>", "b": "foot", "why": "tfoot بيشيل صف الملخص أو المتوسط تحت." }
+          ],
+          "hint": "الترتيب من فوق لتحت: caption ← thead ← tbody ← tfoot."
+        },
+        {
+          "id": "s7-3",
+          "type": "slot",
+          "prompt": "كمّل الجدول عشان يبقى accessible ويدمج ٣ خلايا في صف المتوسط:",
+          "code": "<thead>\n  <tr><th [[0]]=\"col\">الطالب</th><th scope=\"col\">المجموع</th></tr>\n</thead>\n<tfoot>\n  <tr><td [[1]]=\"3\">المتوسط</td><td>186</td></tr>\n</tfoot>",
+          "tokens": ["scope", "colspan", "rowspan", "merge"],
+          "answer": ["scope", "colspan"],
+          "why": "scope=\"col\" بيقول للـ screen reader ده عنوان عمود، و colspan=\"3\" بيدمج ٣ أعمدة.",
+          "hint": "scope للوصولية، و col+span لدمج الأعمدة."
+        },
+        {
+          "id": "s7-4",
+          "type": "choice",
+          "prompt": "توقّع شكل الجدول ده في الـ Browser بعد إضافة colspan=\"2\" على خلية المتوسط:",
+          "code": "<table>\n  <tr><th>الطالب</th><th>HTML</th><th>CSS</th></tr>\n  <tr><td>أحمد</td><td>95</td><td>88</td></tr>\n  <tr><td colspan=\"2\">المتوسط</td><td>91</td></tr>\n</table>",
+          "options": [
+            {
+              "t": "كلمة «المتوسط» بتاخد عرض عمودين جنب بعض وتحتها القيمة 91",
+              "preview": "<table><tr><th>الطالب</th><th>HTML</th><th>CSS</th></tr><tr><td>أحمد</td><td>95</td><td>88</td></tr><tr><td colspan='2'><strong>المتوسط</strong></td><td><strong>91</strong></td></tr></table>",
+              "why": "عاش! colspan=\"2\" دمجت عمودين في خلية واحدة مظبوطة."
+            },
+            {
+              "t": "كلمة «المتوسط» بتاخد عمود واحد ويفضل عمود فاضي",
+              "preview": "<table><tr><th>الطالب</th><th>HTML</th><th>CSS</th></tr><tr><td>أحمد</td><td>95</td><td>88</td></tr><tr><td>المتوسط</td><td>91</td><td></td></tr></table>",
+              "why": "ده كان هيحصل لو نسيت تحط colspan=\"2\"."
+            }
+          ],
+          "answer": 0,
+          "hint": "colspan=\"2\" بتمد الخلية عرضياً على عمودين."
+        }
+      ]
+    },
+    {
+      "id": "lvl-8",
+      "num": 8,
+      "title": "النماذج — Forms",
+      "en": "Forms, Input Types & HTML5 Validation",
+      "docs": [
+        {
+          "tab": "بناء الـ Form",
+          "heading": "إزاي تبني Form تفاعلية مع HTML5 Validation",
+          "body": [
+            "الـ <strong>Forms</strong> هي الطريقة الأساسية اللي المستخدم بيبعت بيها بيانات للـ server (تسجيل دخول، بحث، تعليق). الـ <code>&lt;form&gt;</code> بياخد <code>action</code> (الصفحة المستقبلة) و <code>method</code> (GET أو POST)."
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "HTML5 Validation + Defense in Depth 🛡️",
+            "text": "الـ <code>required</code> و <code>minlength</code> و <code>pattern</code> بتخلي الـ browser يتحقق تلقائياً من غير JS! بس متعتمدش عليهم لوحدهم — لازم Validation في الـ Server كمان."
+          },
+          "filename": "register-form.html",
+          "code": "<form [[0|action=\"/api/register\" method=\"POST\"]]>\n  [[1|<label for=\"user\">اسم المستخدم:</label>]]\n  <input type=\"text\" id=\"user\" [[2|required minlength=\"3\"]]>\n\n  <label for=\"email\">الإيميل:</label>\n  <input type=\"email\" id=\"email\" required>\n\n  [[3|<select name=\"country\"><option value=\"eg\">مصر</option></select>]]\n  [[4|<textarea rows=\"2\" placeholder=\"نبذة عنك\"></textarea>]]\n  <button type=\"submit\">تسجيل</button>\n</form>",
+          "spots": [
+            { "title": "action & method", "say": "مكان إرسال البيانات وطريقة الإرسال (POST للبيانات الحساسة)." },
+            { "title": "<label for>", "say": "بيربط الاسم بالـ input عشان تضغط عليه يعمل focus ومهم للـ a11y." },
+            { "title": "Validation Attributes", "say": "يمنع إرسال الفورم لو فاضي أو أقصر من ٣ حروف." },
+            { "title": "<select>", "say": "قائمة منسدلة لاختيار البلد أو فئة." },
+            { "title": "<textarea>", "say": "مربع نص متعدد الأسطر." }
+          ]
+        },
+        {
+          "tab": "أنواع Input في HTML5",
+          "heading": "١٢ نوع Input بتغير كيبورد الموبايل تلقائياً",
+          "body": [
+            "HTML5 ضافت أنواع ذكية للـ <code>&lt;input&gt;</code> بتحسّن تجربة المستخدم جداً على الموبايل والكمبيوتر."
+          ],
+          "tip": "لما تستخدم <code>type=\"email\"</code> على الموبايل، الكيبورد بيظهر فيه @ و .com تلقائياً. ومع <code>type=\"tel\"</code> بتظهر لوحة الأرقام مباشرة!",
+          "cards": [
+            { "title": "text / password", "desc": "نص عادي أو كلمة سر مخفية بنقط." },
+            { "title": "email / url", "desc": "تحقق تلقائي + كيبورد فيه @ و .com." },
+            { "title": "number / tel", "desc": "أرقام فقط أو لوحة أرقام التليفون." },
+            { "title": "date / color", "desc": "تقويم Date Picker أو منتقي ألوان جاهز." },
+            { "title": "range / file", "desc": "شريط تمرير (Slider) أو رفع ملفات." },
+            { "title": "checkbox / radio", "desc": "اختيار متعدد (checkbox) أو اختيار واحد فقط (radio)." }
+          ]
+        }
+      ],
+      "stages": [
+        {
+          "id": "s8-1",
+          "type": "match",
+          "prompt": "وصّل كل نوع Input في HTML5 بالميزة اللي بيعملها للمستخدم على الموبايل:",
+          "pairs": [
+            ["type=\"email\"", "يظهر @ و .com في كيبورد الموبايل ويتأكد من صيغة الإيميل"],
+            ["type=\"tel\"", "يفتح لوحة الأرقام مباشرة لكتابة التليفون"],
+            ["type=\"date\"", "يفتح تقويم (Date Picker) جاهز لاختيار التاريخ"],
+            ["type=\"password\"", "يخفي الحروف بنقط لحماية كلمة السر"]
+          ],
+          "hint": "email للإيميل، tel للتليفون، date للتاريخ."
+        },
+        {
+          "id": "s8-2",
+          "type": "patch",
+          "prompt": "حوّل الحقل ده لإيميل إجباري (type=\"email\" و required) عشان الـ Browser يتحقق منه تلقائياً:",
+          "start": "<label for=\"em\">الإيميل:</label>\n<input type=\"text\" id=\"em\" name=\"email\">",
+          "chips": ["type=\"email\"", "required"],
+          "checks": [
+            { "selector": "input[type='email']", "fail": "غيّر type=\"text\" وخليها type=\"email\"." },
+            { "selector": "input[required]", "fail": "ضيف attribute الـ required عشان الحقل ميتبعتش فاضي." }
+          ],
+          "solution": "<label for=\"em\">الإيميل:</label>\n<input type=\"email\" id=\"em\" name=\"email\" required>",
+          "why": "عاش يا بطل! كده الـ browser هيمنع إرسال إيميل فاضي أو غلط.",
+          "hint": "بدّل text بـ email وضيف كلمة required جوا الـ <input>."
+        },
+        {
+          "id": "s8-3",
+          "type": "choice",
+          "prompt": "بعد ما حطّيت required و pattern في الـ HTML، هل كده محتاج Validation في الـ Server كمان؟",
+          "options": [
+            { "t": "آه طبعاً! لأن أي حد يقدر يعدّل HTML في الـ Browser (Defense in Depth)", "why": "بالظبط! التحقق في الـ HTML بيساعد المستخدم، والتحقق في الـ Server بيحمي التطبيق." },
+            { "t": "لأ، HTML5 Validation كافي لوحده ومحدش يقدر يتخطاه", "why": "أي مستخدم يفتح DevTools ويمسح كلمة required في ثانية! الـ Server لازم يتحقق." }
+          ],
+          "answer": 0,
+          "hint": "افتكر مبدأ Defense in Depth: هل ينفع تثق في الـ Browser لوحده؟"
+        }
+      ]
+    },
+    {
+      "id": "lvl-9",
+      "num": 9,
+      "title": "Semantic HTML",
+      "en": "Meaningful Layout & details/summary",
+      "docs": [
+        {
+          "tab": "يعني إيه Semantic؟",
+          "heading": "وداعاً لصفحة كلها <div> — اكتب HTML له معنى!",
+          "body": [
+            "<strong>Semantic HTML</strong> معناها تستخدم tags توصف <em>معنى</em> المحتوى مش مجرد شكله: <code>&lt;header&gt;</code> للرأس، <code>&lt;nav&gt;</code> للتنقل، <code>&lt;main&gt;</code> للمحتوى الرئيسي، <code>&lt;article&gt;</code> للمقال المستقل، <code>&lt;section&gt;</code> للقسم، <code>&lt;aside&gt;</code> للشريط الجانبي، و <code>&lt;footer&gt;</code> للتذييل مع <code>&lt;time&gt;</code> و <code>&lt;address&gt;</code>."
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "ليه دي مهمة؟ 🧠",
+            "text": "① جوجل يفهم صفحتك أحسن = SEO أقوى. ② الـ screen readers تنقل المستخدم للـ nav أو main مباشرة. ③ الكود أسهل في الصيانة. الصفحة اللي كلها <code>&lt;div&gt;</code> زي <strong>كتاب من غير فهرس</strong>!"
+          },
+          "filename": "semantic-layout.html",
+          "code": "<body>\n  [[0|<header>]]<h1>اسم الموقع</h1>[[1|<nav>]]<a href=\"/\">الرئيسية</a></nav></header>\n  [[2|<main>]]\n    [[3|<article>]]<h2>عنوان المقال</h2><time datetime=\"2026-02-16\">16 فبراير</time></article>\n    <section><h2>التعليقات</h2></section>\n  </main>\n  [[4|<aside>]]<h3>مقالات ذات صلة</h3></aside>\n  <footer><address>info@site.com</address></footer>\n</body>",
+          "spots": [
+            { "title": "<header>", "say": "رأس الصفحة أو القسم (اللوجو والعنوان)." },
+            { "title": "<nav>", "say": "قائمة روابط التنقل الرئيسية." },
+            { "title": "<main>", "say": "المحتوى الأساسي الفريد في الصفحة." },
+            { "title": "<article>", "say": "محتوى مستقل ينفع يتشار لوحده (مقال/خبر/بوست)." },
+            { "title": "<aside>", "say": "محتوى جانبي مساعد زي مقالات مقترحة." }
+          ]
+        },
+        {
+          "tab": "details & summary",
+          "heading": "عناصر ذكية: Accordion تفاعلي بدون JavaScript!",
+          "body": [
+            "HTML5 فيها عناصر تفاعلية جاهزة من غير سطر JavaScript واحد! تاج <code>&lt;details&gt;</code> ومعاه <code>&lt;summary&gt;</code> بيعملوا قائمة أسئلة بتفتح وتقفل تلقائياً — جرّب تضغط عليها في المعاينة جنب الكود!"
+          ],
+          "filename": "details-summary.html",
+          "code": "<details>\n  <summary>إيه الفرق بين div و section؟</summary>\n  <p>الـ div مجرد container مالوش معنى، والـ section قسم مستقل ومترابط.</p>\n</details>",
+          "preview": "<div dir='rtl'><details open style='padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;margin-bottom:6px;cursor:pointer'><summary style='font-weight:800;color:#ea580c'>إيه الفرق بين div و section؟</summary><p style='margin:6px 0 0;font-size:.92em'>الـ div مجرد container مالوش معنى. الـ section بيقول ده قسم مستقل في المحتوى.</p></details><details style='padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;cursor:pointer'><summary style='font-weight:800;color:#ea580c'>إمتى أستخدم article؟</summary><p style='margin:6px 0 0;font-size:.92em'>لما المحتوى يكون مستقل ويقدر يتشار لوحده زي خبر أو بوست.</p></details></div>",
+          "previewUrl": "جرّب تضغط على السؤال 👆"
+        }
+      ],
+      "stages": [
+        {
+          "id": "s9-1",
+          "type": "buckets",
+          "layout": "wireframe",
+          "prompt": "ابني هيكل صفحة Semantic كاملة: اسحب كل Tag لمكانه الصح في الـ Layout:",
+          "buckets": [
+            { "id": "header", "label": "رأس الصفحة", "area": "header" },
+            { "id": "nav", "label": "قائمة التنقل", "area": "nav" },
+            { "id": "main", "label": "المحتوى الرئيسي", "area": "main" },
+            { "id": "aside", "label": "شريط جانبي", "area": "aside" },
+            { "id": "footer", "label": "تذييل الصفحة", "area": "footer" }
+          ],
+          "items": [
+            { "t": "<header>", "b": "header", "why": "header لرأس الصفحة واللوجو." },
+            { "t": "<nav>", "b": "nav", "why": "nav للينكات التنقل الرئيسية." },
+            { "t": "<main>", "b": "main", "why": "main للمحتوى الأساسي (جواه article و section)." },
+            { "t": "<aside>", "b": "aside", "why": "aside للمقالات ذات الصلة أو الشريط الجانبي." },
+            { "t": "<footer>", "b": "footer", "why": "footer لحقوق النشر ومعلومات الـ <address>." }
+          ],
+          "hint": "header فوق، تحته nav، في النص main وجنبه aside، وتحت footer."
+        },
+        {
+          "id": "s9-2",
+          "type": "choice",
+          "prompt": "إمتى تستخدم <article> بدل <div>؟",
+          "options": [
+            { "t": "لما المحتوى يكون مستقل وينفع يتشار لوحده زي مقال أو خبر في جريدة", "why": "مظبوط ١٠٠٪! والـ <section> لقسم جوا الصفحة، والـ <div> مجرد حاوية ملهاش معنى دلالي." },
+            { "t": "في أي مربع محتاج تلونه بـ CSS", "why": "لو مجرد حاوية للتنسيق بس من غير معنى مستقل، ساعتها استخدم <div>." },
+            { "t": "للقائمة الرئيسية بتاعة الموقع", "why": "القائمة الرئيسية لها التاج بتاعها وهو <nav>." }
+          ],
+          "answer": 0,
+          "hint": "اسأل نفسك: هل الجزء ده يقف لوحده كبوست أو خبر؟"
+        },
+        {
+          "id": "s9-3",
+          "type": "slot",
+          "prompt": "اعمل Accordion تفاعلي في HTML5 من غير سطر JavaScript واحد:",
+          "code": "[[0]]\n  [[1]]إيه الفرق بين div و section؟</summary>\n  <p>الـ section ليه معنى دلالي، الـ div مجرد حاوية.</p>\n</details>",
+          "tokens": ["<details>", "<summary>", "<accordion>", "<header>"],
+          "answer": ["<details>", "<summary>"],
+          "why": "عاش! <details> هي الحاوية التفاعلية و <summary> هو العنوان اللي بتضغط عليه عشان يفتح ويقفل.",
+          "hint": "التاج الخارجي details والداخلي summary."
+        }
+      ]
+    },
+    {
+      "id": "lvl-10",
+      "num": 10,
+      "title": "الوصولية والأخطاء الشائعة",
+      "en": "Accessibility (a11y), ARIA & Common Mistakes",
+      "docs": [
+        {
+          "tab": "الوصولية و ARIA",
+          "heading": "يعني إيه a11y وإمتى نستخدم ARIA؟",
+          "body": [
+            "<strong>Accessibility</strong> (بنختصرها <code>a11y</code> لأن فيه ١١ حرف بين a و y) معناها موقعك يشتغل مع <strong>كل</strong> الناس — حتى اللي عندهم إعاقة بصرية أو بيستخدموا الكيبورد بس.",
+            "لما التاجات الدلالية مش كافية (زي زرار فيه أيقونة من غير كلام)، بنستخدم <strong>ARIA</strong> (<code>aria-label</code>, <code>aria-expanded</code>, <code>aria-hidden</code>, <code>role=\"presentation\"</code>)."
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "القاعدة الأولى في ARIA ❤️",
+            "text": "لو تقدر تستخدم semantic HTML tag، <strong>متستخدمش ARIA</strong>! استخدم <code>&lt;button&gt;</code> بدل <code>&lt;div role=\"button\"&gt;</code> — الـ semantic tag بيديك accessibility مجاناً."
+          },
+          "filename": "aria-examples.html",
+          "code": "<!-- ❶ Skip Link لمستخدمي الكيبورد -->\n[[0|<a href=\"#main\" class=\"skip-link\">اذهب للمحتوى الرئيسي</a>]]\n\n<!-- ❷ زرار بأيقونة بس -->\n<button [[1|aria-label=\"إغلاق القائمة\"]]><i class=\"x\"></i></button>\n\n<!-- ❸ حالة عنصر متغيرة -->\n<button [[2|aria-expanded=\"false\"]]>عرض التفاصيل</button>\n\n<!-- ❹ صورة للزينة بس -->\n<img src=\"bg.svg\" [[3|alt=\"\" role=\"presentation\"]]>",
+          "spots": [
+            { "title": "Skip Link", "say": "أول لينك في الصفحة عشان مستخدم الكيبورد يتخطى الـ Navbar." },
+            { "title": "aria-label", "say": "بيدي وصف مقروء للـ screen reader على زرار أيقونة." },
+            { "title": "aria-expanded", "say": "بيقول هل القائمة مفتوحة ولا مقفولة حالياً." },
+            { "title": "صورة للزينة", "say": "alt فاضية + role=\"presentation\" عشان يتخطاها القارئ." }
+          ]
+        },
+        {
+          "tab": "أخطاء شائعة",
+          "heading": "أشهر ٤ أخطاء HTML لازم تتجنبها",
+          "body": [
+            "دي أكتر أخطاء المبتدئين بيقعوا فيها — لو حفظتها هتوفر على نفسك ساعات debugging:"
+          ],
+          "cards": [
+            { "title": "❌ نسيان إقفال التاجات", "code": "<p>فقرة أولى <p>تانية", "desc": "لازم تقفل الفقرة الأولى بـ </p> قبل ما تبدأ التانية." },
+            { "title": "❌ تداخل خاطئ (Nesting)", "code": "<strong><em>نص</strong></em>", "desc": "اقفل التاج الداخلي </em> الأول قبل الخارجي </strong>." },
+            { "title": "❌ استخدام <br> للمسافات", "code": "<br><br><br>", "desc": "الـ <br> لسطر جديد بس — المسافات شغل CSS margin/padding." },
+            { "title": "❌ inline styles كتير", "code": "style=\"color:red\"", "desc": "بدل ما تكرر style على كل عنصر، اعمل CSS class واحد." }
+          ]
+        }
+      ],
+      "stages": [
+        {
+          "id": "s10-1",
+          "type": "buckets",
+          "layout": "columns",
+          "prompt": "فرّز ممارسات الوصولية (a11y): إيه اللي نعمله ✅ وإيه اللي نبعد عنه ❌؟",
+          "buckets": [
+            { "id": "do", "label": "أعمل ده ✅" },
+            { "id": "dont", "label": "متعملش كده ❌" }
+          ],
+          "items": [
+            { "t": "حط alt لكل صورة مفيدة", "b": "do", "why": "بيخلي الـ screen reader يوصف الصورة." },
+            { "t": "اربط <label> مع كل input", "b": "do", "why": "بيسهّل القراءة والضغط للجميع." },
+            { "t": "اعمل Skip Link للمحتوى الرئيسي", "b": "do", "why": "بيريّح مستخدمي الـ keyboard من تكرار الـ nav." },
+            { "t": "لينك مكتوب عليه «اضغط هنا» بس", "b": "dont", "why": "مش بيشرح اللينك رايح فين لمستخدم الـ screen reader." },
+            { "t": "إزالة الـ focus outline", "b": "dont", "why": "مستخدم الـ keyboard هيتوه ومش هيعرف هو واقف فين!" },
+            { "t": "فيديو من غير subtitles", "b": "dont", "why": "لازم ترجمة عشان الكل يقدر يفهم الفيديو." }
+          ],
+          "hint": "فكّر: هل الممارسة دي بتساعد مستخدم الـ keyboard أو الكفيف؟"
+        },
+        {
+          "id": "s10-2",
+          "type": "bughunt",
+          "prompt": "اصطاد الغلطتين الشائعتين في الكود ده (نسيان إغلاق + تداخل خاطئ):",
+          "code": "[[0|<p>فقرة أولى <p>فقرة تانية</p>]]\n[[ok|<p>دي فقرة سليمة ومقفولة.</p>]]\n[[1|<strong><em>كلام مهم</strong></em>]]",
+          "bugs": [
+            { "why": "نسيت تقفل الفقرة الأولى بـ </p> قبل ما تفتح التانية!" },
+            { "why": "تداخل غلط! فتحت <em> جوا <strong> فلازم تقفل الداخلي </em> الأول قبل </strong>." }
+          ],
+          "hint": "بص على التاجات المفتوحة: مين متقفلش؟ ومين اتقفل بترتيب معكوس؟"
+        },
+        {
+          "id": "s10-3",
+          "type": "choice",
+          "prompt": "القاعدة الأولى في ARIA: عايز تعمل زرار في صفحتك، تختار إيه؟",
+          "options": [
+            { "t": "<button>حفظ</button>", "why": "عاش! لو تقدر تستخدم semantic tag متستخدمش ARIA — <button> بيديك accessibility وكيبورد مجاناً." },
+            { "t": "<div role=\"button\">حفظ</div>", "why": "ده بيكسر القاعدة الأولى في ARIA! الـ div مش بيشتغل بالكيبورد تلقائياً زي <button>." }
+          ],
+          "answer": 0,
+          "hint": "لو فيه Semantic HTML tag جاهز، هو دايماً الاختيار الأول."
+        }
+      ]
+    },
+    {
+      "id": "lvl-boss",
+      "num": 11,
+      "title": "الاختبار الشامل 👾",
+      "en": "Final Knowledge Check (10 Questions)",
+      "boss": true,
+      "stages": [
+        {
+          "id": "b1",
+          "type": "choice",
+          "prompt": "١/١٠ — إيه أول سطر لازم يكون في أي ملف HTML5؟",
+          "options": [
+            { "t": "<!DOCTYPE html>", "why": "صح! بيقول للـ browser إن الملف مكتوب بمعيار HTML5." },
+            { "t": "<html version=\"5\">", "why": "مفيش attribute اسمه version في HTML5 — بنكتب <!DOCTYPE html>." },
+            { "t": "<head>", "why": "الـ <head> بييجي جوا <html> بعد الـ DOCTYPE." }
+          ],
+          "answer": 0,
+          "hint": "إعلان نوع المستند اللي بيبدأ بـ !"
+        },
+        {
+          "id": "b2",
+          "type": "choice",
+          "prompt": "٢/١٠ — إيه الفرق بين <head> و <body>؟",
+          "options": [
+            { "t": "head للـ metadata المخفية (عنوان/وصف/CSS)، و body للمحتوى المرئي", "why": "بالظبط كده! بطاقة الهوية vs المحتوى اللي قدام المستخدم." },
+            { "t": "head لأعلى الصفحة (الـ Navbar)، و body لبقية الصفحة", "why": "أعلى الصفحة المرئي ده <header> جوا الـ <body> مش <head>!" }
+          ],
+          "answer": 0,
+          "hint": "فرق بين <head> (بيانات الصفحة) و <header> (رأس التصميم)."
+        },
+        {
+          "id": "b3",
+          "type": "choice",
+          "prompt": "٣/١٠ — إيه الفرق بين Block و Inline elements؟",
+          "options": [
+            { "t": "Block بياخد العرض كله وسطر جديد (div, p)، Inline على قد محتواه (span, a)", "why": "صح الصح!" },
+            { "t": "Inline بياخد العرض كله، و Block بيمشي جوا النص", "why": "العكس تماماً! Block = صندوق سطر كامل." }
+          ],
+          "answer": 0,
+          "hint": "افتكر تشبيه الصناديق فوق بعضها."
+        },
+        {
+          "id": "b4",
+          "type": "choice",
+          "prompt": "٤/١٠ — أي مجموعة كلها Void Elements (مش محتاجة Closing Tag)؟",
+          "options": [
+            { "t": "<img>, <br>, <input>, <hr>", "why": "معلّم! كلها عناصر مكتفية بذاتها من غير إغلاق." },
+            { "t": "<img>, <p>, <div>, <a>", "why": "الـ p و div و a لازم يتقفلوا." },
+            { "t": "<section>, <br>, <meta>, <span>", "why": "section و span محتاجين closing tag." }
+          ],
+          "answer": 0,
+          "hint": "مفيش ولا واحد فيهم ينفع تكتب جواه نص."
+        },
+        {
+          "id": "b5",
+          "type": "choice",
+          "prompt": "٥/١٠ — إيه الفرق الأساسي بين id و class؟",
+          "options": [
+            { "t": "id فريد مش بيتكرر في الصفحة، و class ينفع يتكرر ويتحط أكتر من واحد", "why": "عاش! رقم البطاقة vs اسم المدرسة." },
+            { "t": "class فريد لكل عنصر، و id بيتكرر عادي", "why": "العكس! الـ id هو اللي فريد." }
+          ],
+          "answer": 0,
+          "hint": "افتكر رقم البطاقة واسم المدرسة."
+        },
+        {
+          "id": "b6",
+          "type": "choice",
+          "prompt": "٦/١٠ — ليه الـ alt attribute مهم جداً في الصور؟",
+          "options": [
+            { "t": "للـ screen readers، وللـ SEO في جوجل، وبيظهر لو الصورة محمّلتش", "why": "إجابة نموذجية! ٣ فوايد في attribute واحد." },
+            { "t": "عشان يصغّر حجم الصورة ويخليها تفتح أسرع", "why": "تأجيل التحميل ده loading=\"lazy\"، مش alt." }
+          ],
+          "answer": 0,
+          "hint": "اسأل: مين غيرك محتاج يفهم الصورة لو مش شايفها؟"
+        },
+        {
+          "id": "b7",
+          "type": "choice",
+          "prompt": "٧/١٠ — إيه الفرق بين <strong> و <b>؟",
+          "options": [
+            { "t": "<strong> ليه معنى دلالي (أهمية للـ screen reader)، و <b> مجرد شكل bold", "why": "بالظبط! دايماً نفضل الـ semantic tag." },
+            { "t": "<strong> خطه أتخن من <b> بس", "why": "الاتنين شكلهم bold — الفرق في المعنى الدلالي." }
+          ],
+          "answer": 0,
+          "hint": "واحد ليه معنى دلالي والتاني شكل وبس."
+        },
+        {
+          "id": "b8",
+          "type": "choice",
+          "prompt": "٨/١٠ — إيه فايدة أنواع الـ Input في HTML5 زي email و number و date؟",
+          "options": [
+            { "t": "Validation تلقائي + كيبورد أو Date Picker مناسب على الموبايل", "why": "صح! بتحسن تجربة المستخدم بشكل رهيب." },
+            { "t": "ملهمش فرق عن type=\"text\" غير في الاسم بس", "why": "لأ، كل نوع بيغير الكيبورد والتحقق تلقائياً." }
+          ],
+          "answer": 0,
+          "hint": "جرب تفتح حقل email على تليفونك — إيه اللي بيظهر في الكيبورد؟"
+        },
+        {
+          "id": "b9",
+          "type": "choice",
+          "prompt": "٩/١٠ — أي مجموعة كلها Semantic Layout Tags صح؟",
+          "options": [
+            { "t": "<header>, <nav>, <main>, <article>", "why": "الله ينوّر! كل واحد بيوصف دور واضح في الصفحة." },
+            { "t": "<div>, <span>, <b>, <br>", "why": "دول عناصر غير دلالية (Non-semantic)." }
+          ],
+          "answer": 0,
+          "hint": "التاجات اللي بتشرح معنى الجزء في الصفحة."
+        },
+        {
+          "id": "b10",
+          "type": "choice",
+          "prompt": "١٠/١٠ — إمتى نستخدم ARIA Attributes؟",
+          "options": [
+            { "t": "بس لما الـ Semantic HTML مش كافي (زي زرار فيه أيقونة من غير نص)", "why": "وحش! ضربت الوحش بالضربة القاضية 🏆" },
+            { "t": "على كل <div> في الصفحة بدل التاجات العادية", "why": "غلط! التاج الدلالي دايماً قبل ARIA." }
+          ],
+          "answer": 0,
+          "hint": "القاعدة الأولى في ARIA: الـ Semantic أولاً!"
+        }
+      ]
+    }
+  ],
+  "recall": [
+    { "q": "إيه أول سطر لازم يكون في أي ملف HTML5؟", "a": "<!DOCTYPE html> — بيقول للـ browser إن الملف مكتوب بمعيار HTML5." },
+    { "q": "إيه الفرق بين <head> و <body>؟", "a": "الـ <head> فيه metadata مش بتظهر للمستخدم (عنوان، وصف، CSS). الـ <body> فيه كل المحتوى المرئي." },
+    { "q": "إيه الفرق بين Block و Inline elements؟", "a": "الـ Block بياخد الـ width كله وبيبدأ سطر جديد (زي div, p). الـ Inline بياخد مساحة محتواه بس (زي span, a)." },
+    { "q": "إيه هي الـ Void Elements؟ اذكر 3 أمثلة.", "a": "عناصر مش محتاجة closing tag: <img>, <br>, <input>, <hr>, <meta>, <link>." },
+    { "q": "إيه الفرق بين id و class؟", "a": "الـ id فريد مش ينفع يتكرر في الصفحة (رقم البطاقة). الـ class ينفع يتكرر ويتحط أكتر من واحد (اسم المدرسة)." },
+    { "q": "ليه الـ alt attribute مهم في الصور؟", "a": "عشان الـ screen readers توصف الصورة للمكفوفين، وجوجل بيقراه للـ SEO، وبيظهر لو الصورة محمّلتش." },
+    { "q": "إيه الفرق بين <strong> و <b>؟", "a": "<strong> ليه semantic meaning (أهمية للـ screen reader). <b> مجرد شكل bold بدون معنى دلالي." },
+    { "q": "اذكر 3 أنواع input في HTML5 مع فايدة كل واحد.", "a": "email: validation تلقائي + كيبورد مناسب. number/tel: أرقام. date: date picker تلقائي." },
+    { "q": "اذكر 4 semantic tags وفايدة كل واحد.", "a": "<header> رأس الصفحة، <nav> التنقل، <main> المحتوى الرئيسي، <article> محتوى مستقل قابل للمشاركة." },
+    { "q": "إيه هو الـ ARIA وإمتى نستخدمه؟", "a": "Attributes توصف العناصر للـ screen readers — نستخدمها بس لما الـ semantic HTML مش كافي زي زرار بأيقونة فقط." }
+  ]
+}

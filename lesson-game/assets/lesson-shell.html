@@ -1,0 +1,1894 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>CodeHub Interactive Lesson Studio</title>
+<meta name="description" content="محاضرة تفاعلية بالعامية المصرية — شرح + لعبة تعليمية بدون scroll — CodeHub">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Readex+Pro:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F0EA;
+  --bg-2:#EAE7DF;
+  --surface:#F9F8F4;
+  --surface-hi:#EDEAE2;
+  --code-bg:#F0EEE8;
+  --code-gutter:#E6E3DA;
+  --preview-bg:#FDFCF9;
+  --border:#DBD7CC;
+  --border-hi:#C4BEB0;
+  --text:#182230;
+  --text-body:#2B3748;
+  --text-soft:#4E5D73;
+  --muted:#69768C;
+  --accent:#0E7C90;
+  --accent-hi:#0A6576;
+  --accent-soft:rgba(14,124,144,.09);
+  --accent-bd:rgba(14,124,144,.32);
+  --amber:#B3700B;
+  --amber-soft:rgba(179,112,11,.10);
+  --amber-bd:rgba(179,112,11,.34);
+  --ok:#167E5C;
+  --ok-soft:rgba(22,126,92,.10);
+  --ok-bd:rgba(22,126,92,.34);
+  --bad:#C03943;
+  --bad-soft:rgba(192,57,67,.09);
+  --bad-bd:rgba(192,57,67,.35);
+  --on-accent:#F9F8F4;
+  --shadow-sm:0 1px 2px rgba(24,34,48,.05);
+  --shadow-md:0 12px 32px rgba(24,34,48,.12);
+  --r:12px;
+  --r-sm:8px;
+  --font:'IBM Plex Sans Arabic',system-ui,-apple-system,sans-serif;
+  --display:'Readex Pro','IBM Plex Sans Arabic',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --rail-w:308px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+button,input,textarea{font-family:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0;touch-action:manipulation}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+bdi,code{unicode-bidi:isolate}
+code{
+  font-family:var(--mono);font-size:.84em;font-weight:500;
+  background:rgba(14,124,144,.08);border:1px solid rgba(14,124,144,.2);
+  padding:.07em .42em;border-radius:5px;color:#0B5C6B;direction:ltr;display:inline-block;
+}
+.ltr{direction:ltr;text-align:left;unicode-bidi:isolate}
+.ic{width:15px;height:15px;display:inline-block;vertical-align:-.18em;flex-shrink:0}
+.ic-sm{width:13.5px;height:13.5px}
+
+/* ─── Contained Scrollbars (Warm Stone) ─────────────────────────────────── */
+.scroll{overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:#CBC6B8 transparent}
+.scroll::-webkit-scrollbar{width:6px;height:6px}
+.scroll::-webkit-scrollbar-thumb{background:#CBC6B8;border-radius:99px}
+.scroll::-webkit-scrollbar-thumb:hover{background:#B2AC9C}
+.scroll-x{overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scrollbar-width:none}
+.scroll-x::-webkit-scrollbar{display:none}
+
+/* ─── Root Full-Viewport App Shell (L1, L2) ─────────────────────────────── */
+.app{
+  display:grid;height:100vh;height:100dvh;min-height:0;overflow:hidden;
+  grid-template-rows:50px minmax(0,1fr);background:var(--bg);
+}
+.topbar,.studio,.rail,.workspace,.ws-body,.doc-split,.doc-prose-wrap,.lab-col,.game-shell,.playfield{min-width:0;min-height:0}
+
+/* ─── 1. Global Header (Quiet Pearl Bar) ────────────────────────────────── */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:0 14px;background:var(--bg-2);border-bottom:1px solid var(--border);
+  position:relative;z-index:20;
+}
+.top-start{display:flex;align-items:center;gap:10px;min-width:0}
+.icon-btn{
+  width:32px;height:32px;border-radius:var(--r-sm);display:grid;place-items:center;flex-shrink:0;
+  border:1px solid var(--border);background:var(--surface);color:var(--text-soft);
+  transition:background .15s var(--ease),border-color .15s,color .15s;
+}
+.icon-btn:hover{background:var(--surface-hi);border-color:var(--border-hi);color:var(--text)}
+.icon-btn[aria-expanded="true"]{color:var(--accent);border-color:var(--accent-bd);background:var(--surface)}
+.brand{display:flex;align-items:center;gap:9px;min-width:0}
+.brand-mark{
+  width:30px;height:30px;border-radius:8px;display:grid;place-items:center;flex-shrink:0;
+  background:var(--surface);border:1px solid var(--border);color:var(--accent);
+}
+.brand-mark svg{width:16px;height:16px}
+.brand-txt{min-width:0}
+.brand-title{font-family:var(--display);font-size:14.5px;font-weight:600;line-height:1.2;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand-sub{font-size:11.5px;color:var(--muted);line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.top-end{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.prog-meter{
+  display:flex;align-items:center;gap:8px;height:32px;padding:0 10px;border-radius:var(--r-sm);
+  background:var(--surface);border:1px solid var(--border);font-size:12px;color:var(--text-soft);
+}
+.prog-lbl{color:var(--muted);font-weight:500}
+.prog-bar{width:64px;height:5px;border-radius:99px;background:var(--bg-2);overflow:hidden}
+.prog-fill{height:100%;border-radius:99px;background:var(--amber);transition:width .35s var(--ease)}
+.prog-fill.full{background:var(--ok)}
+.prog-val{font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--text);direction:ltr}
+
+.xp-chip{
+  display:inline-flex;align-items:center;gap:5px;height:32px;padding:0 10px;border-radius:var(--r-sm);
+  background:var(--surface);border:1px solid var(--border);
+  font-family:var(--mono);font-size:12px;font-weight:600;color:var(--amber);direction:ltr;
+}
+.xp-chip.bump{border-color:var(--amber-bd);background:var(--amber-soft);transition:all .2s}
+.combo-chip{
+  display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 9px;border-radius:99px;
+  background:var(--amber-soft);border:1px solid var(--amber-bd);
+  font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--amber);
+}
+.top-div{width:1px;height:18px;background:var(--border);margin:0 2px}
+.util-btn{
+  display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 11px;border-radius:var(--r-sm);
+  border:1px solid var(--border);background:var(--surface);color:var(--text-soft);
+  font-size:12.5px;font-weight:500;transition:background .15s var(--ease),border-color .15s,color .15s;
+}
+.util-btn:hover{background:var(--surface-hi);border-color:var(--border-hi);color:var(--text)}
+.util-btn.active{background:var(--accent-soft);border-color:var(--accent-bd);color:var(--accent)}
+
+/* ─── 2. Two-Pane Workspace + Collapsible Chapter Sidebar ───────────────── */
+.studio{
+  display:grid;height:100%;overflow:hidden;position:relative;
+  grid-template-columns:var(--rail-w) minmax(0,1fr);
+  transition:grid-template-columns .2s var(--ease);
+}
+.studio.rail-collapsed{grid-template-columns:0px minmax(0,1fr)}
+
+.rail{
+  display:flex;flex-direction:column;overflow:hidden;
+  background:var(--bg-2);border-inline-end:1px solid var(--border);
+  transition:opacity .18s var(--ease),transform .2s var(--ease);
+}
+.studio.rail-collapsed .rail{opacity:0;pointer-events:none;border-inline-end-color:transparent}
+.rail-head{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  height:44px;padding:0 14px;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.rail-head-title{display:flex;align-items:center;gap:7px;font-family:var(--display);font-size:13px;font-weight:600;color:var(--text)}
+.rail-count{
+  font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);
+  padding:1px 7px;border-radius:99px;background:var(--surface);border:1px solid var(--border);
+}
+.rail-list{flex:1;display:flex;flex-direction:column;gap:2px;padding:8px}
+
+/* Chapter Row: Clean 3-State Hierarchy (Completed / Active / Upcoming) */
+.sec-tab{
+  position:relative;display:flex;align-items:center;gap:10px;width:100%;text-align:right;
+  padding:8px 10px;border-radius:var(--r-sm);border:1px solid transparent;background:transparent;
+  transition:background .14s var(--ease),border-color .14s,color .14s;flex-shrink:0;
+}
+.sec-tab::before{
+  content:'';position:absolute;inset-block:7px;inset-inline-start:0;width:2.5px;border-radius:99px;
+  background:var(--accent);opacity:0;transition:opacity .16s var(--ease);
+}
+.sec-tab:hover{background:rgba(249,248,244,.6)}
+.sec-tab.active{background:var(--surface);border-color:var(--border);box-shadow:var(--shadow-sm)}
+.sec-tab.active::before{opacity:1}
+.sec-tab.boss.active::before{background:var(--amber)}
+
+.sec-num{
+  width:24px;height:24px;border-radius:6px;display:grid;place-items:center;flex-shrink:0;
+  font-family:var(--mono);font-size:11px;font-weight:600;
+  background:var(--bg);color:var(--muted);border:1px solid var(--border);
+}
+.sec-tab.active .sec-num{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-bd)}
+.sec-tab.done .sec-num{background:var(--ok-soft);color:var(--ok);border-color:var(--ok-bd)}
+.sec-tab.boss .sec-num{background:var(--amber-soft);color:var(--amber);border-color:var(--amber-bd)}
+
+.sec-info{min-width:0;flex:1}
+.sec-title{
+  display:block;font-size:13px;font-weight:500;color:var(--text-soft);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.35;
+}
+.sec-tab:hover .sec-title{color:var(--text)}
+.sec-tab.active .sec-title{color:var(--text);font-weight:600}
+.sec-stat{
+  font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);
+  flex-shrink:0;direction:ltr;
+}
+.sec-tab.done .sec-stat{color:var(--ok)}
+.sec-tab.active .sec-stat{color:var(--text-soft)}
+
+.rail-foot{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:9px 14px;border-top:1px solid var(--border);flex-shrink:0;
+}
+.rail-foot-note{font-size:11.5px;color:var(--muted)}
+.rail-link{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--accent);text-decoration:none}
+.rail-link:hover{text-decoration:underline;color:var(--accent-hi)}
+
+.drawer-backdrop{
+  display:none;position:fixed;inset:0;z-index:140;background:rgba(24,34,48,.34);
+  opacity:0;transition:opacity .18s var(--ease);
+}
+.drawer-backdrop.open{display:block;opacity:1}
+
+/* ─── 3. Main Workspace & Consolidated Lesson Header ────────────────────── */
+.workspace{display:flex;flex-direction:column;overflow:hidden;background:var(--surface)}
+
+.ws-head{
+  background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.ws-head-top{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  padding:11px 22px 8px;
+}
+.ws-heading{display:flex;align-items:baseline;gap:10px;min-width:0;flex-wrap:wrap}
+.ws-sec-id{
+  font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent);flex-shrink:0;
+}
+.ws-sec-id.boss{color:var(--amber)}
+.ws-heading h1{
+  font-family:var(--display);margin:0;font-size:clamp(16px,1.45vw,19px);font-weight:600;
+  color:var(--text);line-height:1.3;letter-spacing:-.01em;
+}
+.ws-en{font-size:12px;color:var(--muted);font-weight:400;direction:ltr}
+
+/* Restrained Segmented Switcher (Explain <-> Practice) */
+.mode-switch{
+  display:inline-grid;grid-template-columns:1fr 1fr;gap:3px;padding:3px;
+  border-radius:9px;background:var(--bg-2);border:1px solid var(--border);flex-shrink:0;
+}
+.mode-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  height:30px;padding:0 12px;border-radius:6px;font-size:12.5px;font-weight:500;
+  color:var(--text-soft);border:1px solid transparent;transition:all .16s var(--ease);white-space:nowrap;
+}
+.mode-btn:hover{color:var(--text)}
+.mode-btn.active{
+  background:var(--surface);color:var(--text);font-weight:600;border-color:var(--border);box-shadow:var(--shadow-sm);
+}
+.mode-btn.active svg{color:var(--accent)}
+
+/* Underline Sub-Tabs Bar */
+.ws-tabs-row{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:0 22px;border-top:1px solid rgba(219,215,204,.65);background:var(--bg);
+}
+.ws-tabs{display:flex;align-items:stretch;gap:4px;flex:1;min-width:0}
+.ws-tab{
+  position:relative;display:inline-flex;align-items:center;gap:6px;
+  height:36px;padding:0 12px;font-size:13px;font-weight:500;color:var(--text-soft);
+  border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0;
+  transition:color .16s var(--ease),border-color .16s var(--ease),background .16s;
+}
+.ws-tab:hover{color:var(--text);background:rgba(24,34,48,.03)}
+.ws-tab.active{color:var(--text);font-weight:600;border-bottom-color:var(--accent)}
+.ws-tab.solved{color:var(--ok)}
+.ws-tab.solved.active{color:var(--text);border-bottom-color:var(--ok)}
+.ws-meta{font-size:12px;color:var(--muted);flex-shrink:0;white-space:nowrap}
+.hearts-bar{display:inline-flex;align-items:center;gap:4px;color:var(--bad);font-family:var(--mono);font-size:12px;font-weight:600;flex-shrink:0}
+.hearts-bar svg{width:14px;height:14px}
+.hearts-bar svg.lost{color:var(--border-hi);opacity:.55}
+
+.ws-body{flex:1;overflow:hidden;display:flex;flex-direction:column}
+
+/* ─── 4. EXPLAIN MODE: Editorial Ivory Reading + Unified Light Coding Lab ── */
+.doc-split{
+  flex:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.06fr);
+  overflow:hidden;animation:fadeIn .18s var(--ease);
+}
+.doc-split.single{grid-template-columns:1fr}
+
+/* Right Column: Unboxed Warm Ivory Reading Surface */
+.doc-prose-wrap{
+  overflow:auto;padding:24px 28px;border-inline-end:1px solid var(--border);
+  background:var(--surface);
+}
+.doc-split.single .doc-prose-wrap{border-inline-end:0;display:flex;justify-content:center}
+.doc-prose{
+  width:100%;max-width:62ch;display:flex;flex-direction:column;gap:16px;
+}
+.doc-h2{
+  font-family:var(--display);margin:0;font-size:17px;font-weight:600;color:var(--text);
+  line-height:1.4;padding-bottom:10px;border-bottom:1px solid var(--border);
+}
+.doc-p{margin:0;font-size:15px;font-weight:400;line-height:1.88;color:var(--text-body)}
+.doc-p strong{color:var(--text);font-weight:600}
+
+/* Restrained Contextual Insight Blocks (Analogy / Tip / Warning) */
+.insight{
+  display:flex;align-items:flex-start;gap:10px;padding:12px 15px;border-radius:var(--r-sm);
+  background:var(--bg);border:1px solid var(--border);border-inline-start:3px solid var(--amber);
+  font-size:14px;line-height:1.8;color:var(--text-body);
+}
+.insight.tip{border-inline-start-color:var(--ok);background:#EFF5F1}
+.insight.warn{border-inline-start-color:var(--bad);background:#F8F0F0}
+.insight.analogy{background:#F6F2E8}
+.insight-ico{margin-top:3px;flex-shrink:0;color:var(--amber)}
+.insight.tip .insight-ico{color:var(--ok)}
+.insight.warn .insight-ico{color:var(--bad)}
+.insight strong{color:var(--text);font-weight:600}
+
+/* Reference Cards & Tables (Crisp 1px Warm Layers) */
+.ref-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr));gap:10px}
+.ref-card{
+  padding:12px 14px;border-radius:var(--r-sm);background:var(--bg);border:1px solid var(--border);
+  display:flex;flex-direction:column;gap:5px;
+}
+.ref-card-h{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;justify-content:space-between;gap:6px}
+.ref-card-h .code-lbl{font-family:var(--mono);font-size:12.5px;color:#0B5C6B;direction:ltr}
+.ref-card-d{font-size:13.5px;color:var(--text-soft);line-height:1.68}
+
+.doc-table-wrap{overflow:auto;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--surface)}
+.doc-table{width:100%;border-collapse:collapse;font-size:13.5px}
+.doc-table th,.doc-table td{padding:9px 12px;border-bottom:1px solid var(--border);text-align:right;line-height:1.58}
+.doc-table th{background:var(--bg-2);color:var(--text);font-size:12px;font-weight:600}
+.doc-table tr:last-child td{border-bottom:0}
+
+/* Left Column: Unified Interactive Coding Lab (Light Editorial IDE) */
+.lab-col{
+  overflow:auto;padding:18px 20px;background:var(--bg);
+  display:flex;flex-direction:column;gap:14px;
+}
+.coding-lab{
+  display:flex;flex-direction:column;border-radius:var(--r);overflow:hidden;
+  background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-sm);flex-shrink:0;
+}
+.lab-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  height:36px;padding:0 12px;background:var(--bg-2);border-bottom:1px solid var(--border);
+  direction:ltr;
+}
+.lab-tab{
+  display:inline-flex;align-items:center;gap:7px;height:100%;padding:0 6px;
+  font-family:var(--mono);font-size:12px;font-weight:600;color:var(--text);
+  border-top:2px solid var(--accent);background:var(--code-bg);
+}
+.lab-tab svg{color:var(--accent);width:13px;height:13px}
+.lab-bar-meta{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--muted)}
+.lang-pill{
+  font-family:var(--mono);font-size:10.5px;font-weight:600;padding:2px 6px;border-radius:4px;
+  background:var(--surface);border:1px solid var(--border);color:var(--text-soft);text-transform:uppercase;
+}
+
+/* Line-Numbered Light Code Surface (Soft Pearl-Stone, High-Contrast Syntax) */
+.code-box{
+  background:var(--code-bg);overflow:auto;padding:10px 0;direction:ltr;text-align:left;unicode-bidi:isolate;
+}
+.code-lines-inner{display:inline-block;min-width:100%}
+.code-line{
+  display:flex;align-items:baseline;min-height:24px;padding:0 14px 0 0;
+  font-family:var(--mono);font-size:13px;line-height:1.72;color:#1F2937;
+}
+.code-line:hover{background:rgba(24,34,48,.03)}
+.ln{
+  width:36px;padding-right:12px;text-align:right;color:#828D9E;font-size:11.5px;
+  user-select:none;flex-shrink:0;border-right:1px solid var(--border);margin-right:12px;
+}
+.lc{white-space:pre;flex:1;min-width:0;direction:ltr;unicode-bidi:isolate}
+.syn-tag{color:#0F6E54}.syn-attr{color:#1D5FA7}.syn-val{color:#A85418}
+.syn-com{color:#768396;font-style:italic}.syn-kw{color:#9B2C52}.syn-fn{color:#0E7C90}
+.syn-ar{unicode-bidi:isolate;direction:rtl;font-family:var(--font);font-size:.96em;color:#182230}
+
+/* Subtle Interactive Code Token Highlighting */
+.spot{
+  display:inline;font-family:inherit;font-size:inherit;line-height:inherit;
+  padding:1px 4px;margin:0 1px;border-radius:4px;
+  background:rgba(14,124,144,.10);border-bottom:1.5px solid rgba(14,124,144,.55);
+  color:#111B27;transition:background .15s var(--ease),border-color .15s,color .15s;
+}
+.spot:hover{background:rgba(14,124,144,.18)}
+.spot.seen{background:rgba(22,126,92,.10);border-bottom-color:var(--ok);color:#0E4E39}
+.spot.active{background:rgba(179,112,11,.16);border-bottom:2px solid var(--amber);color:#182230}
+
+/* Docked Code Inspector Strip */
+.lab-inspector{
+  display:flex;align-items:flex-start;gap:9px;padding:10px 14px;
+  background:var(--surface);border-top:1px solid var(--border);
+  font-size:13.5px;line-height:1.7;color:var(--text-body);
+}
+.lab-inspector svg{color:var(--accent);margin-top:3px;flex-shrink:0}
+.lab-inspector.has-active{background:#F7F3EA}
+.lab-inspector.has-active svg{color:var(--amber)}
+.lab-inspector .insp-tok{
+  font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--amber);
+  direction:ltr;display:inline-block;unicode-bidi:isolate;margin-inline-end:6px;
+}
+
+/* Integrated Live Browser Preview & Light Console Output */
+.lab-preview{border-top:1px solid var(--border);display:flex;flex-direction:column}
+.preview-chrome{
+  display:flex;align-items:center;gap:10px;height:36px;padding:0 12px;
+  background:var(--bg-2);border-bottom:1px solid var(--border);direction:ltr;
+}
+.preview-nav{display:flex;gap:6px;color:var(--muted);font-size:13px;user-select:none;flex-shrink:0}
+.preview-url{
+  flex:1;min-width:0;display:flex;align-items:center;gap:6px;height:24px;padding:0 9px;
+  border-radius:6px;background:var(--surface);border:1px solid var(--border);
+  font-family:var(--mono);font-size:11.5px;color:var(--text-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.preview-url svg{width:11px;height:11px;color:var(--muted);flex-shrink:0}
+.live-badge{
+  display:inline-flex;align-items:center;gap:5px;font-family:var(--font);font-size:11.5px;font-weight:600;
+  color:var(--ok);flex-shrink:0;direction:rtl;
+}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--ok)}
+.browser-body{
+  padding:16px 18px;background:var(--preview-bg);color:#182230;font-family:var(--font);
+  font-size:14px;line-height:1.62;min-height:68px;
+}
+.browser-body h1{font-size:1.5em;margin:.12em 0;color:#182230}
+.browser-body h2{font-size:1.22em;margin:.12em 0;color:#182230}
+.browser-body h3{font-size:1.05em;margin:.12em 0;color:#182230}
+.browser-body p{margin:.32em 0}
+.browser-body a{color:#0E7C90;text-decoration:underline}
+.browser-body table{border-collapse:collapse;width:100%;font-size:.88em}
+.browser-body th,.browser-body td{border:1px solid #D4D0C5;padding:5px 8px}
+.browser-body th{background:#F2F0EA}
+.browser-body blockquote{border-right:3px solid #9AA5B4;padding:4px 10px;margin:4px 0;color:#475569;font-style:italic;background:#F4F2EC}
+
+.console-pane{border-top:1px solid var(--border);background:#ECEFF2}
+.console-head{
+  display:flex;align-items:center;justify-content:space-between;height:30px;padding:0 12px;
+  background:#E4E7EC;border-bottom:1px solid var(--border);
+  font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--ok);direction:ltr;
+}
+.console-body{padding:10px 14px;font-family:var(--mono);font-size:12.5px;line-height:1.7;color:#1E293B;direction:ltr;text-align:left}
+.console-line{display:flex;gap:8px}.console-line::before{content:'›';color:var(--ok);font-weight:700}
+
+/* ─── 5. PLAY MODE: Cohesive Light Challenge Workspace ──────────────────── */
+.game-shell{
+  flex:1;overflow:auto;padding:20px 24px;display:flex;flex-direction:column;align-items:center;
+  background:var(--bg);
+}
+.game-inner{
+  width:100%;max-width:980px;display:flex;flex-direction:column;gap:14px;animation:fadeIn .18s var(--ease);
+}
+.mission-head{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  padding:14px 18px;border-radius:var(--r);background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-sm);
+}
+.mission-head h2{font-family:var(--display);margin:0;font-size:clamp(15px,1.35vw,17.5px);font-weight:600;line-height:1.5;outline:none;flex:1;min-width:220px;color:var(--text)}
+.type-pill{
+  display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;
+  font-size:12px;font-weight:600;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-bd);flex-shrink:0;
+}
+.playfield{
+  display:flex;flex-direction:column;gap:14px;padding:18px;
+  border-radius:var(--r);background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-sm);
+}
+
+/* Mechanics: Crisp Warm Editorial Surfaces */
+.opt-grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr))}
+.opt-btn{
+  display:flex;flex-direction:column;align-items:stretch;gap:10px;text-align:right;
+  padding:13px 15px;border-radius:10px;border:1px solid var(--border);background:var(--bg);
+  min-height:50px;font-size:14.5px;font-weight:500;color:var(--text);
+  transition:background .15s var(--ease),border-color .15s,transform .12s;
+}
+.opt-btn:hover:not(:disabled){background:var(--surface-hi);border-color:var(--border-hi)}
+.opt-btn:active:not(:disabled){transform:scale(.99)}
+.opt-btn:disabled{opacity:.65;cursor:default}
+.opt-btn.ok{border-color:var(--ok);background:var(--ok-soft);color:#0E4E39;opacity:1}
+.opt-btn.bad{border-color:var(--bad);background:var(--bad-soft);color:#7E1D24;animation:shake .22s}
+.opt-row{display:flex;align-items:center;gap:10px}
+.opt-k{
+  width:26px;height:26px;border-radius:6px;display:grid;place-items:center;flex-shrink:0;
+  background:var(--surface);border:1px solid var(--border);font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent);
+}
+.opt-prev-box{border-radius:8px;overflow:hidden;border:1px solid var(--border);background:var(--preview-bg)}
+
+.tray{
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;
+  padding:11px;border-radius:10px;background:var(--bg);border:1px dashed var(--border-hi);
+}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:6px 13px;
+  border-radius:8px;border:1px solid var(--border-hi);background:var(--surface);
+  font-size:13.5px;font-weight:500;color:var(--text);user-select:none;touch-action:none;
+  box-shadow:var(--shadow-sm);transition:background .14s var(--ease),border-color .14s,transform .14s,opacity .14s;
+}
+.chip.code-chip{font-family:var(--mono);direction:ltr;font-size:13px}
+.chip:hover{background:var(--surface-hi);border-color:var(--accent)}
+.chip.picked{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-hi)}
+.chip.used{opacity:.32;pointer-events:none;box-shadow:none}
+.chip.locked{border-color:var(--ok-bd);background:var(--ok-soft);color:#0E4E39;cursor:default;box-shadow:none}
+.chip.bad{border-color:var(--bad);background:var(--bad-soft);color:#7E1D24;animation:shake .22s}
+.drag-ghost{position:fixed;z-index:999;pointer-events:none;transform:translate(-50%,-50%) scale(1.03);box-shadow:var(--shadow-md);border-color:var(--accent)!important;background:var(--surface)!important}
+.drop-over{border-color:var(--accent)!important;background:var(--accent-soft)!important}
+
+.slot-blank{
+  display:inline-flex;align-items:center;justify-content:center;min-width:78px;height:26px;
+  padding:0 9px;margin:0 3px;border-radius:6px;vertical-align:middle;
+  border:1px dashed var(--accent);background:var(--accent-soft);color:var(--accent);
+  font-family:var(--mono);font-size:12.5px;font-weight:600;transition:all .14s;
+}
+.slot-blank.filled{border-style:solid;background:rgba(14,124,144,.14);color:var(--text)}
+.slot-blank.ok{border-color:var(--ok);background:var(--ok-soft);color:#0E4E39}
+.slot-blank.bad{border-color:var(--bad);background:var(--bad-soft);color:#7E1D24;animation:shake .22s}
+
+.buckets-grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr))}
+.bucket{
+  display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:10px;
+  border:1px dashed var(--border-hi);background:var(--bg);min-height:106px;transition:border-color .15s,background .15s;
+}
+.bucket-h{font-family:var(--display);font-size:13px;font-weight:600;color:var(--accent);text-align:center;padding-bottom:7px;border-bottom:1px solid var(--border)}
+.bucket-items{display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;flex:1}
+.bucket.hint-glow{border-color:var(--amber);background:var(--amber-soft)}
+.wireframe-page{display:grid;gap:8px;direction:ltr;grid-template-areas:"header header" "nav nav" "main aside" "footer footer";grid-template-columns:2.2fr 1fr}
+.wireframe-table{display:grid;gap:8px;direction:ltr;grid-template-columns:1fr}
+.wireframe-page .bucket,.wireframe-table .bucket{min-height:64px;padding:8px 10px}
+
+.order-list{display:flex;flex-direction:column;gap:7px;width:100%}
+.order-row{
+  display:flex;align-items:center;gap:12px;padding:9px 13px;border-radius:10px;
+  border:1px solid var(--border);background:var(--bg);min-height:46px;user-select:none;touch-action:none;
+  transition:border-color .15s,background .15s;
+}
+.order-row:hover{border-color:var(--border-hi);background:var(--surface-hi)}
+.order-row.ok{border-color:var(--ok);background:var(--ok-soft)}
+.order-row.bad{border-color:var(--bad);background:var(--bad-soft);animation:shake .22s}
+.order-idx{
+  width:26px;height:26px;border-radius:6px;display:grid;place-items:center;flex-shrink:0;
+  background:var(--surface);border:1px solid var(--border);font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent);
+}
+.order-txt{flex:1;min-width:0;font-size:14px;font-weight:500}
+.order-txt.mono{font-family:var(--mono);direction:ltr;text-align:left;font-size:13px}
+.mv-btns{display:flex;gap:4px;flex-shrink:0}
+.mv-btn{width:32px;height:32px;border-radius:7px;border:1px solid var(--border);background:var(--surface);display:grid;place-items:center;font-size:11px;color:var(--text-soft);transition:all .14s}
+.mv-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.mv-btn:disabled{opacity:.32;cursor:not-allowed}
+
+.bug-tok{
+  display:inline;font-family:inherit;font-size:inherit;padding:1px 5px;border-radius:4px;
+  background:rgba(24,34,48,.04);border-bottom:1.5px solid rgba(78,93,115,.38);
+  color:inherit;transition:background .14s,border-color .14s;
+}
+.bug-tok:hover{background:var(--amber-soft);border-bottom-color:var(--amber)}
+.bug-tok.found{background:var(--ok-soft);border-bottom:2px solid var(--ok);color:#0E4E39}
+.bug-tok.safe-hit{background:var(--bad-soft);border-bottom-color:var(--bad);animation:shake .22s}
+
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:stretch}
+.match-col{display:flex;flex-direction:column;gap:7px}
+.m-btn{
+  width:100%;min-height:46px;padding:9px 13px;border-radius:10px;
+  border:1px solid var(--border);background:var(--bg);font-size:13.5px;font-weight:500;
+  text-align:center;color:var(--text);transition:all .15s var(--ease);
+}
+.m-btn.mono-m{font-family:var(--mono);font-size:13px;direction:ltr}
+.m-btn:hover:not(:disabled){background:var(--surface-hi);border-color:var(--border-hi)}
+.m-btn.picked{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-hi)}
+.m-btn.ok{border-color:var(--ok);background:var(--ok-soft);color:#0E4E39;cursor:default}
+.m-btn.bad{border-color:var(--bad);background:var(--bad-soft);animation:shake .22s}
+.m-btn.hint-glow{border-color:var(--amber);background:var(--amber-soft)}
+
+/* Unified Split Mini-IDE (Patch Mechanic) */
+.patch-lab{
+  display:grid;grid-template-columns:minmax(0,1.15fr) minmax(240px,.85fr);
+  border-radius:var(--r);overflow:hidden;border:1px solid var(--border);background:var(--surface);
+}
+.patch-pane{display:flex;flex-direction:column;min-width:0;border-inline-end:1px solid var(--border)}
+.patch-tools{
+  display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:space-between;
+  padding:8px 10px;background:var(--bg-2);border-bottom:1px solid var(--border);
+}
+.chip-bar{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.ins-chip{
+  font-family:var(--mono);font-size:12px;padding:4px 9px;border-radius:6px;direction:ltr;
+  border:1px solid var(--accent-bd);background:var(--surface);color:var(--accent);min-height:30px;font-weight:500;
+  transition:background .14s,border-color .14s;
+}
+.ins-chip:hover{background:var(--accent-soft);border-color:var(--accent)}
+.patch-ta{
+  width:100%;min-height:152px;flex:1;resize:none;padding:12px 14px;border:0;
+  background:var(--code-bg);color:#182230;
+  font-family:var(--mono);font-size:13px;line-height:1.72;direction:ltr;text-align:left;
+}
+.patch-ta:focus{outline:none;box-shadow:inset 0 0 0 1.5px var(--accent)}
+.patch-out{display:flex;flex-direction:column;min-width:0;min-height:152px;background:var(--preview-bg)}
+.patch-out iframe{border:0;width:100%;flex:1;min-height:120px;background:var(--preview-bg)}
+.patch-out.js-out{background:var(--code-bg)}
+.patch-check-list{padding:12px;display:flex;flex-direction:column;gap:7px;font-size:13px}
+.pchk{
+  display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:8px;
+  background:var(--surface);border:1px solid var(--border);color:var(--text-soft);transition:all .16s;
+}
+.pchk.pass{background:var(--ok-soft);border-color:var(--ok-bd);color:#0E4E39}
+.pchk svg{margin-top:2px;flex-shrink:0}
+
+/* ─── 6. Lesson Navigation Footer Dock ──────────────────────────────────── */
+.ws-dock{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  min-height:52px;padding:8px 22px calc(8px + env(safe-area-inset-bottom));
+  border-top:1px solid var(--border);background:var(--bg-2);flex-shrink:0;
+}
+.dock-g{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.btn-primary{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  height:36px;padding:0 16px;border-radius:9px;
+  background:var(--accent);color:var(--on-accent);font-family:var(--display);font-size:13px;font-weight:600;
+  transition:background .15s var(--ease),transform .12s;white-space:nowrap;
+}
+.btn-primary:hover:not(:disabled){background:var(--accent-hi)}
+.btn-primary:active:not(:disabled){transform:scale(.98)}
+.btn-primary:disabled{opacity:.42;cursor:not-allowed}
+.btn-sec{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  height:36px;padding:0 12px;border-radius:9px;
+  border:1px solid var(--border);background:var(--surface);color:var(--text-soft);
+  font-size:13px;font-weight:500;transition:background .15s,border-color .15s,color .15s;white-space:nowrap;
+}
+.btn-sec:hover:not(:disabled){background:var(--surface-hi);border-color:var(--border-hi);color:var(--text)}
+.btn-sec:disabled{opacity:.4;cursor:not-allowed}
+.btn-sec.pulse{border-color:var(--amber-bd);color:var(--amber);background:var(--amber-soft)}
+.toast{
+  flex:1;min-width:0;text-align:center;font-size:13px;font-weight:500;line-height:1.45;
+  padding:6px 12px;border-radius:8px;color:var(--text-soft);overflow:hidden;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+}
+.toast.ok{color:#0E5940;background:var(--ok-soft);border:1px solid var(--ok-bd)}
+.toast.bad{color:#91252D;background:var(--bad-soft);border:1px solid var(--bad-bd)}
+.toast.warn{color:#8A5608;background:var(--amber-soft);border:1px solid var(--amber-bd)}
+.toast.info{color:var(--text-soft);background:transparent}
+
+/* ─── Recall & Submission Summary Views ─────────────────────────────────── */
+.recall-wrap{flex:1;overflow:auto;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--bg);animation:fadeIn .18s var(--ease)}
+.flashcard{
+  width:min(640px,100%);padding:26px 24px;border-radius:var(--r);
+  background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-sm);
+  text-align:center;display:flex;flex-direction:column;gap:14px;
+}
+.flash-q{font-family:var(--display);font-size:17.5px;font-weight:600;line-height:1.6;color:var(--text)}
+.flash-a{
+  font-size:14.5px;color:#0E4E39;padding:14px 16px;border-radius:var(--r-sm);
+  background:var(--ok-soft);border:1px solid var(--ok-bd);line-height:1.75;
+}
+.sum-list{list-style:none;margin:0;padding:0;width:min(720px,100%);display:flex;flex-direction:column;gap:8px}
+.sum-list li{
+  display:flex;align-items:flex-start;gap:11px;padding:12px 15px;border-radius:10px;
+  background:var(--surface);border:1px solid var(--border);font-size:14.5px;line-height:1.75;color:var(--text-body);
+}
+.sum-num{
+  width:24px;height:24px;border-radius:6px;display:grid;place-items:center;flex-shrink:0;
+  background:var(--bg);border:1px solid var(--border);color:var(--accent);
+  font-family:var(--mono);font-size:12px;font-weight:600;margin-top:2px;
+}
+
+/* ─── Single Modal Slot ─────────────────────────────────────────────────── */
+.overlay{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:16px;background:rgba(24,34,48,.42)}
+.overlay[hidden]{display:none}
+.modal{
+  width:min(460px,100%);max-height:90dvh;display:flex;flex-direction:column;gap:14px;
+  padding:20px;border-radius:14px;background:var(--surface);border:1px solid var(--border-hi);
+  box-shadow:var(--shadow-md);animation:pop .18s var(--ease);
+}
+.modal h3{font-family:var(--display);margin:0;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--text)}
+.modal-body{overflow:auto;display:flex;flex-direction:column;gap:10px;font-size:14px;line-height:1.7;color:var(--text-body)}
+.modal-foot{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.clear-ring{
+  width:52px;height:52px;border-radius:50%;margin:2px auto;display:grid;place-items:center;
+  background:var(--ok-soft);border:1px solid var(--ok-bd);color:var(--ok);
+}
+.clear-ring svg{width:24px;height:24px}
+
+@keyframes fadeIn{0%{opacity:0;transform:translateY(4px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes pop{0%{transform:scale(.96);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* ─── 7. Responsive Tiers (Desktop -> Medium Drawer -> Mobile -> Short) ── */
+@media (max-width:1119px){
+  .studio,.studio.rail-collapsed{grid-template-columns:1fr}
+  .rail,.studio.rail-collapsed .rail{
+    position:fixed;inset-block:0;inset-inline-start:0;z-index:150;
+    width:min(316px,86vw);border-inline-end:1px solid var(--border-hi);
+    box-shadow:var(--shadow-md);
+    opacity:1;pointer-events:auto;
+    transform:translateX(105%);transition:transform .2s var(--ease);
+  }
+  .rail.drawer-open,.studio.rail-collapsed .rail.drawer-open{transform:translateX(0)}
+}
+@media (max-width:959px){
+  .doc-split{display:flex;flex-direction:column;overflow:auto;overscroll-behavior:contain}
+  .doc-prose-wrap{overflow:visible;flex-shrink:0;min-height:auto;border-inline-end:0;border-bottom:1px solid var(--border);padding:18px 18px}
+  .doc-prose{max-width:none}
+  .lab-col{overflow:visible;flex-shrink:0;min-height:auto;padding:16px 18px}
+  .patch-lab{grid-template-columns:1fr}
+  .patch-pane{border-inline-end:0;border-bottom:1px solid var(--border)}
+}
+@media (max-width:767px){
+  .topbar{padding:0 10px;gap:8px}
+  .brand-sub,.prog-lbl,.prog-bar,.top-div,.util-lbl{display:none}
+  .ws-head-top{padding:10px 14px 8px;gap:8px}
+  .ws-en{display:none}
+  .ws-tabs-row{padding:0 14px}
+  .ws-meta{display:none}
+  .doc-prose-wrap{padding:14px}
+  .lab-col{padding:12px 14px}
+  .game-shell{padding:12px 14px}
+  .playfield{padding:12px}
+  .ws-dock{padding:8px 12px calc(8px + env(safe-area-inset-bottom));gap:8px}
+  .ws-dock .toast.info{display:none}
+  .dock-lbl{display:none}
+  .btn-primary,.btn-sec,.icon-btn,.util-btn{min-height:40px}
+  .match-grid{gap:8px}
+  .m-btn{padding:8px;font-size:13px}
+}
+@media (max-width:520px){
+  .prog-meter{display:none}
+}
+@media (max-height:480px){
+  .app{grid-template-rows:42px minmax(0,1fr)}
+  .ws-head-top{padding:6px 14px 5px}
+  .ws-heading h1{font-size:15px}
+  .ws-en{display:none}
+  .mode-btn{height:26px;padding:0 10px;font-size:12px}
+  .ws-tab{height:30px;font-size:12px;padding:0 10px}
+  .doc-prose-wrap{padding:12px 16px}
+  .doc-prose{gap:10px}
+  .doc-h2{font-size:15px;padding-bottom:6px}
+  .doc-p{font-size:13.5px;line-height:1.62}
+  .insight{padding:8px 11px;font-size:13px;line-height:1.55}
+  .lab-col{padding:10px 14px}
+  .code-line{font-size:12px;line-height:1.55;min-height:20px}
+  .game-shell{padding:10px 14px}
+  .mission-head{padding:9px 14px}
+  .mission-head h2{font-size:14.5px}
+  .playfield{padding:10px 14px;gap:10px}
+  .ws-dock{min-height:44px;padding:5px 14px}
+  .btn-primary,.btn-sec{height:32px;font-size:12.5px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+<svg style="display:none" aria-hidden="true">
+  <symbol id="i-emblem-it" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 15h3M1 9h3M1 15h3"/><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-emblem-html" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 6 2 12 8 18"/><polyline points="16 6 22 12 16 18"/><line x1="14" y1="4" x2="10" y2="20"/></symbol>
+  <symbol id="i-emblem-css" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 22 8.5 12 15 2 8.5 12 2"/><polyline points="2 15.5 12 22 22 15.5"/><polyline points="2 12 12 18.5 22 12"/></symbol>
+  <symbol id="i-emblem-js" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4C5 4 4 5 4 7v3c0 1.2-.8 2-2 2 1.2 0 2 .8 2 2v3c0 2 1 3 3 3"/><path d="M17 4c2 0 3 1 3 3v3c0 1.2.8 2 2 2-1.2 0-2 .8-2 2v3c0 2-1 3-3 3"/><polygon points="13 7 9.5 13 12 13 11 17 14.5 11 12 11 13 7" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-panel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2.5"/><line x1="15" y1="3" x2="15" y2="21"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 4 20 12 6 20 6 4"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></symbol>
+  <symbol id="i-tip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><circle cx="12" cy="17" r=".8" fill="currentColor"/></symbol>
+  <symbol id="i-boss" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h18l-1.5-10-4.5 4-3-6-3 6-4.5-4L3 18z"/><line x1="4" y1="21" x2="20" y2="21"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+  <symbol id="i-cards" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="14" height="14" rx="2"/><path d="M7 3h12a2 2 0 0 1 2 2v12"/></symbol>
+  <symbol id="i-summary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24" fill="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></symbol>
+  <symbol id="i-xray" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+  <symbol id="i-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></symbol>
+</svg>
+
+<div class="app">
+  <header class="topbar" id="topbar"></header>
+  <div class="studio" id="studio">
+    <div class="drawer-backdrop" id="drawerBackdrop" aria-hidden="true"></div>
+    <aside class="rail" id="rail" aria-label="أقسام المحاضرة"></aside>
+    <main class="workspace" id="workspace"></main>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" hidden role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal" id="modal"></div>
+</div>
+
+<script id="lesson-data" type="application/json">
+{
+  "id": "demo-studio",
+  "title": "درس تجريبي — استوديو التعلّم",
+  "subtitle": "شرح تفاعلي + لعبة بدون Scroll",
+  "accent": "#0E7C90",
+  "theme": "html",
+  "lang": "html",
+  "summary": ["افهم الفكرة من الشرح التفاعلي وطبّقها فوراً في اللعبة."],
+  "levels": [
+    {
+      "id": "demo-1",
+      "num": 1,
+      "title": "أول صفحة HTML",
+      "en": "First HTML File",
+      "docs": [
+        {
+          "tab": "الهيكل الأساسي",
+          "heading": "أول ملف HTML5 من الصفر",
+          "body": ["أي ملف HTML5 لازم يبدأ بـ <code>&lt;!DOCTYPE html&gt;</code> عشان الـ browser يعرف إنك بتكتب بأحدث إصدار."],
+          "callout": { "kind": "analogy", "title": "فكّر فيها كده", "text": "الـ head زي بطاقة الهوية (معلومات عن الصفحة مش باينة)، والـ body هو إنت نفسك!" },
+          "code": "[[0|<!DOCTYPE html>]]\n<html lang=\"ar\" dir=\"rtl\">\n  [[1|<body>]]<h1>أهلاً بيك!</h1></body>\n</html>",
+          "spots": [
+            { "title": "DOCTYPE", "say": "إعلان رسمي للـ browser إن الملف HTML5." },
+            { "title": "<body>", "say": "كل المحتوى المرئي جوا الصفحة." }
+          ],
+          "preview": "<div dir='rtl'><h1>أهلاً بيك!</h1></div>",
+          "previewUrl": "file:///index.html"
+        }
+      ],
+      "stages": [
+        {
+          "id": "d1",
+          "type": "choice",
+          "prompt": "إيه أول سطر لازم يكون في أي ملف HTML5؟",
+          "options": [
+            { "t": "<!DOCTYPE html>", "why": "بالظبط! ده إعلان HTML5 الرسمي." },
+            { "t": "<html5>", "why": "مفيش tag اسمه html5 — بنكتب <!DOCTYPE html>." }
+          ],
+          "answer": 0,
+          "hint": "بيبدأ بعلامة تعجب !"
+        },
+        {
+          "id": "d2",
+          "type": "slot",
+          "prompt": "اسحب التاج الصح عشان تقفل العنوان:",
+          "code": "[[0]]أهلاً بيك[[1]]",
+          "tokens": ["<h1>", "</h1>", "<p>"],
+          "answer": ["<h1>", "</h1>"],
+          "why": "العنوان الرئيسي بيفتح بـ <h1> ويقفل بـ </h1>.",
+          "hint": "نفس الاسم في الفتح والإغلاق مع /."
+        }
+      ]
+    }
+  ],
+  "recall": [
+    { "q": "إيه أول سطر في ملف HTML5؟", "a": "<!DOCTYPE html>" }
+  ]
+}
+</script>
+
+<script>
+(() => {
+'use strict';
+
+const LESSON = JSON.parse(document.getElementById('lesson-data').textContent);
+
+const VOICE = {
+  ok: ['عاش يا وحش!','بالظبط كده!','ممتاز، جبتها صح!','دماغك شغالة ١٠/١٠!','معلّم! إجابة دقيقة','صح الصح يا بطل!','تركيز عالي أوي!','شغل نضيف!'],
+  wrong: ['قرّبت جداً… ','مش دي، بص كده: ','حلو إنك جرّبت، بس ','استنى ثانية: ','فكّر فيها تاني: ','تكة صغيرة فاتتك: '],
+  okSpot: ['السطر ده سليم ١٠٠٪! دوّر في حتة تانية.','الكود هنا زي الفل، الغلطة مش هنا.','الجزء ده بريء! بص حواليه.'],
+  hint: ['تلميحة: ','بص يا سيدي: ','مفتاح الحل: ','فكّر فيها كده: '],
+  combo: ['كومبو ×2 شغال!','تركيز متواصل — ×2 XP','سلسلة صح — نقط مضاعفة!'],
+  reveal: ['ولا يهمك، المهم تفهمها! الحل الصح هنا:','عادي جداً، تعالى نشوف الحل الصح وليه:'],
+  levelDone: ['خلّصت تحديات القسم بنجاح!','أتممت القسم بالكامل!','أداء ممتاز في القسم ده!']
+};
+
+const TYPE_LABEL = {
+  explore:'استكشاف كود', choice:'اختيار وتوقّع', slot:'اسحب وركّب', buckets:'تصنيف وبناء',
+  order:'رتّب الخطوات', bughunt:'اصطاد الغلطة', match:'وصّل الصح', patch:'عدّل الكود حي'
+};
+
+const qs = new URLSearchParams(location.search);
+const QA_MODE = qs.get('qa') === '1';
+const AR = '٠١٢٣٤٥٦٧٨٩';
+const ar = n => String(n).replace(/\d/g, d => AR[+d]);
+const pad2 = n => (n < 10 ? '0' + n : String(n));
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ico = (id, cls='') => `<svg class="ic ${cls}" aria-hidden="true"><use href="#i-${id}"/></svg>`;
+const lastV = {};
+const say = k => { const a = VOICE[k]||['']; let i = Math.floor(Math.random()*a.length); if(a.length>1 && lastV[k]===i) i=(i+1)%a.length; lastV[k]=i; return a[i]; };
+const looksCode = s => {
+  const t = String(s).trim();
+  return t.startsWith('<') || (/^[.#@a-zA-Z0-9_$()[\]{}:;=+\-*/%!<>&|"'`.,\s]+$/.test(t) && /[a-zA-Z0-9<>:=#.]/.test(t) && !/[\u0600-\u06FF]/.test(t));
+};
+
+/* ─── Persistence (Existing Progress Schema Preserved 100%) ─────────────── */
+const KEY = `lg2:${LESSON.id}:v1`;
+const UI_RAIL_KEY = 'lg2:ui:railCollapsed';
+const defState = () => ({ v:1, xp:0, streak:0, solved:{}, levels:{} });
+let memState = defState();
+const Store = {
+  load(){
+    try{
+      const p = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if(p && p.v===1 && p.solved && p.levels) return (memState = p);
+    }catch{}
+    return memState;
+  },
+  save(st){ memState = st; try{ localStorage.setItem(KEY, JSON.stringify(st)); }catch{} },
+  getRailCollapsed(){ try{ return localStorage.getItem(UI_RAIL_KEY) === '1'; }catch{ return false; } },
+  setRailCollapsed(v){ try{ localStorage.setItem(UI_RAIL_KEY, v ? '1' : '0'); }catch{} }
+};
+let S = Store.load();
+
+/* ─── BiDi-Safe Syntax Highlighter & Line-Numbered Code Renderer ────────── */
+function isolateArText(segment){
+  return segment.replace(/([\u0600-\u06FF][^\n<&]*[\u0600-\u06FF.!؟،]|[ \u0600-\u06FF]*[\u0600-\u06FF]+[!؟.]?)/g, m => `<bdi class="syn-ar">${m}</bdi>`);
+}
+function hl(text, lang){
+  const l = lang || LESSON.lang || 'html';
+  let s = esc(text);
+  if(l === 'plain') return s;
+  if(l === 'html'){
+    const parts = s.split(/(&lt;!--[\s\S]*?--&gt;|&lt;\/?[a-zA-Z!][a-zA-Z0-9-]*[\s\S]*?\/?&gt;)/g);
+    return parts.map(p => {
+      if(/^&lt;!--/.test(p)) return `<span class="syn-com">${p}</span>`;
+      if(/^&lt;/.test(p)){
+        return p.replace(/^(&lt;\/?[a-zA-Z!][a-zA-Z0-9-]*)([\s\S]*?)(\/?&gt;)$/, (_, o, attrs, c) => {
+          const a = attrs.replace(/([a-zA-Z_:][-a-zA-Z0-9_:.]*)(\s*=\s*)(&quot;[^&]*?&quot;)/g,
+            '<span class="syn-attr">$1</span>$2<span class="syn-val">$3</span>');
+          return `<span class="syn-tag">${o}</span>${a}<span class="syn-tag">${c}</span>`;
+        });
+      }
+      return isolateArText(p);
+    }).join('');
+  }
+  if(l === 'css'){
+    return s.replace(/(\/\*[\s\S]*?\*\/)|(@[a-z-]+)\b|((?:--[a-z0-9-]+|[a-z-]+)\s*:\s*[^;{}\n]+)/gi, (m, com, at, decl) => {
+      if(com) return `<span class="syn-com">${isolateArText(com)}</span>`;
+      if(at) return `<span class="syn-kw">${at}</span>`;
+      return decl.replace(/^(--[a-z0-9-]+|[a-z-]+)(\s*:\s*)([\s\S]+)$/i, '<span class="syn-attr">$1</span>$2<span class="syn-val">$3</span>');
+    });
+  }
+  if(l === 'js'){
+    return s.replace(/(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|(&quot;[\s\S]*?&quot;|&#39;[\s\S]*?&#39;|`[^`]*?`)|\b(const|let|var|function|return|if|else|for|while|switch|case|break|default|of|in|typeof|class|new|true|false|null|undefined|async|await)\b|\b(console|document|window|Math|Array|Object)\b/g, (m, com, str, kw, fn) => {
+      if(com) return `<span class="syn-com">${isolateArText(com)}</span>`;
+      if(str) return `<span class="syn-val">${isolateArText(str)}</span>`;
+      if(kw) return `<span class="syn-kw">${kw}</span>`;
+      if(fn) return `<span class="syn-fn">${fn}</span>`;
+      return m;
+    });
+  }
+  if(l === 'sql'){
+    return s.replace(/\b(SELECT|FROM|WHERE|JOIN|ON|GROUP BY|ORDER BY|HAVING|INSERT|INTO|VALUES|UPDATE|SET|DELETE|CREATE|TABLE|AS|AND|OR|NOT|NULL)\b/gi, '<span class="syn-kw">$1</span>');
+  }
+  return s;
+}
+function renderMarkedLine(line, lang, fn){
+  return String(line).split(/(\[\[(?:ok|\d+)(?:\|[^\]]+)?\]\])/g).map(p => {
+    const m = p.match(/^\[\[(ok|\d+)(?:\|([^\]]+))?\]\]$/);
+    return m ? fn(m[1], m[2] || '') : hl(p, lang);
+  }).join('');
+}
+function renderCodeLines(code, lang, markerFn){
+  const lines = String(code).split('\n');
+  return `<div class="code-box scroll"><div class="code-lines-inner">${lines.map((ln, idx) => {
+    const content = markerFn ? renderMarkedLine(ln, lang, markerFn) : hl(ln, lang);
+    return `<div class="code-line"><span class="ln" aria-hidden="true">${idx+1}</span><span class="lc">${content || ' '}</span></div>`;
+  }).join('')}</div></div>`;
+}
+
+function shuffled(arr, seed){
+  const out = arr.map((v,i)=>({v,i}));
+  let h = 2166136261;
+  for(const c of String(seed)) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
+  for(let i=out.length-1;i>0;i--){
+    h = Math.imul(h ^ (h>>>13), 1274126177);
+    const j = Math.abs(h) % (i+1);
+    [out[i],out[j]] = [out[j],out[i]];
+  }
+  if(out.length > 1 && out.every((x,i)=>x.i===i)) [out[0],out[1]] = [out[1],out[0]];
+  return out;
+}
+
+/* ─── Runtime Studio State ──────────────────────────────────────────────── */
+let view = 'section';
+let curL = 0;
+let mode = 'explain';
+let curDoc = 0;
+let curS = 0;
+let stageSolved = false, stageMisses = 0, stageHintUsed = false;
+let hearts = 3, levelMisses = 0, levelXP = 0, levelMistakes = [];
+let checkHandler = null, revealHandler = null, lastFocus = null, bumpXpNext = false;
+let recallQ = [], recallIdx = 0, recallFlipped = false;
+let railCollapsed = Store.getRailCollapsed();
+let drawerOpen = false;
+
+const $top = document.getElementById('topbar');
+const $studio = document.getElementById('studio');
+const $rail = document.getElementById('rail');
+const $backdrop = document.getElementById('drawerBackdrop');
+const $ws = document.getElementById('workspace');
+const $overlay = document.getElementById('overlay');
+const $modal = document.getElementById('modal');
+
+const isDrawerMode = () => innerWidth < 1120;
+const totalStagesAll = LESSON.levels.reduce((a,l)=>a+l.stages.length, 0);
+const solvedCountAll = () => LESSON.levels.reduce((a,l)=>a+l.stages.filter(st=>S.solved[st.id]).length, 0);
+const sectionSolvedCount = L => L.stages.filter(st=>S.solved[st.id]).length;
+const emblemId = () => {
+  const t = (LESSON.theme || LESSON.lang || 'html').toLowerCase();
+  return ['it','html','css','js'].includes(t) ? `emblem-${t}` : 'emblem-html';
+};
+
+function syncRailState(){
+  $studio.classList.toggle('rail-collapsed', !isDrawerMode() && railCollapsed);
+  $rail.classList.toggle('drawer-open', isDrawerMode() && drawerOpen);
+  $backdrop.classList.toggle('open', isDrawerMode() && drawerOpen);
+  const tb = document.getElementById('railToggle');
+  if(tb) tb.setAttribute('aria-expanded', String(isDrawerMode() ? drawerOpen : !railCollapsed));
+}
+function toggleRail(){
+  if(isDrawerMode()){
+    drawerOpen = !drawerOpen;
+    syncRailState();
+    if(drawerOpen) $rail.querySelector('.sec-tab.active, .sec-tab')?.focus();
+    else document.getElementById('railToggle')?.focus();
+  } else {
+    railCollapsed = !railCollapsed;
+    Store.setRailCollapsed(railCollapsed);
+    syncRailState();
+  }
+}
+function closeDrawer(restoreFocus=false){
+  if(!drawerOpen) return;
+  drawerOpen = false;
+  syncRailState();
+  if(restoreFocus) document.getElementById('railToggle')?.focus();
+}
+$backdrop.addEventListener('click', () => closeDrawer(true));
+window.addEventListener('resize', () => { if(!isDrawerMode() && drawerOpen) drawerOpen = false; syncRailState(); });
+
+function toast(msg, kind='info'){
+  const t = document.getElementById('toast');
+  if(t){ t.className = `toast ${kind}`; t.textContent = msg; }
+}
+
+function openModal(title, bodyHtml, footHtml){
+  lastFocus = document.activeElement;
+  $modal.innerHTML = `<h3 id="modalTitle"><span>${title}</span><button class="icon-btn" id="mClose" aria-label="إغلاق">${ico('close','ic-sm')}</button></h3><div class="modal-body scroll">${bodyHtml}</div><div class="modal-foot">${footHtml||''}</div>`;
+  $overlay.hidden = false;
+  $modal.querySelector('#mClose').onclick = closeModal;
+  $modal.querySelector('#mClose').focus();
+}
+function closeModal(){
+  if($overlay.hidden) return;
+  $overlay.hidden = true; $modal.innerHTML = '';
+  if(lastFocus && lastFocus.isConnected) lastFocus.focus();
+}
+$overlay.addEventListener('click', e => { if(e.target === $overlay) closeModal(); });
+
+/* ─── Pointer-Events Drag Helper ────────────────────────────────────────── */
+function attachDrag(el, { onTap, onDrop }){
+  let sx=0, sy=0, dragging=false, ghost=null, lastDrop=null, pid=null;
+  el.addEventListener('pointerdown', e => {
+    if(e.button && e.button !== 0) return;
+    if(e.target.closest('.mv-btn')) return;
+    if(el.classList.contains('used') || el.classList.contains('locked')) return;
+    pid = e.pointerId; sx = e.clientX; sy = e.clientY; dragging = false;
+  });
+  el.addEventListener('pointermove', e => {
+    if(pid !== e.pointerId) return;
+    if(!dragging && Math.hypot(e.clientX-sx, e.clientY-sy) > 7){
+      dragging = true;
+      try{ el.setPointerCapture(pid); }catch{}
+      ghost = el.cloneNode(true); ghost.classList.add('drag-ghost');
+      ghost.style.width = el.offsetWidth + 'px';
+      document.body.appendChild(ghost);
+    }
+    if(dragging && ghost){
+      ghost.style.left = e.clientX + 'px'; ghost.style.top = e.clientY + 'px';
+      const u = document.elementFromPoint(e.clientX, e.clientY);
+      const dz = u && u.closest('[data-drop]');
+      if(lastDrop && lastDrop !== dz) lastDrop.classList.remove('drop-over');
+      if(dz) dz.classList.add('drop-over');
+      lastDrop = dz;
+    }
+  });
+  const end = e => {
+    if(pid !== e.pointerId) return;
+    pid = null;
+    if(ghost){ ghost.remove(); ghost = null; }
+    if(lastDrop) lastDrop.classList.remove('drop-over');
+    if(dragging){ const dz = lastDrop; lastDrop = null; if(dz && onDrop) onDrop(dz); }
+    else if(onTap) onTap();
+    dragging = false;
+  };
+  el.addEventListener('pointerup', end);
+  el.addEventListener('pointercancel', end);
+}
+
+/* ─── Render Global Header & Collapsible Chapter Sidebar ────────────────── */
+function renderChrome(){
+  const doneS = solvedCountAll();
+  const pct = totalStagesAll ? Math.round((doneS / totalStagesAll) * 100) : 0;
+  const comboHtml = S.streak >= 3 ? `<span class="combo-chip" title="سلسلة إجابات صحيحة">×2</span>` : '';
+  const xpCls = bumpXpNext ? 'xp-chip bump' : 'xp-chip';
+  bumpXpNext = false;
+
+  $top.innerHTML = `
+    <div class="top-start">
+      <button class="icon-btn" id="railToggle" aria-label="إظهار أو إخفاء فهرس الأقسام" aria-controls="rail" aria-expanded="${isDrawerMode() ? drawerOpen : !railCollapsed}">${ico('panel')}</button>
+      <div class="brand">
+        <span class="brand-mark">${ico(emblemId())}</span>
+        <div class="brand-txt">
+          <div class="brand-title">${esc(LESSON.title)}</div>
+          <div class="brand-sub">${esc(LESSON.subtitle || '')}</div>
+        </div>
+      </div>
+    </div>
+    <div class="top-end">
+      <div class="prog-meter" aria-label="التقدم الإجمالي ${pct}% (${doneS} من ${totalStagesAll})">
+        <span class="prog-lbl">التقدّم</span>
+        <div class="prog-bar"><div class="prog-fill ${pct===100?'full':''}" style="width:${pct}%"></div></div>
+        <span class="prog-val">${doneS}/${totalStagesAll}</span>
+      </div>
+      ${comboHtml}
+      <span class="${xpCls}" aria-label="${S.xp} نقطة خبرة">${ico('bolt','ic-sm')} ${S.xp} XP</span>
+      <span class="top-div" aria-hidden="true"></span>
+      ${LESSON.recall?.length ? `<button class="util-btn ${view==='recall'?'active':''}" id="navRecall">${ico('cards','ic-sm')} <span class="util-lbl">مراجعة (${ar(LESSON.recall.length)})</span></button>` : ''}
+      <button class="util-btn ${view==='summary'?'active':''}" id="navSummary">${ico('summary','ic-sm')} <span class="util-lbl">ملخص التسليم</span></button>
+    </div>`;
+
+  document.getElementById('railToggle').onclick = toggleRail;
+  const nr = document.getElementById('navRecall');
+  if(nr) nr.onclick = () => { view = 'recall'; closeDrawer(); renderAll(); };
+  document.getElementById('navSummary').onclick = () => { view = 'summary'; closeDrawer(); renderAll(); };
+
+  const readLink = LESSON.readUrl ? `<a class="rail-link" href="${esc(LESSON.readUrl)}" target="_blank" rel="noopener">نسخة القراءة ${ico('ext','ic-sm')}</a>` : '<span></span>';
+  $rail.innerHTML = `
+    <div class="rail-head">
+      <div class="rail-head-title">
+        <span>فهرس المحاضرة</span>
+        <span class="rail-count">${ar(LESSON.levels.length)}</span>
+      </div>
+      <button class="icon-btn" id="railClose" aria-label="طي الفهرس">${ico('close','ic-sm')}</button>
+    </div>
+    <nav class="rail-list scroll" role="tablist" aria-label="التنقل بين أقسام المحاضرة">
+      ${LESSON.levels.map((L,i) => {
+        const sc = sectionSolvedCount(L);
+        const tot = L.stages.length;
+        const isDone = sc === tot && tot > 0;
+        const isAct = view === 'section' && i === curL;
+        const numInner = isDone ? ico('check','ic-sm') : (L.boss ? ico('boss','ic-sm') : pad2(L.num));
+        return `<button class="sec-tab ${isAct?'active':''} ${isDone?'done':''} ${L.boss?'boss':''}" data-li="${i}" role="tab" aria-selected="${isAct}">
+          <span class="sec-num">${numInner}</span>
+          <span class="sec-info">
+            <span class="sec-title">${esc(L.title)}</span>
+          </span>
+          <span class="sec-stat">${sc}/${tot}</span>
+        </button>`;
+      }).join('')}
+    </nav>
+    <div class="rail-foot">
+      <span class="rail-foot-note">كل الأقسام متاحة مباشرة</span>
+      ${readLink}
+    </div>`;
+
+  document.getElementById('railClose').onclick = toggleRail;
+  $rail.querySelectorAll('.sec-tab').forEach(btn => {
+    btn.onclick = () => { selectSection(+btn.dataset.li); closeDrawer(); };
+  });
+  syncRailState();
+}
+
+function selectSection(li, forceMode){
+  view = 'section';
+  curL = li;
+  const L = LESSON.levels[curL];
+  curDoc = 0;
+  curS = 0;
+  hearts = 3; levelMisses = 0; levelXP = 0; levelMistakes = [];
+  if(forceMode) mode = forceMode;
+  else mode = (L.docs && L.docs.length && !L.boss) ? 'explain' : 'play';
+  renderAll();
+  const activeTab = $rail.querySelector('.sec-tab.active');
+  if(activeTab) activeTab.scrollIntoView({ block:'nearest' });
+}
+
+function renderAll(){
+  renderChrome();
+  if(view === 'recall') return renderRecallView();
+  if(view === 'summary') return renderSummaryView();
+  renderSectionWorkspace();
+}
+
+function renderHeartsHtml(h){
+  return [1,2,3].map(n => `<svg class="${n<=h?'':'lost'}" aria-hidden="true"><use href="#i-heart"/></svg>`).join('');
+}
+
+/* ─── Active Section Workspace (Consolidated Header + Tabs) ─────────────── */
+function renderSectionWorkspace(){
+  const L = LESSON.levels[curL];
+  const hasDocs = !!(L.docs && L.docs.length);
+  if(!hasDocs && mode === 'explain') mode = 'play';
+  const sc = sectionSolvedCount(L);
+
+  $ws.innerHTML = `
+    <div class="ws-head">
+      <div class="ws-head-top">
+        <div class="ws-heading">
+          <span class="ws-sec-id ${L.boss?'boss':''}">${L.boss ? 'التحدي النهائي' : `قسم ${pad2(L.num)}`}</span>
+          <h1>${esc(L.title)}</h1>
+          ${L.en ? `<span class="ws-en">${esc(L.en)}</span>` : ''}
+        </div>
+        ${hasDocs ? `
+          <div class="mode-switch" role="tablist" aria-label="وضع التعلم">
+            <button class="mode-btn ${mode==='explain'?'active':''}" id="mExplain" role="tab" aria-selected="${mode==='explain'}">${ico('book','ic-sm')} افهم الشرح</button>
+            <button class="mode-btn ${mode==='play'?'active':''}" id="mPlay" role="tab" aria-selected="${mode==='play'}">${ico('play','ic-sm')} العب وطبّق (${ar(sc)}/${ar(L.stages.length)})</button>
+          </div>` : `<div class="hearts-bar">${renderHeartsHtml(hearts)} <span>${sc}/${L.stages.length}</span></div>`}
+      </div>
+      <div class="ws-tabs-row" id="subBar"></div>
+    </div>
+    <div class="ws-body" id="wsBody"></div>
+    <footer class="ws-dock" id="wsDock"></footer>`;
+
+  const me = document.getElementById('mExplain');
+  const mp = document.getElementById('mPlay');
+  if(me) me.onclick = () => { mode = 'explain'; renderSectionWorkspace(); };
+  if(mp) mp.onclick = () => { mode = 'play'; renderSectionWorkspace(); };
+
+  if(mode === 'explain') renderExplainMode(L);
+  else renderPlayMode(L);
+}
+
+/* ─── EXPLAIN MODE: Unboxed Editorial Content + Unified Coding Lab ──────── */
+function renderExplainMode(L){
+  checkHandler = revealHandler = null;
+  const docs = L.docs;
+  const d = docs[curDoc] || docs[0];
+  const $sub = document.getElementById('subBar');
+  const $body = document.getElementById('wsBody');
+  const $dock = document.getElementById('wsDock');
+
+  $sub.innerHTML = `
+    <div class="ws-tabs scroll-x" role="tablist" aria-label="موضوعات القسم">
+      ${docs.map((item, idx) => `
+        <button class="ws-tab ${idx===curDoc?'active':''}" data-di="${idx}" role="tab" aria-selected="${idx===curDoc}">
+          <span>${ar(idx+1)}. ${esc(item.tab)}</span>
+        </button>`).join('')}
+    </div>
+    <span class="ws-meta">موضوع ${ar(curDoc+1)} من ${ar(docs.length)}</span>`;
+
+  $sub.querySelectorAll('[data-di]').forEach(b => b.onclick = () => { curDoc = +b.dataset.di; renderExplainMode(L); });
+
+  const calloutIconId = { analogy:'spark', tip:'tip', warn:'warn' };
+  const showH2 = d.heading && d.heading.trim() !== L.title.trim();
+  const renderCard = c => {
+    const isCodeTitle = looksCode(c.title);
+    return `<div class="ref-card"><div class="ref-card-h"><span class="${isCodeTitle?'code-lbl':''}">${esc(c.title)}</span>${c.code?`<code>${esc(c.code)}</code>`:''}</div><div class="ref-card-d">${c.desc}</div></div>`;
+  };
+
+  const rightHtml = `
+    <div class="doc-prose">
+      ${showH2 ? `<h2 class="doc-h2">${esc(d.heading)}</h2>` : ''}
+      ${(d.body || []).map(p => `<p class="doc-p">${p}</p>`).join('')}
+      ${d.callout ? `<div class="insight ${esc(d.callout.kind||'analogy')}"><span class="insight-ico">${ico(calloutIconId[d.callout.kind]||'spark')}</span><div><strong>${esc(d.callout.title)}:</strong> ${d.callout.text}</div></div>` : ''}
+      ${d.tip ? `<div class="insight tip"><span class="insight-ico">${ico('tip')}</span><div><strong>نصيحة:</strong> ${d.tip}</div></div>` : ''}
+      ${d.warning ? `<div class="insight warn"><span class="insight-ico">${ico('warn')}</span><div><strong>خد بالك:</strong> ${d.warning}</div></div>` : ''}
+      ${(d.cards && d.cards.length && (d.code || d.preview || d.console)) ? `<div class="ref-grid">${d.cards.map(renderCard).join('')}</div>` : ''}
+    </div>`;
+
+  const labBlocks = [];
+  const hasLabUnit = !!(d.code || d.preview || (d.console && d.console.length));
+  if(hasLabUnit){
+    const hasSpots = !!(d.code && d.spots && d.spots.length);
+    const codeLang = d.lang || LESSON.lang || 'html';
+    const editorHtml = d.code ? `
+      <div class="lab-bar">
+        <span class="lab-tab">${ico('file','ic-sm')} ${esc(d.filename || 'index.html')}</span>
+        <div class="lab-bar-meta">
+          ${hasSpots ? `<span id="docSpotProg" dir="rtl">اضغط الأجزاء المظللة لشرحها</span>` : ''}
+          <span class="lang-pill">${esc(codeLang)}</span>
+        </div>
+      </div>
+      ${renderCodeLines(d.code, codeLang, hasSpots ? (id, txt) => `<button type="button" class="spot" data-si="${id}">${esc(txt)}</button>` : null)}
+      ${hasSpots ? `<div class="lab-inspector" id="docSpotBox">${ico('xray','ic-sm')}<span>اضغط على أي جزء مظلّل جوا الكود فوق عشان تشوف شرحه بالتفصيل هنا.</span></div>` : ''}
+    ` : '';
+
+    const consoleHtml = (d.console && d.console.length) ? `
+      <div class="console-pane">
+        <div class="console-head"><span>Console Output</span><span>F12</span></div>
+        <div class="console-body">${d.console.map(l => `<div class="console-line"><span>${esc(l)}</span></div>`).join('')}</div>
+      </div>` : '';
+
+    const previewHtml = d.preview ? `
+      <div class="lab-preview">
+        <div class="preview-chrome">
+          <span class="preview-nav" aria-hidden="true"><span>‹</span><span>›</span><span>↻</span></span>
+          <div class="preview-url">${ico('lock','ic-sm')} <span>${esc(d.previewUrl || 'file:///index.html')}</span></div>
+          <span class="live-badge"><i class="live-dot"></i> معاينة مباشرة</span>
+        </div>
+        <div class="browser-body">${d.preview}</div>
+      </div>` : '';
+
+    labBlocks.push(`<section class="coding-lab" aria-label="بيئة الكود والمعاينة">${editorHtml}${consoleHtml}${previewHtml}</section>`);
+  }
+  if(d.table){
+    labBlocks.push(`
+      <div class="doc-table-wrap">
+        <table class="doc-table">
+          <thead><tr>${d.table.headers.map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead>
+          <tbody>${d.table.rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody>
+        </table>
+      </div>`);
+  }
+  if(d.cards && d.cards.length && !hasLabUnit){
+    labBlocks.push(`<div class="ref-grid">${d.cards.map(renderCard).join('')}</div>`);
+  }
+
+  const isSingle = labBlocks.length === 0;
+  $body.innerHTML = `
+    <div class="doc-split ${isSingle?'single':''}">
+      <div class="doc-prose-wrap scroll">${rightHtml}</div>
+      ${isSingle ? '' : `<div class="lab-col scroll">${labBlocks.join('')}</div>`}
+    </div>`;
+
+  const seenDoc = new Set();
+  $body.querySelectorAll('.spot').forEach(btn => {
+    btn.onclick = () => {
+      const idx = +btn.dataset.si, sp = d.spots[idx];
+      seenDoc.add(idx);
+      $body.querySelectorAll('.spot.active').forEach(x=>x.classList.remove('active'));
+      btn.classList.add('seen','active');
+      const box = document.getElementById('docSpotBox');
+      if(box && sp){
+        box.classList.add('has-active');
+        box.innerHTML = `${ico('spark','ic-sm')}<div><span class="insp-tok">${esc(sp.title)}</span> ${esc(sp.say)}</div>`;
+      }
+      const prog = document.getElementById('docSpotProg');
+      if(prog) prog.textContent = `${ar(seenDoc.size)}/${ar(d.spots.length)} مفحوص`;
+    };
+  });
+
+  const hasNextDoc = curDoc < docs.length - 1;
+  $dock.innerHTML = `
+    <div class="dock-g">
+      <button class="btn-sec" id="prevDoc" ${curDoc===0?'disabled':''}>السابق</button>
+      ${hasNextDoc ? `<button class="btn-sec" id="nextDoc">الموضوع الجاي</button>` : ''}
+    </div>
+    <div class="toast info" id="toast" aria-live="polite">افهم الفكرة من الشرح وجرّب تضغط على الكود، وبعدين انتقل للتطبيق العملي.</div>
+    <button class="btn-primary" id="jumpPlay">${ico('play','ic-sm')} العب<span class="dock-lbl"> وطبّق (${ar(L.stages.length)} تحديات)</span></button>`;
+
+  document.getElementById('prevDoc').onclick = () => { curDoc--; renderExplainMode(L); };
+  const nd = document.getElementById('nextDoc');
+  if(nd) nd.onclick = () => { curDoc++; renderExplainMode(L); };
+  document.getElementById('jumpPlay').onclick = () => { mode = 'play'; renderSectionWorkspace(); };
+}
+
+/* ─── PLAY MODE: Tactile Game Workspace ─────────────────────────────────── */
+function renderPlayMode(L, freeHints=false){
+  stageSolved = false; stageMisses = 0; stageHintUsed = freeHints;
+  checkHandler = revealHandler = null;
+  const st = L.stages[curS] || L.stages[0];
+  const $sub = document.getElementById('subBar');
+  const $body = document.getElementById('wsBody');
+  const $dock = document.getElementById('wsDock');
+
+  $sub.innerHTML = `
+    <div class="ws-tabs scroll-x" role="tablist" aria-label="تحديات القسم">
+      ${L.stages.map((item, idx) => `
+        <button class="ws-tab ${idx===curS?'active':''} ${S.solved[item.id]?'solved':''}" data-si="${idx}" role="tab" aria-selected="${idx===curS}">
+          ${S.solved[item.id] ? ico('check','ic-sm') : ''}<span>تحدي ${ar(idx+1)}</span>
+        </button>`).join('')}
+    </div>
+    ${L.boss ? `<div class="hearts-bar">${renderHeartsHtml(hearts)}</div>` : `<span class="ws-meta">${ar(sectionSolvedCount(L))}/${ar(L.stages.length)} مكتمل</span>`}`;
+
+  $sub.querySelectorAll('[data-si]').forEach(b => b.onclick = () => { curS = +b.dataset.si; renderPlayMode(L); });
+
+  $body.innerHTML = `
+    <div class="game-shell scroll" id="gameShell">
+      <div class="game-inner">
+        <div class="mission-head">
+          <h2 id="stageTitle" tabindex="-1">${esc(st.prompt)}</h2>
+          <span class="type-pill">${TYPE_LABEL[st.type] || st.type}</span>
+        </div>
+        ${st.coach ? `<div class="insight analogy"><span class="insight-ico">${ico('spark')}</span><div><strong>كابتن كود:</strong> ${esc(st.coach)}</div></div>` : ''}
+        <div class="playfield" id="playfield"></div>
+      </div>
+    </div>`;
+
+  const hasDocs = !!(L.docs && L.docs.length);
+  $dock.innerHTML = `
+    <div class="dock-g">
+      ${hasDocs ? `<button class="btn-sec" id="backExplain">${ico('book','ic-sm')} <span class="dock-lbl">راجع الشرح</span></button>` : ''}
+      <button class="btn-sec" id="hintBtn" ${st.hint?'':'disabled'}>${ico('spark','ic-sm')} <span class="dock-lbl">تلميحة</span></button>
+    </div>
+    <div class="toast info" id="toast" aria-live="polite">${L.boss && curS===0 ? 'جه وقت الاختبار الشامل — معاك ٣ قلوب، ركّز وانطلق!' : ''}</div>
+    <button class="btn-primary" id="primaryBtn">${ico('check','ic-sm')} اتأكد</button>`;
+
+  const be = document.getElementById('backExplain');
+  if(be) be.onclick = () => { mode = 'explain'; renderSectionWorkspace(); };
+  const hb = document.getElementById('hintBtn');
+  if(hb && st.hint){
+    hb.onclick = () => {
+      stageHintUsed = true; hb.classList.remove('pulse');
+      toast(`${say('hint')}${st.hint}`, 'warn');
+    };
+  }
+  if(freeHints && st.hint) toast(`${say('hint')}${st.hint}`, 'warn');
+
+  const pf = document.getElementById('playfield');
+  const pb = document.getElementById('primaryBtn');
+  if(MECHANICS[st.type]) MECHANICS[st.type](st, pf, pb);
+  if(!QA_MODE) document.getElementById('stageTitle')?.focus({ preventScroll:true });
+}
+
+/* ─── Scoring, Miss Handling & Section Completion ───────────────────────── */
+function onMiss(whyMsg, st){
+  stageMisses++; levelMisses++;
+  S.streak = 0; Store.save(S);
+  const L = LESSON.levels[curL];
+  if(L.boss){
+    hearts = Math.max(0, hearts - 1);
+    renderChrome();
+    $ws.querySelectorAll('.hearts-bar').forEach(x => x.innerHTML = renderHeartsHtml(hearts));
+    if(hearts === 0){
+      openModal('خلصت القلوب', `<p>عاش إنك وصلت لحد هنا — هنرجع نبدأ التحدي والتلميحات مفتوحة ليك مجاناً.</p>`,
+        `<button class="btn-primary" id="bossRetry">جرّب تاني</button>`);
+      document.getElementById('bossRetry').onclick = () => { closeModal(); hearts=3; curS=0; renderPlayMode(L, true); };
+      return;
+    }
+  }
+  if(whyMsg && !levelMistakes.includes(whyMsg)) levelMistakes.push(whyMsg);
+  if(stageMisses >= 3 && revealHandler){
+    toast(`${say('reveal')} ${whyMsg || ''}`, 'warn');
+    revealHandler();
+    markSolved({ xpOverride:0, revealed:true });
+    return;
+  }
+  toast(`${say('wrong')}${whyMsg || ''}`, 'bad');
+  const hbBtn = document.getElementById('hintBtn');
+  if(hbBtn && st.hint){
+    hbBtn.classList.add('pulse');
+    if(stageMisses === 2 && !stageHintUsed){ stageHintUsed = true; toast(`${say('hint')}${st.hint}`, 'warn'); }
+  }
+  renderChrome();
+}
+
+function markSolved({ xpOverride, revealed=false, msg } = {}){
+  if(stageSolved) return;
+  stageSolved = true;
+  const L = LESSON.levels[curL];
+  const st = L.stages[curS];
+  const firstClear = !S.solved[st.id];
+  S.solved[st.id] = true;
+
+  let gained = xpOverride !== undefined ? xpOverride : (stageMisses===0 ? 10 : stageMisses===1 ? 6 : 3);
+  if(!firstClear) gained = Math.min(gained, 2);
+  if(!revealed && stageHintUsed && gained > 0) gained = Math.max(0, gained - 2);
+  let comboMsg = '';
+  if(!revealed && stageMisses === 0 && xpOverride === undefined){
+    S.streak = (S.streak || 0) + 1;
+    if(S.streak >= 3){ gained *= 2; comboMsg = ' · ' + say('combo'); }
+  }
+  S.xp += gained; levelXP += gained;
+  if(gained > 0) bumpXpNext = true;
+
+  if(sectionSolvedCount(L) === L.stages.length){
+    const stars = levelMisses === 0 ? 3 : levelMisses <= 2 ? 2 : 1;
+    const prev = S.levels[L.id]?.stars || 0;
+    S.levels[L.id] = { done:true, stars:Math.max(prev, stars) };
+  }
+  Store.save(S);
+  if(!revealed) toast(`${msg || say('ok')} (+${gained} XP)${comboMsg}`, 'ok');
+  renderChrome();
+
+  const curPill = $ws.querySelector(`.ws-tab[data-si="${curS}"]`);
+  if(curPill){ curPill.classList.add('solved'); curPill.innerHTML = `${ico('check','ic-sm')}<span>تحدي ${ar(curS+1)}</span>`; }
+
+  const pb = document.getElementById('primaryBtn');
+  if(pb){
+    pb.disabled = false;
+    const isLast = curS >= L.stages.length - 1;
+    pb.innerHTML = isLast ? `${ico('check','ic-sm')} خلصت القسم` : `التحدي اللي بعده`;
+    pb.onclick = goNextChallenge;
+  }
+}
+
+function goNextChallenge(){
+  const L = LESSON.levels[curL];
+  if(curS < L.stages.length - 1){
+    curS++;
+    renderPlayMode(L);
+  } else {
+    const hasNext = curL < LESSON.levels.length - 1;
+    const nextL = hasNext ? LESSON.levels[curL + 1] : null;
+    openModal(
+      `${say('levelDone')}`,
+      `<div class="clear-ring">${ico('check')}</div>
+       <div style="text-align:center;font-family:var(--mono);color:var(--amber);font-weight:600">+${levelXP} XP · إجمالي ${S.xp} XP</div>
+       ${levelMistakes.length ? `<div class="insight warn"><span class="insight-ico">${ico('warn')}</span><div><strong>افتكر دايماً:</strong> ${esc(levelMistakes[0])}</div></div>` : `<div class="insight tip"><span class="insight-ico">${ico('tip')}</span><div>ولا غلطة! أداء نضيف ١٠٠٪ في القسم ده.</div></div>`}`,
+      `<button class="btn-sec" id="mStay">أراجع القسم</button>
+       <button class="btn-primary" id="mNext">${hasNext ? `القسم الجاي: ${esc(nextL.title)}` : 'بطاقات المراجعة والملخص'}</button>`
+    );
+    document.getElementById('mStay').onclick = closeModal;
+    document.getElementById('mNext').onclick = () => {
+      closeModal();
+      if(hasNext) selectSection(curL + 1);
+      else { view = 'recall'; renderAll(); }
+    };
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   THE 8 INTERACTIVE MECHANICS
+   ═══════════════════════════════════════════════════════════════════════════ */
+const MECHANICS = {
+  explore(st, root, pb){
+    const seen = new Set(); const total = st.spots.length;
+    const codeLang = st.lang || LESSON.lang || 'html';
+    root.innerHTML = `
+      <div class="coding-lab">
+        <div class="lab-bar">
+          <span class="lab-tab">${ico('file','ic-sm')} explore.${esc(codeLang)}</span>
+          <div class="lab-bar-meta"><span id="expCnt" dir="rtl">فحصت ${ar(0)} من ${ar(total)}</span><span class="lang-pill">${esc(codeLang)}</span></div>
+        </div>
+        ${renderCodeLines(st.code, codeLang, (id, txt) => `<button type="button" class="spot" data-si="${id}">${esc(txt)}</button>`)}
+        <div class="lab-inspector" id="spotCard">${ico('xray','ic-sm')}<span>اضغط على كل جزء مظلّل جوا الكود فوق عشان تشوف دوره بالتفصيل.</span></div>
+      </div>`;
+    pb.disabled = true; pb.textContent = `استكشف (${ar(0)}/${ar(total)})`;
+    root.querySelectorAll('.spot').forEach(btn => {
+      btn.onclick = () => {
+        const idx = +btn.dataset.si, sp = st.spots[idx];
+        root.querySelectorAll('.spot.active').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('seen','active'); seen.add(idx);
+        const card = document.getElementById('spotCard');
+        card.classList.add('has-active');
+        card.innerHTML = `${ico('spark','ic-sm')}<div><span class="insp-tok">${esc(sp.title)}</span> ${esc(sp.say)}</div>`;
+        const ec = document.getElementById('expCnt');
+        if(ec) ec.textContent = `فحصت ${ar(seen.size)} من ${ar(total)}`;
+        if(seen.size >= total) markSolved({ xpOverride:5, msg:'عاش! استكشفت الكود كله!' });
+        else pb.textContent = `استكشف (${ar(seen.size)}/${ar(total)})`;
+      };
+    });
+  },
+
+  choice(st, root, pb){
+    pb.disabled = true; pb.textContent = 'اختار الإجابة';
+    const codeLang = st.lang || LESSON.lang || 'html';
+    root.innerHTML = `
+      ${st.code ? `<div class="coding-lab"><div class="lab-bar"><span class="lab-tab">${ico('file','ic-sm')} snippet.${esc(codeLang)}</span><span class="lang-pill">${esc(codeLang)}</span></div>${renderCodeLines(st.code, codeLang)}</div>` : ''}
+      <div class="opt-grid" role="radiogroup">
+        ${st.options.map((o,i) => `
+          <button type="button" class="opt-btn" data-oi="${i}">
+            <div class="opt-row"><span class="opt-k">${ar(i+1)}</span><span ${looksCode(o.t||'')?'class="ltr" style="font-family:var(--mono);font-size:13px"':''}>${esc(o.t || `النتيجة ${ar(i+1)}`)}</span></div>
+            ${o.preview ? `<div class="opt-prev-box"><div class="browser-body">${o.preview}</div></div>` : ''}
+          </button>`).join('')}
+      </div>`;
+    revealHandler = () => root.querySelectorAll('.opt-btn').forEach((b,i)=>{ b.disabled=true; if(i===st.answer) b.classList.add('ok'); });
+    root.querySelectorAll('.opt-btn').forEach(btn => {
+      btn.onclick = () => {
+        if(stageSolved) return;
+        const idx = +btn.dataset.oi, opt = st.options[idx];
+        if(idx === st.answer){
+          btn.classList.add('ok'); root.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+          markSolved({ msg: opt.why || say('ok') });
+        } else {
+          btn.classList.add('bad'); btn.disabled = true;
+          onMiss(opt.why || st.options[st.answer].why, st);
+        }
+      };
+    });
+  },
+
+  slot(st, root, pb){
+    const filled = Array(st.answer.length).fill(null);
+    let picked = null;
+    const toks = shuffled(st.tokens, st.id);
+    const codeLang = st.lang || LESSON.lang || 'html';
+    root.innerHTML = `
+      <div class="coding-lab">
+        <div class="lab-bar"><span class="lab-tab">${ico('file','ic-sm')} build.${esc(codeLang)}</span><span class="lab-bar-meta" dir="rtl">اسحب القطع أو اضغط للتركيب</span></div>
+        ${renderCodeLines(st.code, codeLang, id => `<button type="button" class="slot-blank" data-drop="slot" data-si="${id}">___</button>`)}
+      </div>
+      <div class="tray" id="tokTray">${toks.map((t,ti)=>`<button type="button" class="chip code-chip" data-ti="${ti}">${esc(t.v)}</button>`).join('')}</div>`;
+    const slotEls = [...root.querySelectorAll('.slot-blank')];
+    const chipEls = [...root.querySelectorAll('.chip')];
+    function sync(){
+      slotEls.forEach((s,i)=>{ const ti=filled[i]; s.textContent = ti===null?'___':toks[ti].v; s.classList.toggle('filled',ti!==null); s.classList.remove('ok','bad'); });
+      chipEls.forEach((c,ti)=>{ c.classList.toggle('used', filled.includes(ti)); c.classList.toggle('picked', picked===ti); });
+      pb.disabled = filled.some(x=>x===null);
+    }
+    function place(ti, si){
+      if(stageSolved) return;
+      const old = filled.indexOf(ti); if(old!==-1) filled[old]=null;
+      filled[si] = ti; picked = null; sync();
+    }
+    chipEls.forEach((c,ti)=>attachDrag(c, { onTap(){ picked=(picked===ti?null:ti); sync(); }, onDrop(dz){ if(dz.dataset.drop==='slot') place(ti, +dz.dataset.si); } }));
+    slotEls.forEach((s,si)=> s.onclick = () => { if(stageSolved) return; if(picked!==null) place(picked, si); else if(filled[si]!==null){ filled[si]=null; sync(); } });
+    revealHandler = () => { slotEls.forEach((s,i)=>{ s.textContent=st.answer[i]; s.classList.add('filled','ok'); }); chipEls.forEach(c=>c.classList.add('used')); };
+    checkHandler = () => {
+      if(stageSolved || filled.some(x=>x===null)) return;
+      let ok = true;
+      slotEls.forEach((s,i)=>{ const r = toks[filled[i]].v === st.answer[i]; s.classList.toggle('ok',r); s.classList.toggle('bad',!r); if(!r) ok=false; });
+      if(ok) markSolved({ msg: st.why || say('ok') }); else onMiss(st.why || 'في خانة لسه مش مظبوطة — راجع الحمرا!', st);
+    };
+    pb.onclick = checkHandler; sync();
+  },
+
+  buckets(st, root, pb){
+    pb.disabled = true; pb.textContent = 'اسحب أو اضغط كل عنصر لمكانه';
+    const items = shuffled(st.items, st.id);
+    const placed = new Set(); let picked = null;
+    const isWire = st.layout === 'wireframe';
+    const isTable = isWire && st.buckets.every(b=>['caption','thead','tbody','tfoot'].includes(b.area));
+    const cls = isWire ? (isTable ? 'wireframe-table' : 'wireframe-page') : 'buckets-grid';
+    root.innerHTML = `
+      <div class="${cls}">${st.buckets.map(b=>`<div class="bucket" data-drop="bucket" data-bid="${esc(b.id)}" ${b.area&&!isTable?`style="grid-area:${esc(b.area)}"`:''}><div class="bucket-h">${esc(b.label)}</div><div class="bucket-items" data-bi="${esc(b.id)}"></div></div>`).join('')}</div>
+      <div class="tray" id="bTray">${items.map((it,idx)=>`<button type="button" class="chip ${looksCode(it.v.t)?'code-chip':''}" data-ii="${idx}">${esc(it.v.t)}</button>`).join('')}</div>`;
+    const chips = [...root.querySelectorAll('#bTray .chip')];
+    const bkts = [...root.querySelectorAll('.bucket')];
+    function tryDrop(idx, bid){
+      if(stageSolved || placed.has(idx)) return;
+      const item = items[idx].v, chip = chips[idx];
+      picked = null; chips.forEach(c=>c.classList.remove('picked')); bkts.forEach(b=>b.classList.remove('hint-glow'));
+      if(item.b === bid){
+        placed.add(idx); chip.classList.add('locked');
+        root.querySelector(`[data-bi="${CSS.escape(bid)}"]`).appendChild(chip);
+        toast(item.why || say('ok'), 'ok');
+        if(placed.size === items.length) markSolved();
+      } else {
+        chip.classList.remove('bad'); void chip.offsetWidth; chip.classList.add('bad');
+        onMiss(item.why || 'جرّب خانة تانية!', st);
+        if(stageMisses >= 2) root.querySelector(`[data-bid="${CSS.escape(item.b)}"]`)?.classList.add('hint-glow');
+      }
+    }
+    chips.forEach((c,idx)=>attachDrag(c, { onTap(){ if(placed.has(idx)) return; picked=(picked===idx?null:idx); chips.forEach((x,i)=>x.classList.toggle('picked',i===picked)); }, onDrop(dz){ if(dz.dataset.drop==='bucket') tryDrop(idx, dz.dataset.bid); } }));
+    bkts.forEach(b=> b.onclick = () => { if(picked !== null) tryDrop(picked, b.dataset.bid); });
+    revealHandler = () => items.forEach((it,idx)=>{ if(!placed.has(idx)){ placed.add(idx); chips[idx].classList.add('locked'); root.querySelector(`[data-bi="${CSS.escape(it.v.b)}"]`).appendChild(chips[idx]); } });
+  },
+
+  order(st, root, pb){
+    let arr = shuffled(st.items, st.id);
+    const isCode = !!st.mono || st.items.every(x => looksCode(x));
+    function draw(){
+      root.innerHTML = `<div class="order-list">${arr.map((it,pos)=>`
+        <div class="order-row" data-drop="order" data-pos="${pos}">
+          <span class="order-idx">${ar(pos+1)}</span>
+          <span class="order-txt ${isCode?'mono':''}">${esc(it.v)}</span>
+          <div class="mv-btns">
+            <button type="button" class="mv-btn" data-up="${pos}" aria-label="أعلى" ${pos===0?'disabled':''}>▲</button>
+            <button type="button" class="mv-btn" data-dn="${pos}" aria-label="أسفل" ${pos===arr.length-1?'disabled':''}>▼</button>
+          </div>
+        </div>`).join('')}</div>`;
+      root.querySelectorAll('[data-up]').forEach(b=> b.onclick = e => { e.stopPropagation(); swap(+b.dataset.up, +b.dataset.up-1); });
+      root.querySelectorAll('[data-dn]').forEach(b=> b.onclick = e => { e.stopPropagation(); swap(+b.dataset.dn, +b.dataset.dn+1); });
+      root.querySelectorAll('.order-row').forEach(r=> attachDrag(r, {
+        onDrop(dz){ if(dz.dataset.drop==='order'){ const f=+r.dataset.pos, t=+dz.dataset.pos; if(f!==t){ const [m]=arr.splice(f,1); arr.splice(t,0,m); draw(); } } }
+      }));
+    }
+    function swap(a,b){ if(stageSolved) return; [arr[a],arr[b]]=[arr[b],arr[a]]; draw(); }
+    revealHandler = () => { arr = st.items.map((v,i)=>({v,i})); draw(); root.querySelectorAll('.order-row').forEach(r=>r.classList.add('ok')); };
+    checkHandler = () => {
+      if(stageSolved) return;
+      let ok = true;
+      root.querySelectorAll('.order-row').forEach((r,pos)=>{ const rt = arr[pos].i===pos; r.classList.toggle('ok',rt); r.classList.toggle('bad',!rt); if(!rt) ok=false; });
+      if(ok) markSolved({ msg: st.why || say('ok') }); else onMiss(st.why || 'السطور الحمرا مش في ترتيبها الصح!', st);
+    };
+    pb.disabled = false; pb.onclick = checkHandler; draw();
+  },
+
+  bughunt(st, root, pb){
+    const found = new Set(), total = st.bugs.length;
+    const codeLang = st.lang || LESSON.lang || 'html';
+    pb.disabled = true; pb.textContent = `اصطدت ${ar(0)}/${ar(total)}`;
+    root.innerHTML = `
+      <div class="coding-lab">
+        <div class="lab-bar"><span class="lab-tab">${ico('target','ic-sm')} debug.${esc(codeLang)}</span><span class="lab-bar-meta" dir="rtl">اضغط على الغلطة جوا الكود</span></div>
+        ${renderCodeLines(st.code, codeLang, (id, txt) => `<button type="button" class="bug-tok" data-bk="${id}">${hl(txt, codeLang)}</button>`)}
+        <div class="lab-inspector" id="bugCard" hidden></div>
+      </div>`;
+    revealHandler = () => {
+      root.querySelectorAll('.bug-tok').forEach(b=>{ if(b.dataset.bk!=='ok') b.classList.add('found'); });
+      const bc = document.getElementById('bugCard'); bc.hidden=false; bc.classList.add('has-active');
+      bc.innerHTML=`${ico('target','ic-sm')}<div><strong>الغلطة:</strong> ${esc(st.bugs.map(x=>x.why).join(' · '))}</div>`;
+    };
+    root.querySelectorAll('.bug-tok').forEach(btn => {
+      btn.onclick = () => {
+        if(stageSolved) return;
+        const k = btn.dataset.bk;
+        if(k === 'ok'){ btn.classList.remove('safe-hit'); void btn.offsetWidth; btn.classList.add('safe-hit'); onMiss(say('okSpot'), st); }
+        else {
+          const bi = +k; if(found.has(bi)) return;
+          found.add(bi); btn.classList.add('found');
+          const bc = document.getElementById('bugCard'); bc.hidden=false; bc.classList.add('has-active');
+          bc.innerHTML=`${ico('check','ic-sm')}<div><strong>صِدتَها!</strong> ${esc(st.bugs[bi].why)}</div>`;
+          if(found.size >= total) markSolved({ msg: st.bugs[bi].why });
+          else { pb.textContent = `اصطدت ${ar(found.size)}/${ar(total)}`; toast(st.bugs[bi].why, 'ok'); }
+        }
+      };
+    });
+  },
+
+  match(st, root, pb){
+    pb.disabled = true; pb.textContent = `وصّل ${ar(st.pairs.length)} أزواج`;
+    const lefts = st.pairs.map((p,i)=>({v:p[0],i}));
+    const rights = shuffled(st.pairs.map(p=>p[1]), st.id);
+    const done = new Set(); let pL = null, pR = null;
+    root.innerHTML = `<div class="match-grid">
+      <div class="match-col">${lefts.map(x=>`<button type="button" class="m-btn ${looksCode(x.v)?'mono-m':''}" data-ml="${x.i}">${esc(x.v)}</button>`).join('')}</div>
+      <div class="match-col">${rights.map(x=>`<button type="button" class="m-btn ${looksCode(x.v)?'mono-m':''}" data-mr="${x.i}">${esc(x.v)}</button>`).join('')}</div>
+    </div>`;
+    const lBtns = [...root.querySelectorAll('[data-ml]')], rBtns = [...root.querySelectorAll('[data-mr]')];
+    function chk(){
+      if(pL===null || pR===null) return;
+      const lb = root.querySelector(`[data-ml="${pL}"]`), rb = root.querySelector(`[data-mr="${pR}"]`);
+      if(pL === pR){
+        done.add(pL); lb.classList.remove('picked','hint-glow'); rb.classList.remove('picked','hint-glow');
+        lb.classList.add('ok'); rb.classList.add('ok'); lb.disabled=rb.disabled=true; pL=pR=null;
+        if(done.size === st.pairs.length) markSolved();
+        else toast(`${say('ok')} (${ar(done.size)}/${ar(st.pairs.length)})`, 'ok');
+      } else {
+        lb.classList.add('bad'); rb.classList.add('bad'); const curPL = pL;
+        setTimeout(()=>{ lb.classList.remove('bad','picked'); rb.classList.remove('bad','picked'); }, 280);
+        pL=pR=null; onMiss('التوصيلة دي مش مظبوطة — فكّر في معنى المصطلح وجرّب تاني!', st);
+        if(stageMisses >= 2){ root.querySelector(`[data-ml="${curPL}"]`)?.classList.add('hint-glow'); root.querySelector(`[data-mr="${curPL}"]`)?.classList.add('hint-glow'); }
+      }
+    }
+    lBtns.forEach(b=> b.onclick = () => { if(stageSolved||b.disabled) return; lBtns.forEach(x=>x.classList.remove('picked')); pL=+b.dataset.ml; b.classList.add('picked'); chk(); });
+    rBtns.forEach(b=> b.onclick = () => { if(stageSolved||b.disabled) return; rBtns.forEach(x=>x.classList.remove('picked')); pR=+b.dataset.mr; b.classList.add('picked'); chk(); });
+    revealHandler = () => { lBtns.forEach(b=>{ b.classList.add('ok'); b.disabled=true; }); rBtns.forEach(b=>{ b.classList.add('ok'); b.disabled=true; }); };
+  },
+
+  patch(st, root, pb){
+    const chipsHtml = (st.chips||[]).map(c=>`<button type="button" class="ins-chip" data-ins="${esc(c)}">+ ${esc(c)}</button>`).join('');
+    const codeLang = st.lang || LESSON.lang || 'html';
+    const isCodeCheckOnly = codeLang === 'js' && !st.previewHtml;
+    root.innerHTML = `<div class="patch-lab">
+      <div class="patch-pane">
+        <div class="patch-tools">
+          <div class="chip-bar">${chipsHtml}</div>
+          <button type="button" class="util-btn" id="pReset">${ico('reset','ic-sm')} رجّع الكود</button>
+        </div>
+        <textarea class="patch-ta" id="pTa" spellcheck="false" aria-label="محرر الكود">${esc(st.start)}</textarea>
+      </div>
+      ${isCodeCheckOnly ? `
+        <div class="patch-out js-out">
+          <div class="lab-bar"><span class="lab-tab">${ico('check','ic-sm')} فحص الكود المباشر</span><span class="lang-pill">JS</span></div>
+          <div class="patch-check-list" id="pChecklist"></div>
+        </div>` : `
+        <div class="patch-out">
+          <div class="preview-chrome">
+            <div class="preview-url">${ico('eye','ic-sm')} <span>live-preview</span></div>
+            <span class="live-badge"><i class="live-dot"></i> معاينة حية</span>
+          </div>
+          <iframe id="pFrame" sandbox="" title="معاينة حية"></iframe>
+        </div>`}
+    </div>`;
+    const ta = document.getElementById('pTa');
+    const fr = document.getElementById('pFrame');
+    const cl = document.getElementById('pChecklist');
+    let tm = null;
+    const evalCheck = (c, val, doc) => {
+      if(c.selector && !doc.querySelector(c.selector)) return false;
+      if(c.notSelector && doc.querySelector(c.notSelector)) return false;
+      if(c.regex && !(new RegExp(c.regex, c.flags||'i').test(val))) return false;
+      if(c.notRegex && (new RegExp(c.notRegex, c.flags||'i').test(val))) return false;
+      return true;
+    };
+    const upd = () => {
+      const val = ta.value;
+      if(fr){
+        const bodyContent = st.previewHtml ? `<style>${val}</style>${st.previewHtml}` : val;
+        fr.srcdoc = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><style>body{font-family:system-ui,sans-serif;padding:12px;margin:0;background:#FDFCF9;color:#182230;font-size:14px}img{max-width:100%}a{color:#0E7C90}</style></head><body>${bodyContent}</body></html>`;
+      }
+      if(cl){
+        const doc = new DOMParser().parseFromString(val, 'text/html');
+        cl.innerHTML = st.checks.map((c, idx) => {
+          const ok = evalCheck(c, val.trim(), doc);
+          return `<div class="pchk ${ok?'pass':''}">${ok ? ico('check','ic-sm') : ico('target','ic-sm')}<span>شرط ${ar(idx+1)}: ${esc(c.label || c.fail)}</span></div>`;
+        }).join('');
+      }
+    };
+    upd();
+    ta.addEventListener('input', () => { clearTimeout(tm); tm = setTimeout(upd, 180); });
+    ta.addEventListener('keydown', e => {
+      if(e.key==='Tab'){ e.preventDefault(); const s=ta.selectionStart,en=ta.selectionEnd; ta.value=ta.value.slice(0,s)+'  '+ta.value.slice(en); ta.selectionStart=ta.selectionEnd=s+2; }
+    });
+    root.querySelectorAll('[data-ins]').forEach(btn => btn.onclick = () => {
+      const ins = btn.dataset.ins, pos = ta.selectionStart ?? ta.value.length;
+      const b = ta.value.slice(0,pos), a = ta.value.slice(ta.selectionEnd ?? pos);
+      const pad = b.length && !/\s$/.test(b) && !b.endsWith('<') ? ' ' : '';
+      ta.value = b + pad + ins + a; ta.focus(); ta.selectionStart = ta.selectionEnd = (b+pad+ins).length; upd();
+    });
+    document.getElementById('pReset').onclick = () => { ta.value = st.start; upd(); ta.focus(); };
+    revealHandler = () => { if(st.solution){ ta.value = st.solution; upd(); } };
+    checkHandler = () => {
+      if(stageSolved) return;
+      const val = ta.value.trim(), doc = new DOMParser().parseFromString(val, 'text/html');
+      for(const c of st.checks){
+        if(!evalCheck(c, val, doc)) return onMiss(c.fail, st);
+      }
+      markSolved({ msg: st.why || 'كودك شغال ١٠٠٪!' });
+    };
+    pb.disabled = false; pb.onclick = checkHandler;
+  }
+};
+
+/* ─── Recall Flashcards & Submission Summary Views ──────────────────────── */
+function renderRecallView(){
+  checkHandler = revealHandler = null;
+  if(!recallQ.length && LESSON.recall?.length){
+    recallQ = LESSON.recall.map((r,i)=>({...r, id:i, retried:false}));
+    recallIdx = 0; recallFlipped = false;
+  }
+  const finished = recallIdx >= recallQ.length;
+  const card = recallQ[recallIdx];
+  $ws.innerHTML = `
+    <div class="ws-head"><div class="ws-head-top"><div class="ws-heading"><span class="ws-sec-id">مراجعة سريعة</span><h1>ثبّت أهم أفكار المحاضرة</h1></div></div></div>
+    <div class="recall-wrap scroll">
+      ${finished ? `<div class="flashcard"><div class="clear-ring">${ico('check')}</div><div class="flash-q">خلّصت كل بطاقات المراجعة!</div><div><button class="btn-sec" id="recRestart">${ico('reset','ic-sm')} راجع من الأول</button></div></div>` : `
+        <div class="flashcard">
+          <div style="font-family:var(--mono);font-size:12px;color:var(--muted)">بطاقة ${ar(recallIdx+1)} من ${ar(recallQ.length)}</div>
+          <div class="flash-q">${esc(card.q)}</div>
+          ${recallFlipped
+            ? `<div class="flash-a">${esc(card.a)}</div><div style="display:flex;gap:8px;justify-content:center"><button class="btn-primary" id="recOk">${ico('check','ic-sm')} عرفتها</button><button class="btn-sec" id="recNo">${ico('reset','ic-sm')} لسه شوية</button></div>`
+            : `<div><button class="btn-primary" id="recFlip">${ico('eye','ic-sm')} ورّيني الإجابة</button></div>`}
+        </div>`}
+    </div>
+    <footer class="ws-dock">
+      <button class="btn-sec" id="backSec">ارجع للأقسام</button>
+      <div class="toast info">اضغط على أي قسم من الفهرس في أي وقت</div>
+      <button class="btn-primary" id="goSum">${ico('summary','ic-sm')} ملخص التسليم</button>
+    </footer>`;
+  const fl = document.getElementById('recFlip'); if(fl) fl.onclick = () => { recallFlipped=true; renderRecallView(); };
+  const ok = document.getElementById('recOk'); if(ok) ok.onclick = () => { recallIdx++; recallFlipped=false; renderRecallView(); };
+  const no = document.getElementById('recNo'); if(no) no.onclick = () => { if(!card.retried) recallQ.push({...card, retried:true}); recallIdx++; recallFlipped=false; renderRecallView(); };
+  const rs = document.getElementById('recRestart'); if(rs) rs.onclick = () => { recallQ=[]; renderRecallView(); };
+  document.getElementById('backSec').onclick = () => { view='section'; renderAll(); };
+  document.getElementById('goSum').onclick = () => { view='summary'; renderAll(); };
+}
+
+function renderSummaryView(){
+  checkHandler = revealHandler = null;
+  $ws.innerHTML = `
+    <div class="ws-head"><div class="ws-head-top"><div class="ws-heading"><span class="ws-sec-id">ملخص التسليم</span><h1>نقط مهمة تكتبها في «تقديم الحل» تحت</h1></div></div></div>
+    <div class="recall-wrap scroll" style="justify-content:flex-start">
+      <div class="insight tip" style="width:min(720px,100%)"><span class="insight-ico">${ico('tip')}</span><div><strong>إزاي تقفّل المهمة في CodeHub:</strong> افتح لوحة «تقديم الحل» تحت الشاشة واكتب ملخصك بأسلوبك مغطي النقط دي:</div></div>
+      <ul class="sum-list">${(LESSON.summary||[]).map((s,i)=>`<li><span class="sum-num">${ar(i+1)}</span><span>${esc(s)}</span></li>`).join('')}</ul>
+    </div>
+    <footer class="ws-dock">
+      <button class="btn-sec" id="backSec">ارجع للأقسام</button>
+      <div class="toast ok">إجمالي نقطك لحد دلوقتي: ${S.xp} XP</div>
+      <button class="btn-primary" id="goRec">${ico('cards','ic-sm')} بطاقات المراجعة</button>
+    </footer>`;
+  document.getElementById('backSec').onclick = () => { view='section'; renderAll(); };
+  document.getElementById('goRec').onclick = () => { view='recall'; renderAll(); };
+}
+
+/* ─── Input-Safe Global Keyboard Navigation ─────────────────────────────── */
+window.addEventListener('keydown', e => {
+  const tag = document.activeElement?.tagName;
+  if(tag === 'INPUT' || tag === 'TEXTAREA') return;
+  if(e.key === 'Escape'){
+    if(!$overlay.hidden){ e.preventDefault(); closeModal(); return; }
+    if(drawerOpen){ e.preventDefault(); closeDrawer(true); return; }
+  }
+  if(!$overlay.hidden || view !== 'section' || mode !== 'play') return;
+  if(e.key === 'Enter'){ const pb=document.getElementById('primaryBtn'); if(pb&&!pb.disabled){ e.preventDefault(); pb.click(); } }
+  else if(e.key.toLowerCase()==='h'){ const hb=document.getElementById('hintBtn'); if(hb&&!hb.disabled){ e.preventDefault(); hb.click(); } }
+  else if(/^[1-4]$/.test(e.key)){ const b=$ws.querySelector(`.opt-btn[data-oi="${+e.key-1}"]`); if(b&&!b.disabled){ e.preventDefault(); b.click(); } }
+});
+
+/* ─── Built-in QA Self-Audit (?qa=1 & window.__LG_QA) ───────────────────── */
+function runQA(){
+  const rows = [];
+  LESSON.levels.forEach((L, li) => {
+    if(L.docs?.length){
+      L.docs.forEach((d, di) => {
+        view='section'; curL=li; mode='explain'; curDoc=di; renderAll();
+        rows.push({ id:`${L.id}:doc${di}`, type:'explain', docY:Math.max(0,document.documentElement.scrollHeight-innerHeight), docX:Math.max(0,document.documentElement.scrollWidth-innerWidth) });
+      });
+    }
+    L.stages.forEach((st, si) => {
+      view='section'; curL=li; mode='play'; curS=si; renderAll();
+      rows.push({ id:st.id, type:st.type, docY:Math.max(0,document.documentElement.scrollHeight-innerHeight), docX:Math.max(0,document.documentElement.scrollWidth-innerWidth) });
+    });
+  });
+  view='recall'; renderAll();
+  rows.push({ id:'RECALL', type:'recall', docY:Math.max(0,document.documentElement.scrollHeight-innerHeight), docX:Math.max(0,document.documentElement.scrollWidth-innerWidth) });
+  view='summary'; renderAll();
+  rows.push({ id:'SUMMARY', type:'summary', docY:Math.max(0,document.documentElement.scrollHeight-innerHeight), docX:Math.max(0,document.documentElement.scrollWidth-innerWidth) });
+  selectSection(0, 'explain');
+  window.__LG_QA_RESULT = { viewport:`${innerWidth}x${innerHeight}`, rows };
+  return window.__LG_QA_RESULT;
+}
+window.__LG_QA = runQA;
+
+/* ─── Boot ──────────────────────────────────────────────────────────────── */
+selectSection(0);
+if(QA_MODE) setTimeout(()=> {
+  const r = runQA();
+  const bad = r.rows.filter(x=>x.docY>1||x.docX>1);
+  openModal(`QA (${r.viewport})`, `<p>Checked ${r.rows.length} views · Document overflows: <strong>${bad.length}</strong></p>`, `<button class="btn-primary" id="qaOk">تمام</button>`);
+  document.getElementById('qaOk').onclick = closeModal;
+}, 120);
+})();
+</script>
+</body>
+</html>

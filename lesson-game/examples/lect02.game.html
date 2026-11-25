@@ -1,0 +1,3689 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>HTML من الألف للياء — CodeHub Game</title>
+<meta name="description" content="المحاضرة التانية — شرح تفاعلي + لعبة تطبيق بالعامية المصرية">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Readex+Pro:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F0EA;
+  --bg-2:#EAE7DF;
+  --surface:#F9F8F4;
+  --surface-hi:#EDEAE2;
+  --code-bg:#F0EEE8;
+  --code-gutter:#E6E3DA;
+  --preview-bg:#FDFCF9;
+  --border:#DBD7CC;
+  --border-hi:#C4BEB0;
+  --text:#182230;
+  --text-body:#2B3748;
+  --text-soft:#4E5D73;
+  --muted:#69768C;
+  --accent:#0E7C90;
+  --accent-hi:#0A6576;
+  --accent-soft:rgba(14,124,144,.09);
+  --accent-bd:rgba(14,124,144,.32);
+  --amber:#B3700B;
+  --amber-soft:rgba(179,112,11,.10);
+  --amber-bd:rgba(179,112,11,.34);
+  --ok:#167E5C;
+  --ok-soft:rgba(22,126,92,.10);
+  --ok-bd:rgba(22,126,92,.34);
+  --bad:#C03943;
+  --bad-soft:rgba(192,57,67,.09);
+  --bad-bd:rgba(192,57,67,.35);
+  --on-accent:#F9F8F4;
+  --shadow-sm:0 1px 2px rgba(24,34,48,.05);
+  --shadow-md:0 12px 32px rgba(24,34,48,.12);
+  --r:12px;
+  --r-sm:8px;
+  --font:'IBM Plex Sans Arabic',system-ui,-apple-system,sans-serif;
+  --display:'Readex Pro','IBM Plex Sans Arabic',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --rail-w:308px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+button,input,textarea{font-family:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0;touch-action:manipulation}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+bdi,code{unicode-bidi:isolate}
+code{
+  font-family:var(--mono);font-size:.84em;font-weight:500;
+  background:rgba(14,124,144,.08);border:1px solid rgba(14,124,144,.2);
+  padding:.07em .42em;border-radius:5px;color:#0B5C6B;direction:ltr;display:inline-block;
+}
+.ltr{direction:ltr;text-align:left;unicode-bidi:isolate}
+.ic{width:15px;height:15px;display:inline-block;vertical-align:-.18em;flex-shrink:0}
+.ic-sm{width:13.5px;height:13.5px}
+
+/* ─── Contained Scrollbars (Warm Stone) ─────────────────────────────────── */
+.scroll{overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:#CBC6B8 transparent}
+.scroll::-webkit-scrollbar{width:6px;height:6px}
+.scroll::-webkit-scrollbar-thumb{background:#CBC6B8;border-radius:99px}
+.scroll::-webkit-scrollbar-thumb:hover{background:#B2AC9C}
+.scroll-x{overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scrollbar-width:none}
+.scroll-x::-webkit-scrollbar{display:none}
+
+/* ─── Root Full-Viewport App Shell (L1, L2) ─────────────────────────────── */
+.app{
+  display:grid;height:100vh;height:100dvh;min-height:0;overflow:hidden;
+  grid-template-rows:50px minmax(0,1fr);background:var(--bg);
+}
+.topbar,.studio,.rail,.workspace,.ws-body,.doc-split,.doc-prose-wrap,.lab-col,.game-shell,.playfield{min-width:0;min-height:0}
+
+/* ─── 1. Global Header (Quiet Pearl Bar) ────────────────────────────────── */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:0 14px;background:var(--bg-2);border-bottom:1px solid var(--border);
+  position:relative;z-index:20;
+}
+.top-start{display:flex;align-items:center;gap:10px;min-width:0}
+.icon-btn{
+  width:32px;height:32px;border-radius:var(--r-sm);display:grid;place-items:center;flex-shrink:0;
+  border:1px solid var(--border);background:var(--surface);color:var(--text-soft);
+  transition:background .15s var(--ease),border-color .15s,color .15s;
+}
+.icon-btn:hover{background:var(--surface-hi);border-color:var(--border-hi);color:var(--text)}
+.icon-btn[aria-expanded="true"]{color:var(--accent);border-color:var(--accent-bd);background:var(--surface)}
+.brand{display:flex;align-items:center;gap:9px;min-width:0}
+.brand-mark{
+  width:30px;height:30px;border-radius:8px;display:grid;place-items:center;flex-shrink:0;
+  background:var(--surface);border:1px solid var(--border);color:var(--accent);
+}
+.brand-mark svg{width:16px;height:16px}
+.brand-txt{min-width:0}
+.brand-title{font-family:var(--display);font-size:14.5px;font-weight:600;line-height:1.2;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand-sub{font-size:11.5px;color:var(--muted);line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.top-end{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.prog-meter{
+  display:flex;align-items:center;gap:8px;height:32px;padding:0 10px;border-radius:var(--r-sm);
+  background:var(--surface);border:1px solid var(--border);font-size:12px;color:var(--text-soft);
+}
+.prog-lbl{color:var(--muted);font-weight:500}
+.prog-bar{width:64px;height:5px;border-radius:99px;background:var(--bg-2);overflow:hidden}
+.prog-fill{height:100%;border-radius:99px;background:var(--amber);transition:width .35s var(--ease)}
+.prog-fill.full{background:var(--ok)}
+.prog-val{font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--text);direction:ltr}
+
+.xp-chip{
+  display:inline-flex;align-items:center;gap:5px;height:32px;padding:0 10px;border-radius:var(--r-sm);
+  background:var(--surface);border:1px solid var(--border);
+  font-family:var(--mono);font-size:12px;font-weight:600;color:var(--amber);direction:ltr;
+}
+.xp-chip.bump{border-color:var(--amber-bd);background:var(--amber-soft);transition:all .2s}
+.combo-chip{
+  display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 9px;border-radius:99px;
+  background:var(--amber-soft);border:1px solid var(--amber-bd);
+  font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--amber);
+}
+.top-div{width:1px;height:18px;background:var(--border);margin:0 2px}
+.util-btn{
+  display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 11px;border-radius:var(--r-sm);
+  border:1px solid var(--border);background:var(--surface);color:var(--text-soft);
+  font-size:12.5px;font-weight:500;transition:background .15s var(--ease),border-color .15s,color .15s;
+}
+.util-btn:hover{background:var(--surface-hi);border-color:var(--border-hi);color:var(--text)}
+.util-btn.active{background:var(--accent-soft);border-color:var(--accent-bd);color:var(--accent)}
+
+/* ─── 2. Two-Pane Workspace + Collapsible Chapter Sidebar ───────────────── */
+.studio{
+  display:grid;height:100%;overflow:hidden;position:relative;
+  grid-template-columns:var(--rail-w) minmax(0,1fr);
+  transition:grid-template-columns .2s var(--ease);
+}
+.studio.rail-collapsed{grid-template-columns:0px minmax(0,1fr)}
+
+.rail{
+  display:flex;flex-direction:column;overflow:hidden;
+  background:var(--bg-2);border-inline-end:1px solid var(--border);
+  transition:opacity .18s var(--ease),transform .2s var(--ease);
+}
+.studio.rail-collapsed .rail{opacity:0;pointer-events:none;border-inline-end-color:transparent}
+.rail-head{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  height:44px;padding:0 14px;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.rail-head-title{display:flex;align-items:center;gap:7px;font-family:var(--display);font-size:13px;font-weight:600;color:var(--text)}
+.rail-count{
+  font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);
+  padding:1px 7px;border-radius:99px;background:var(--surface);border:1px solid var(--border);
+}
+.rail-list{flex:1;display:flex;flex-direction:column;gap:2px;padding:8px}
+
+/* Chapter Row: Clean 3-State Hierarchy (Completed / Active / Upcoming) */
+.sec-tab{
+  position:relative;display:flex;align-items:center;gap:10px;width:100%;text-align:right;
+  padding:8px 10px;border-radius:var(--r-sm);border:1px solid transparent;background:transparent;
+  transition:background .14s var(--ease),border-color .14s,color .14s;flex-shrink:0;
+}
+.sec-tab::before{
+  content:'';position:absolute;inset-block:7px;inset-inline-start:0;width:2.5px;border-radius:99px;
+  background:var(--accent);opacity:0;transition:opacity .16s var(--ease);
+}
+.sec-tab:hover{background:rgba(249,248,244,.6)}
+.sec-tab.active{background:var(--surface);border-color:var(--border);box-shadow:var(--shadow-sm)}
+.sec-tab.active::before{opacity:1}
+.sec-tab.boss.active::before{background:var(--amber)}
+
+.sec-num{
+  width:24px;height:24px;border-radius:6px;display:grid;place-items:center;flex-shrink:0;
+  font-family:var(--mono);font-size:11px;font-weight:600;
+  background:var(--bg);color:var(--muted);border:1px solid var(--border);
+}
+.sec-tab.active .sec-num{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-bd)}
+.sec-tab.done .sec-num{background:var(--ok-soft);color:var(--ok);border-color:var(--ok-bd)}
+.sec-tab.boss .sec-num{background:var(--amber-soft);color:var(--amber);border-color:var(--amber-bd)}
+
+.sec-info{min-width:0;flex:1}
+.sec-title{
+  display:block;font-size:13px;font-weight:500;color:var(--text-soft);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.35;
+}
+.sec-tab:hover .sec-title{color:var(--text)}
+.sec-tab.active .sec-title{color:var(--text);font-weight:600}
+.sec-stat{
+  font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);
+  flex-shrink:0;direction:ltr;
+}
+.sec-tab.done .sec-stat{color:var(--ok)}
+.sec-tab.active .sec-stat{color:var(--text-soft)}
+
+.rail-foot{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:9px 14px;border-top:1px solid var(--border);flex-shrink:0;
+}
+.rail-foot-note{font-size:11.5px;color:var(--muted)}
+.rail-link{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--accent);text-decoration:none}
+.rail-link:hover{text-decoration:underline;color:var(--accent-hi)}
+
+.drawer-backdrop{
+  display:none;position:fixed;inset:0;z-index:140;background:rgba(24,34,48,.34);
+  opacity:0;transition:opacity .18s var(--ease);
+}
+.drawer-backdrop.open{display:block;opacity:1}
+
+/* ─── 3. Main Workspace & Consolidated Lesson Header ────────────────────── */
+.workspace{display:flex;flex-direction:column;overflow:hidden;background:var(--surface)}
+
+.ws-head{
+  background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.ws-head-top{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  padding:11px 22px 8px;
+}
+.ws-heading{display:flex;align-items:baseline;gap:10px;min-width:0;flex-wrap:wrap}
+.ws-sec-id{
+  font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent);flex-shrink:0;
+}
+.ws-sec-id.boss{color:var(--amber)}
+.ws-heading h1{
+  font-family:var(--display);margin:0;font-size:clamp(16px,1.45vw,19px);font-weight:600;
+  color:var(--text);line-height:1.3;letter-spacing:-.01em;
+}
+.ws-en{font-size:12px;color:var(--muted);font-weight:400;direction:ltr}
+
+/* Restrained Segmented Switcher (Explain <-> Practice) */
+.mode-switch{
+  display:inline-grid;grid-template-columns:1fr 1fr;gap:3px;padding:3px;
+  border-radius:9px;background:var(--bg-2);border:1px solid var(--border);flex-shrink:0;
+}
+.mode-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  height:30px;padding:0 12px;border-radius:6px;font-size:12.5px;font-weight:500;
+  color:var(--text-soft);border:1px solid transparent;transition:all .16s var(--ease);white-space:nowrap;
+}
+.mode-btn:hover{color:var(--text)}
+.mode-btn.active{
+  background:var(--surface);color:var(--text);font-weight:600;border-color:var(--border);box-shadow:var(--shadow-sm);
+}
+.mode-btn.active svg{color:var(--accent)}
+
+/* Underline Sub-Tabs Bar */
+.ws-tabs-row{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:0 22px;border-top:1px solid rgba(219,215,204,.65);background:var(--bg);
+}
+.ws-tabs{display:flex;align-items:stretch;gap:4px;flex:1;min-width:0}
+.ws-tab{
+  position:relative;display:inline-flex;align-items:center;gap:6px;
+  height:36px;padding:0 12px;font-size:13px;font-weight:500;color:var(--text-soft);
+  border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0;
+  transition:color .16s var(--ease),border-color .16s var(--ease),background .16s;
+}
+.ws-tab:hover{color:var(--text);background:rgba(24,34,48,.03)}
+.ws-tab.active{color:var(--text);font-weight:600;border-bottom-color:var(--accent)}
+.ws-tab.solved{color:var(--ok)}
+.ws-tab.solved.active{color:var(--text);border-bottom-color:var(--ok)}
+.ws-meta{font-size:12px;color:var(--muted);flex-shrink:0;white-space:nowrap}
+.hearts-bar{display:inline-flex;align-items:center;gap:4px;color:var(--bad);font-family:var(--mono);font-size:12px;font-weight:600;flex-shrink:0}
+.hearts-bar svg{width:14px;height:14px}
+.hearts-bar svg.lost{color:var(--border-hi);opacity:.55}
+
+.ws-body{flex:1;overflow:hidden;display:flex;flex-direction:column}
+
+/* ─── 4. EXPLAIN MODE: Editorial Ivory Reading + Unified Light Coding Lab ── */
+.doc-split{
+  flex:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.06fr);
+  overflow:hidden;animation:fadeIn .18s var(--ease);
+}
+.doc-split.single{grid-template-columns:1fr}
+
+/* Right Column: Unboxed Warm Ivory Reading Surface */
+.doc-prose-wrap{
+  overflow:auto;padding:24px 28px;border-inline-end:1px solid var(--border);
+  background:var(--surface);
+}
+.doc-split.single .doc-prose-wrap{border-inline-end:0;display:flex;justify-content:center}
+.doc-prose{
+  width:100%;max-width:62ch;display:flex;flex-direction:column;gap:16px;
+}
+.doc-h2{
+  font-family:var(--display);margin:0;font-size:17px;font-weight:600;color:var(--text);
+  line-height:1.4;padding-bottom:10px;border-bottom:1px solid var(--border);
+}
+.doc-p{margin:0;font-size:15px;font-weight:400;line-height:1.88;color:var(--text-body)}
+.doc-p strong{color:var(--text);font-weight:600}
+
+/* Restrained Contextual Insight Blocks (Analogy / Tip / Warning) */
+.insight{
+  display:flex;align-items:flex-start;gap:10px;padding:12px 15px;border-radius:var(--r-sm);
+  background:var(--bg);border:1px solid var(--border);border-inline-start:3px solid var(--amber);
+  font-size:14px;line-height:1.8;color:var(--text-body);
+}
+.insight.tip{border-inline-start-color:var(--ok);background:#EFF5F1}
+.insight.warn{border-inline-start-color:var(--bad);background:#F8F0F0}
+.insight.analogy{background:#F6F2E8}
+.insight-ico{margin-top:3px;flex-shrink:0;color:var(--amber)}
+.insight.tip .insight-ico{color:var(--ok)}
+.insight.warn .insight-ico{color:var(--bad)}
+.insight strong{color:var(--text);font-weight:600}
+
+/* Reference Cards & Tables (Crisp 1px Warm Layers) */
+.ref-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr));gap:10px}
+.ref-card{
+  padding:12px 14px;border-radius:var(--r-sm);background:var(--bg);border:1px solid var(--border);
+  display:flex;flex-direction:column;gap:5px;
+}
+.ref-card-h{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;justify-content:space-between;gap:6px}
+.ref-card-h .code-lbl{font-family:var(--mono);font-size:12.5px;color:#0B5C6B;direction:ltr}
+.ref-card-d{font-size:13.5px;color:var(--text-soft);line-height:1.68}
+
+.doc-table-wrap{overflow:auto;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--surface)}
+.doc-table{width:100%;border-collapse:collapse;font-size:13.5px}
+.doc-table th,.doc-table td{padding:9px 12px;border-bottom:1px solid var(--border);text-align:right;line-height:1.58}
+.doc-table th{background:var(--bg-2);color:var(--text);font-size:12px;font-weight:600}
+.doc-table tr:last-child td{border-bottom:0}
+
+/* Left Column: Unified Interactive Coding Lab (Light Editorial IDE) */
+.lab-col{
+  overflow:auto;padding:18px 20px;background:var(--bg);
+  display:flex;flex-direction:column;gap:14px;
+}
+.coding-lab{
+  display:flex;flex-direction:column;border-radius:var(--r);overflow:hidden;
+  background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-sm);flex-shrink:0;
+}
+.lab-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  height:36px;padding:0 12px;background:var(--bg-2);border-bottom:1px solid var(--border);
+  direction:ltr;
+}
+.lab-tab{
+  display:inline-flex;align-items:center;gap:7px;height:100%;padding:0 6px;
+  font-family:var(--mono);font-size:12px;font-weight:600;color:var(--text);
+  border-top:2px solid var(--accent);background:var(--code-bg);
+}
+.lab-tab svg{color:var(--accent);width:13px;height:13px}
+.lab-bar-meta{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--muted)}
+.lang-pill{
+  font-family:var(--mono);font-size:10.5px;font-weight:600;padding:2px 6px;border-radius:4px;
+  background:var(--surface);border:1px solid var(--border);color:var(--text-soft);text-transform:uppercase;
+}
+
+/* Line-Numbered Light Code Surface (Soft Pearl-Stone, High-Contrast Syntax) */
+.code-box{
+  background:var(--code-bg);overflow:auto;padding:10px 0;direction:ltr;text-align:left;unicode-bidi:isolate;
+}
+.code-lines-inner{display:inline-block;min-width:100%}
+.code-line{
+  display:flex;align-items:baseline;min-height:24px;padding:0 14px 0 0;
+  font-family:var(--mono);font-size:13px;line-height:1.72;color:#1F2937;
+}
+.code-line:hover{background:rgba(24,34,48,.03)}
+.ln{
+  width:36px;padding-right:12px;text-align:right;color:#828D9E;font-size:11.5px;
+  user-select:none;flex-shrink:0;border-right:1px solid var(--border);margin-right:12px;
+}
+.lc{white-space:pre;flex:1;min-width:0;direction:ltr;unicode-bidi:isolate}
+.syn-tag{color:#0F6E54}.syn-attr{color:#1D5FA7}.syn-val{color:#A85418}
+.syn-com{color:#768396;font-style:italic}.syn-kw{color:#9B2C52}.syn-fn{color:#0E7C90}
+.syn-ar{unicode-bidi:isolate;direction:rtl;font-family:var(--font);font-size:.96em;color:#182230}
+
+/* Subtle Interactive Code Token Highlighting */
+.spot{
+  display:inline;font-family:inherit;font-size:inherit;line-height:inherit;
+  padding:1px 4px;margin:0 1px;border-radius:4px;
+  background:rgba(14,124,144,.10);border-bottom:1.5px solid rgba(14,124,144,.55);
+  color:#111B27;transition:background .15s var(--ease),border-color .15s,color .15s;
+}
+.spot:hover{background:rgba(14,124,144,.18)}
+.spot.seen{background:rgba(22,126,92,.10);border-bottom-color:var(--ok);color:#0E4E39}
+.spot.active{background:rgba(179,112,11,.16);border-bottom:2px solid var(--amber);color:#182230}
+
+/* Docked Code Inspector Strip */
+.lab-inspector{
+  display:flex;align-items:flex-start;gap:9px;padding:10px 14px;
+  background:var(--surface);border-top:1px solid var(--border);
+  font-size:13.5px;line-height:1.7;color:var(--text-body);
+}
+.lab-inspector svg{color:var(--accent);margin-top:3px;flex-shrink:0}
+.lab-inspector.has-active{background:#F7F3EA}
+.lab-inspector.has-active svg{color:var(--amber)}
+.lab-inspector .insp-tok{
+  font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--amber);
+  direction:ltr;display:inline-block;unicode-bidi:isolate;margin-inline-end:6px;
+}
+
+/* Integrated Live Browser Preview & Light Console Output */
+.lab-preview{border-top:1px solid var(--border);display:flex;flex-direction:column}
+.preview-chrome{
+  display:flex;align-items:center;gap:10px;height:36px;padding:0 12px;
+  background:var(--bg-2);border-bottom:1px solid var(--border);direction:ltr;
+}
+.preview-nav{display:flex;gap:6px;color:var(--muted);font-size:13px;user-select:none;flex-shrink:0}
+.preview-url{
+  flex:1;min-width:0;display:flex;align-items:center;gap:6px;height:24px;padding:0 9px;
+  border-radius:6px;background:var(--surface);border:1px solid var(--border);
+  font-family:var(--mono);font-size:11.5px;color:var(--text-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.preview-url svg{width:11px;height:11px;color:var(--muted);flex-shrink:0}
+.live-badge{
+  display:inline-flex;align-items:center;gap:5px;font-family:var(--font);font-size:11.5px;font-weight:600;
+  color:var(--ok);flex-shrink:0;direction:rtl;
+}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--ok)}
+.browser-body{
+  padding:16px 18px;background:var(--preview-bg);color:#182230;font-family:var(--font);
+  font-size:14px;line-height:1.62;min-height:68px;
+}
+.browser-body h1{font-size:1.5em;margin:.12em 0;color:#182230}
+.browser-body h2{font-size:1.22em;margin:.12em 0;color:#182230}
+.browser-body h3{font-size:1.05em;margin:.12em 0;color:#182230}
+.browser-body p{margin:.32em 0}
+.browser-body a{color:#0E7C90;text-decoration:underline}
+.browser-body table{border-collapse:collapse;width:100%;font-size:.88em}
+.browser-body th,.browser-body td{border:1px solid #D4D0C5;padding:5px 8px}
+.browser-body th{background:#F2F0EA}
+.browser-body blockquote{border-right:3px solid #9AA5B4;padding:4px 10px;margin:4px 0;color:#475569;font-style:italic;background:#F4F2EC}
+
+.console-pane{border-top:1px solid var(--border);background:#ECEFF2}
+.console-head{
+  display:flex;align-items:center;justify-content:space-between;height:30px;padding:0 12px;
+  background:#E4E7EC;border-bottom:1px solid var(--border);
+  font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--ok);direction:ltr;
+}
+.console-body{padding:10px 14px;font-family:var(--mono);font-size:12.5px;line-height:1.7;color:#1E293B;direction:ltr;text-align:left}
+.console-line{display:flex;gap:8px}.console-line::before{content:'›';color:var(--ok);font-weight:700}
+
+/* ─── 5. PLAY MODE: Cohesive Light Challenge Workspace ──────────────────── */
+.game-shell{
+  flex:1;overflow:auto;padding:20px 24px;display:flex;flex-direction:column;align-items:center;
+  background:var(--bg);
+}
+.game-inner{
+  width:100%;max-width:980px;display:flex;flex-direction:column;gap:14px;animation:fadeIn .18s var(--ease);
+}
+.mission-head{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  padding:14px 18px;border-radius:var(--r);background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-sm);
+}
+.mission-head h2{font-family:var(--display);margin:0;font-size:clamp(15px,1.35vw,17.5px);font-weight:600;line-height:1.5;outline:none;flex:1;min-width:220px;color:var(--text)}
+.type-pill{
+  display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;
+  font-size:12px;font-weight:600;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-bd);flex-shrink:0;
+}
+.playfield{
+  display:flex;flex-direction:column;gap:14px;padding:18px;
+  border-radius:var(--r);background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-sm);
+}
+
+/* Mechanics: Crisp Warm Editorial Surfaces */
+.opt-grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr))}
+.opt-btn{
+  display:flex;flex-direction:column;align-items:stretch;gap:10px;text-align:right;
+  padding:13px 15px;border-radius:10px;border:1px solid var(--border);background:var(--bg);
+  min-height:50px;font-size:14.5px;font-weight:500;color:var(--text);
+  transition:background .15s var(--ease),border-color .15s,transform .12s;
+}
+.opt-btn:hover:not(:disabled){background:var(--surface-hi);border-color:var(--border-hi)}
+.opt-btn:active:not(:disabled){transform:scale(.99)}
+.opt-btn:disabled{opacity:.65;cursor:default}
+.opt-btn.ok{border-color:var(--ok);background:var(--ok-soft);color:#0E4E39;opacity:1}
+.opt-btn.bad{border-color:var(--bad);background:var(--bad-soft);color:#7E1D24;animation:shake .22s}
+.opt-row{display:flex;align-items:center;gap:10px}
+.opt-k{
+  width:26px;height:26px;border-radius:6px;display:grid;place-items:center;flex-shrink:0;
+  background:var(--surface);border:1px solid var(--border);font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent);
+}
+.opt-prev-box{border-radius:8px;overflow:hidden;border:1px solid var(--border);background:var(--preview-bg)}
+
+.tray{
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;
+  padding:11px;border-radius:10px;background:var(--bg);border:1px dashed var(--border-hi);
+}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:6px 13px;
+  border-radius:8px;border:1px solid var(--border-hi);background:var(--surface);
+  font-size:13.5px;font-weight:500;color:var(--text);user-select:none;touch-action:none;
+  box-shadow:var(--shadow-sm);transition:background .14s var(--ease),border-color .14s,transform .14s,opacity .14s;
+}
+.chip.code-chip{font-family:var(--mono);direction:ltr;font-size:13px}
+.chip:hover{background:var(--surface-hi);border-color:var(--accent)}
+.chip.picked{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-hi)}
+.chip.used{opacity:.32;pointer-events:none;box-shadow:none}
+.chip.locked{border-color:var(--ok-bd);background:var(--ok-soft);color:#0E4E39;cursor:default;box-shadow:none}
+.chip.bad{border-color:var(--bad);background:var(--bad-soft);color:#7E1D24;animation:shake .22s}
+.drag-ghost{position:fixed;z-index:999;pointer-events:none;transform:translate(-50%,-50%) scale(1.03);box-shadow:var(--shadow-md);border-color:var(--accent)!important;background:var(--surface)!important}
+.drop-over{border-color:var(--accent)!important;background:var(--accent-soft)!important}
+
+.slot-blank{
+  display:inline-flex;align-items:center;justify-content:center;min-width:78px;height:26px;
+  padding:0 9px;margin:0 3px;border-radius:6px;vertical-align:middle;
+  border:1px dashed var(--accent);background:var(--accent-soft);color:var(--accent);
+  font-family:var(--mono);font-size:12.5px;font-weight:600;transition:all .14s;
+}
+.slot-blank.filled{border-style:solid;background:rgba(14,124,144,.14);color:var(--text)}
+.slot-blank.ok{border-color:var(--ok);background:var(--ok-soft);color:#0E4E39}
+.slot-blank.bad{border-color:var(--bad);background:var(--bad-soft);color:#7E1D24;animation:shake .22s}
+
+.buckets-grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr))}
+.bucket{
+  display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:10px;
+  border:1px dashed var(--border-hi);background:var(--bg);min-height:106px;transition:border-color .15s,background .15s;
+}
+.bucket-h{font-family:var(--display);font-size:13px;font-weight:600;color:var(--accent);text-align:center;padding-bottom:7px;border-bottom:1px solid var(--border)}
+.bucket-items{display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;flex:1}
+.bucket.hint-glow{border-color:var(--amber);background:var(--amber-soft)}
+.wireframe-page{display:grid;gap:8px;direction:ltr;grid-template-areas:"header header" "nav nav" "main aside" "footer footer";grid-template-columns:2.2fr 1fr}
+.wireframe-table{display:grid;gap:8px;direction:ltr;grid-template-columns:1fr}
+.wireframe-page .bucket,.wireframe-table .bucket{min-height:64px;padding:8px 10px}
+
+.order-list{display:flex;flex-direction:column;gap:7px;width:100%}
+.order-row{
+  display:flex;align-items:center;gap:12px;padding:9px 13px;border-radius:10px;
+  border:1px solid var(--border);background:var(--bg);min-height:46px;user-select:none;touch-action:none;
+  transition:border-color .15s,background .15s;
+}
+.order-row:hover{border-color:var(--border-hi);background:var(--surface-hi)}
+.order-row.ok{border-color:var(--ok);background:var(--ok-soft)}
+.order-row.bad{border-color:var(--bad);background:var(--bad-soft);animation:shake .22s}
+.order-idx{
+  width:26px;height:26px;border-radius:6px;display:grid;place-items:center;flex-shrink:0;
+  background:var(--surface);border:1px solid var(--border);font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent);
+}
+.order-txt{flex:1;min-width:0;font-size:14px;font-weight:500}
+.order-txt.mono{font-family:var(--mono);direction:ltr;text-align:left;font-size:13px}
+.mv-btns{display:flex;gap:4px;flex-shrink:0}
+.mv-btn{width:32px;height:32px;border-radius:7px;border:1px solid var(--border);background:var(--surface);display:grid;place-items:center;font-size:11px;color:var(--text-soft);transition:all .14s}
+.mv-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.mv-btn:disabled{opacity:.32;cursor:not-allowed}
+
+.bug-tok{
+  display:inline;font-family:inherit;font-size:inherit;padding:1px 5px;border-radius:4px;
+  background:rgba(24,34,48,.04);border-bottom:1.5px solid rgba(78,93,115,.38);
+  color:inherit;transition:background .14s,border-color .14s;
+}
+.bug-tok:hover{background:var(--amber-soft);border-bottom-color:var(--amber)}
+.bug-tok.found{background:var(--ok-soft);border-bottom:2px solid var(--ok);color:#0E4E39}
+.bug-tok.safe-hit{background:var(--bad-soft);border-bottom-color:var(--bad);animation:shake .22s}
+
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:stretch}
+.match-col{display:flex;flex-direction:column;gap:7px}
+.m-btn{
+  width:100%;min-height:46px;padding:9px 13px;border-radius:10px;
+  border:1px solid var(--border);background:var(--bg);font-size:13.5px;font-weight:500;
+  text-align:center;color:var(--text);transition:all .15s var(--ease);
+}
+.m-btn.mono-m{font-family:var(--mono);font-size:13px;direction:ltr}
+.m-btn:hover:not(:disabled){background:var(--surface-hi);border-color:var(--border-hi)}
+.m-btn.picked{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-hi)}
+.m-btn.ok{border-color:var(--ok);background:var(--ok-soft);color:#0E4E39;cursor:default}
+.m-btn.bad{border-color:var(--bad);background:var(--bad-soft);animation:shake .22s}
+.m-btn.hint-glow{border-color:var(--amber);background:var(--amber-soft)}
+
+/* Unified Split Mini-IDE (Patch Mechanic) */
+.patch-lab{
+  display:grid;grid-template-columns:minmax(0,1.15fr) minmax(240px,.85fr);
+  border-radius:var(--r);overflow:hidden;border:1px solid var(--border);background:var(--surface);
+}
+.patch-pane{display:flex;flex-direction:column;min-width:0;border-inline-end:1px solid var(--border)}
+.patch-tools{
+  display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:space-between;
+  padding:8px 10px;background:var(--bg-2);border-bottom:1px solid var(--border);
+}
+.chip-bar{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.ins-chip{
+  font-family:var(--mono);font-size:12px;padding:4px 9px;border-radius:6px;direction:ltr;
+  border:1px solid var(--accent-bd);background:var(--surface);color:var(--accent);min-height:30px;font-weight:500;
+  transition:background .14s,border-color .14s;
+}
+.ins-chip:hover{background:var(--accent-soft);border-color:var(--accent)}
+.patch-ta{
+  width:100%;min-height:152px;flex:1;resize:none;padding:12px 14px;border:0;
+  background:var(--code-bg);color:#182230;
+  font-family:var(--mono);font-size:13px;line-height:1.72;direction:ltr;text-align:left;
+}
+.patch-ta:focus{outline:none;box-shadow:inset 0 0 0 1.5px var(--accent)}
+.patch-out{display:flex;flex-direction:column;min-width:0;min-height:152px;background:var(--preview-bg)}
+.patch-out iframe{border:0;width:100%;flex:1;min-height:120px;background:var(--preview-bg)}
+.patch-out.js-out{background:var(--code-bg)}
+.patch-check-list{padding:12px;display:flex;flex-direction:column;gap:7px;font-size:13px}
+.pchk{
+  display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:8px;
+  background:var(--surface);border:1px solid var(--border);color:var(--text-soft);transition:all .16s;
+}
+.pchk.pass{background:var(--ok-soft);border-color:var(--ok-bd);color:#0E4E39}
+.pchk svg{margin-top:2px;flex-shrink:0}
+
+/* ─── 6. Lesson Navigation Footer Dock ──────────────────────────────────── */
+.ws-dock{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  min-height:52px;padding:8px 22px calc(8px + env(safe-area-inset-bottom));
+  border-top:1px solid var(--border);background:var(--bg-2);flex-shrink:0;
+}
+.dock-g{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.btn-primary{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  height:36px;padding:0 16px;border-radius:9px;
+  background:var(--accent);color:var(--on-accent);font-family:var(--display);font-size:13px;font-weight:600;
+  transition:background .15s var(--ease),transform .12s;white-space:nowrap;
+}
+.btn-primary:hover:not(:disabled){background:var(--accent-hi)}
+.btn-primary:active:not(:disabled){transform:scale(.98)}
+.btn-primary:disabled{opacity:.42;cursor:not-allowed}
+.btn-sec{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  height:36px;padding:0 12px;border-radius:9px;
+  border:1px solid var(--border);background:var(--surface);color:var(--text-soft);
+  font-size:13px;font-weight:500;transition:background .15s,border-color .15s,color .15s;white-space:nowrap;
+}
+.btn-sec:hover:not(:disabled){background:var(--surface-hi);border-color:var(--border-hi);color:var(--text)}
+.btn-sec:disabled{opacity:.4;cursor:not-allowed}
+.btn-sec.pulse{border-color:var(--amber-bd);color:var(--amber);background:var(--amber-soft)}
+.toast{
+  flex:1;min-width:0;text-align:center;font-size:13px;font-weight:500;line-height:1.45;
+  padding:6px 12px;border-radius:8px;color:var(--text-soft);overflow:hidden;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+}
+.toast.ok{color:#0E5940;background:var(--ok-soft);border:1px solid var(--ok-bd)}
+.toast.bad{color:#91252D;background:var(--bad-soft);border:1px solid var(--bad-bd)}
+.toast.warn{color:#8A5608;background:var(--amber-soft);border:1px solid var(--amber-bd)}
+.toast.info{color:var(--text-soft);background:transparent}
+
+/* ─── Recall & Submission Summary Views ─────────────────────────────────── */
+.recall-wrap{flex:1;overflow:auto;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--bg);animation:fadeIn .18s var(--ease)}
+.flashcard{
+  width:min(640px,100%);padding:26px 24px;border-radius:var(--r);
+  background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-sm);
+  text-align:center;display:flex;flex-direction:column;gap:14px;
+}
+.flash-q{font-family:var(--display);font-size:17.5px;font-weight:600;line-height:1.6;color:var(--text)}
+.flash-a{
+  font-size:14.5px;color:#0E4E39;padding:14px 16px;border-radius:var(--r-sm);
+  background:var(--ok-soft);border:1px solid var(--ok-bd);line-height:1.75;
+}
+.sum-list{list-style:none;margin:0;padding:0;width:min(720px,100%);display:flex;flex-direction:column;gap:8px}
+.sum-list li{
+  display:flex;align-items:flex-start;gap:11px;padding:12px 15px;border-radius:10px;
+  background:var(--surface);border:1px solid var(--border);font-size:14.5px;line-height:1.75;color:var(--text-body);
+}
+.sum-num{
+  width:24px;height:24px;border-radius:6px;display:grid;place-items:center;flex-shrink:0;
+  background:var(--bg);border:1px solid var(--border);color:var(--accent);
+  font-family:var(--mono);font-size:12px;font-weight:600;margin-top:2px;
+}
+
+/* ─── Single Modal Slot ─────────────────────────────────────────────────── */
+.overlay{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:16px;background:rgba(24,34,48,.42)}
+.overlay[hidden]{display:none}
+.modal{
+  width:min(460px,100%);max-height:90dvh;display:flex;flex-direction:column;gap:14px;
+  padding:20px;border-radius:14px;background:var(--surface);border:1px solid var(--border-hi);
+  box-shadow:var(--shadow-md);animation:pop .18s var(--ease);
+}
+.modal h3{font-family:var(--display);margin:0;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--text)}
+.modal-body{overflow:auto;display:flex;flex-direction:column;gap:10px;font-size:14px;line-height:1.7;color:var(--text-body)}
+.modal-foot{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.clear-ring{
+  width:52px;height:52px;border-radius:50%;margin:2px auto;display:grid;place-items:center;
+  background:var(--ok-soft);border:1px solid var(--ok-bd);color:var(--ok);
+}
+.clear-ring svg{width:24px;height:24px}
+
+@keyframes fadeIn{0%{opacity:0;transform:translateY(4px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes pop{0%{transform:scale(.96);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* ─── 7. Responsive Tiers (Desktop -> Medium Drawer -> Mobile -> Short) ── */
+@media (max-width:1119px){
+  .studio,.studio.rail-collapsed{grid-template-columns:1fr}
+  .rail,.studio.rail-collapsed .rail{
+    position:fixed;inset-block:0;inset-inline-start:0;z-index:150;
+    width:min(316px,86vw);border-inline-end:1px solid var(--border-hi);
+    box-shadow:var(--shadow-md);
+    opacity:1;pointer-events:auto;
+    transform:translateX(105%);transition:transform .2s var(--ease);
+  }
+  .rail.drawer-open,.studio.rail-collapsed .rail.drawer-open{transform:translateX(0)}
+}
+@media (max-width:959px){
+  .doc-split{display:flex;flex-direction:column;overflow:auto;overscroll-behavior:contain}
+  .doc-prose-wrap{overflow:visible;flex-shrink:0;min-height:auto;border-inline-end:0;border-bottom:1px solid var(--border);padding:18px 18px}
+  .doc-prose{max-width:none}
+  .lab-col{overflow:visible;flex-shrink:0;min-height:auto;padding:16px 18px}
+  .patch-lab{grid-template-columns:1fr}
+  .patch-pane{border-inline-end:0;border-bottom:1px solid var(--border)}
+}
+@media (max-width:767px){
+  .topbar{padding:0 10px;gap:8px}
+  .brand-sub,.prog-lbl,.prog-bar,.top-div,.util-lbl{display:none}
+  .ws-head-top{padding:10px 14px 8px;gap:8px}
+  .ws-en{display:none}
+  .ws-tabs-row{padding:0 14px}
+  .ws-meta{display:none}
+  .doc-prose-wrap{padding:14px}
+  .lab-col{padding:12px 14px}
+  .game-shell{padding:12px 14px}
+  .playfield{padding:12px}
+  .ws-dock{padding:8px 12px calc(8px + env(safe-area-inset-bottom));gap:8px}
+  .ws-dock .toast.info{display:none}
+  .dock-lbl{display:none}
+  .btn-primary,.btn-sec,.icon-btn,.util-btn{min-height:40px}
+  .match-grid{gap:8px}
+  .m-btn{padding:8px;font-size:13px}
+}
+@media (max-width:520px){
+  .prog-meter{display:none}
+}
+@media (max-height:480px){
+  .app{grid-template-rows:42px minmax(0,1fr)}
+  .ws-head-top{padding:6px 14px 5px}
+  .ws-heading h1{font-size:15px}
+  .ws-en{display:none}
+  .mode-btn{height:26px;padding:0 10px;font-size:12px}
+  .ws-tab{height:30px;font-size:12px;padding:0 10px}
+  .doc-prose-wrap{padding:12px 16px}
+  .doc-prose{gap:10px}
+  .doc-h2{font-size:15px;padding-bottom:6px}
+  .doc-p{font-size:13.5px;line-height:1.62}
+  .insight{padding:8px 11px;font-size:13px;line-height:1.55}
+  .lab-col{padding:10px 14px}
+  .code-line{font-size:12px;line-height:1.55;min-height:20px}
+  .game-shell{padding:10px 14px}
+  .mission-head{padding:9px 14px}
+  .mission-head h2{font-size:14.5px}
+  .playfield{padding:10px 14px;gap:10px}
+  .ws-dock{min-height:44px;padding:5px 14px}
+  .btn-primary,.btn-sec{height:32px;font-size:12.5px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+<svg style="display:none" aria-hidden="true">
+  <symbol id="i-emblem-it" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 15h3M1 9h3M1 15h3"/><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-emblem-html" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 6 2 12 8 18"/><polyline points="16 6 22 12 16 18"/><line x1="14" y1="4" x2="10" y2="20"/></symbol>
+  <symbol id="i-emblem-css" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 22 8.5 12 15 2 8.5 12 2"/><polyline points="2 15.5 12 22 22 15.5"/><polyline points="2 12 12 18.5 22 12"/></symbol>
+  <symbol id="i-emblem-js" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4C5 4 4 5 4 7v3c0 1.2-.8 2-2 2 1.2 0 2 .8 2 2v3c0 2 1 3 3 3"/><path d="M17 4c2 0 3 1 3 3v3c0 1.2.8 2 2 2-1.2 0-2 .8-2 2v3c0 2-1 3-3 3"/><polygon points="13 7 9.5 13 12 13 11 17 14.5 11 12 11 13 7" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-panel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2.5"/><line x1="15" y1="3" x2="15" y2="21"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 4 20 12 6 20 6 4"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></symbol>
+  <symbol id="i-tip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><circle cx="12" cy="17" r=".8" fill="currentColor"/></symbol>
+  <symbol id="i-boss" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h18l-1.5-10-4.5 4-3-6-3 6-4.5-4L3 18z"/><line x1="4" y1="21" x2="20" y2="21"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+  <symbol id="i-cards" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="14" height="14" rx="2"/><path d="M7 3h12a2 2 0 0 1 2 2v12"/></symbol>
+  <symbol id="i-summary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24" fill="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></symbol>
+  <symbol id="i-xray" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+  <symbol id="i-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></symbol>
+</svg>
+
+<div class="app">
+  <header class="topbar" id="topbar"></header>
+  <div class="studio" id="studio">
+    <div class="drawer-backdrop" id="drawerBackdrop" aria-hidden="true"></div>
+    <aside class="rail" id="rail" aria-label="أقسام المحاضرة"></aside>
+    <main class="workspace" id="workspace"></main>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" hidden role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal" id="modal"></div>
+</div>
+
+<script id="lesson-data" type="application/json">
+{
+  "id": "basics-lect02",
+  "title": "HTML من الألف للياء",
+  "subtitle": "المحاضرة التانية — شرح تفاعلي + لعبة تطبيق بالعامية المصرية",
+  "accent": "#f97316",
+  "lang": "html",
+  "readUrl": "lect02.read.html",
+  "summary": [
+    "هيكل ملف HTML5 الأساسي (DOCTYPE, html lang/dir, head و meta tags زي UTF-8 و viewport, و body).",
+    "الفرق بين Elements (Opening + Content + Closing) و Block vs Inline والـ Void Elements.",
+    "الـ Attributes (id vs class، Global و Boolean و data-* للتعامل مع JavaScript).",
+    "العناوين h1–h6، النصوص الدلالية (strong vs b)، الروابط الآمنة (noopener)، الصور (alt)، القوائم (ul/ol/dl)، الجداول (scope/colspan)، والـ Forms مع HTML5 Validation.",
+    "Semantic HTML (header, nav, main, article, section, aside, footer, details/summary) و Accessibility (a11y + القاعدة الأولى في ARIA)."
+  ],
+  "levels": [
+    {
+      "id": "lvl-1",
+      "num": 1,
+      "title": "ليه HTML مهمة؟",
+      "en": "Why HTML & How the Browser Works",
+      "docs": [
+        {
+          "tab": "ليه HTML مهمة؟",
+          "heading": "ليه HTML هي أساس كل موقع في العالم؟",
+          "body": [
+            "<strong>HTML<\/strong> (HyperText Markup Language) هي اللغة الأساسية اللي كل صفحة ويب في العالم مبنية بيها — مفيش موقع واحد على الإنترنت، لا فيسبوك ولا جوجل ولا يوتيوب، إلا وبيستخدم HTML.",
+            "لما بتفتح أي صفحة، الـ <bdi>browser<\/bdi> بياخد ملف HTML من الـ <bdi>server<\/bdi> ويحوله لصفحة مرئية قدامك: «هنا عنوان، وهنا فقرة، وده لينك، ودي صورة»."
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "فكّر فيها زي العمارة 🏗️",
+            "text": "لو الموقع عمارة، <strong>HTML<\/strong> هي الخرسانة والطوب (الهيكل). <strong>CSS<\/strong> هي الدهان والديكور (الشكل)، و <strong>JavaScript<\/strong> هي الكهربا والأجهزة (الحركة والتفاعل). من غير HTML مفيش عمارة أصلاً!"
+          },
+          "filename": "hello.html",
+          "code": "[[0|<h1>أهلاً بيك في الويب<\/h1>]]\n[[1|<p>HTML بتوصف هيكل ومحتوى الصفحة.<\/p>]]\n[[2|<a href=\"https://codehub.eg\">زور موقعنا<\/a>]]",
+          "spots": [
+            {
+              "title": "<h1> عنوان رئيسي",
+              "say": "بيقول للـ browser: ده العنوان الأهم في الصفحة."
+            },
+            {
+              "title": "<p> فقرة نص",
+              "say": "بيوصف إن الكلام ده فقرة مستقلة."
+            },
+            {
+              "title": "<a> رابط",
+              "say": "بيعمل hyperlink ينقلك لصفحة تانية."
+            }
+          ],
+          "preview": "<div dir='rtl'><h1 style='margin:0 0 6px'>أهلاً بيك في الويب<\/h1><p style='margin:0 0 6px'>HTML بتوصف هيكل ومحتوى الصفحة.<\/p><a href='#'>زور موقعنا<\/a><\/div>",
+          "previewUrl": "file:///hello.html"
+        },
+        {
+          "tab": "إزاي الـ Browser بيشتغل؟",
+          "heading": "رحلة الصفحة في أجزاء من الثانية",
+          "body": [
+            "أول ما تكتب عنوان موقع في شريط الـ <bdi>browser<\/bdi> وتضغط Enter، بيحصل ٤ خطوات ورا بعض بسرعة رهيبة في ملي ثانية!"
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "اللي بيحصل في الخلفية",
+            "text": "الـ browser بيروح للـ server يقوله «عايز الصفحة دي»، الـ server يبعتله ملف HTML، الـ browser يقراه سطر سطر ويحوله للشكل اللي بتشوفه قدامك."
+          },
+          "cards": [
+            {
+              "title": "١. User types URL",
+              "desc": "المستخدم يكتب رابط الموقع في الـ browser."
+            },
+            {
+              "title": "٢. Server sends HTML",
+              "desc": "السيرفر يرد ويبعت ملف الـ HTML المطلوب."
+            },
+            {
+              "title": "٣. Browser parses HTML",
+              "desc": "المتصفح يقرا التاجات سطر سطر ويفهم الهيكل."
+            },
+            {
+              "title": "٤. Page rendered",
+              "desc": "الصفحة تترسم وتظهر قدامك بألوانها وعناصرها."
+            }
+          ]
+        }
+      ],
+      "stages": [
+        {
+          "id": "s1-1",
+          "type": "buckets",
+          "layout": "columns",
+          "prompt": "اسحب كل دور لمكانه الصح في تشبيه العمارة (HTML vs CSS vs JS):",
+          "coach": "الخرسانة هيكل، الدهان شكل، والكهربا حركة وتفاعل!",
+          "buckets": [
+            {
+              "id": "html",
+              "label": "HTML (هيكل)"
+            },
+            {
+              "id": "css",
+              "label": "CSS (شكل)"
+            },
+            {
+              "id": "js",
+              "label": "JavaScript (حركة)"
+            }
+          ],
+          "items": [
+            {
+              "t": "الخرسانة والطوب",
+              "b": "html",
+              "why": "HTML هي الهيكل اللي كل حاجة بتتبني عليه."
+            },
+            {
+              "t": "الدهان والديكور",
+              "b": "css",
+              "why": "CSS هي الألوان والتنسيق والديكور."
+            },
+            {
+              "t": "الكهربا والأجهزة",
+              "b": "js",
+              "why": "JavaScript بتخلي الصفحة تتحرك وتتفاعل."
+            },
+            {
+              "t": "العناوين والفقرات والصور",
+              "b": "html",
+              "why": "وصف المحتوى والهيكل شغل HTML."
+            },
+            {
+              "t": "الألوان وحجم الخط",
+              "b": "css",
+              "why": "تجميل الشكل والخطوط شغل CSS."
+            },
+            {
+              "t": "زرار بيفتح قائمة لما تضغطه",
+              "b": "js",
+              "why": "التفاعل لما المستخدم يضغط شغل JavaScript."
+            }
+          ],
+          "hint": "اسأل نفسك: ده هيكل أساسي ولا شكل ودهان ولا حركة وتفاعل؟"
+        },
+        {
+          "id": "s1-2",
+          "type": "order",
+          "prompt": "رتّب خطوات شغل الـ Browser من أول ما تكتب الرابط لحد ما الصفحة تظهر:",
+          "items": [
+            "المستخدم يكتب عنوان الموقع (URL)",
+            "الـ Server يبعت ملف الـ HTML",
+            "الـ Browser يقرا الكود سطر سطر (Parse)",
+            "الصفحة تترسم وتظهر قدامك (Render)"
+          ],
+          "why": "الرحلة دايماً: تكتب URL ← السيرفر يبعت HTML ← البراوزر يقراه ← الصفحة تتعرض.",
+          "hint": "ابدأ بالخطوة اللي المستخدم بيعملها بنفسه، واختم بظهور الصفحة."
+        }
+      ]
+    },
+    {
+      "id": "lvl-2",
+      "num": 2,
+      "title": "الهيكل الأساسي والـ Meta",
+      "en": "HTML5 Document Structure & Meta Tags",
+      "docs": [
+        {
+          "tab": "أول ملف HTML",
+          "heading": "الهيكل الثابت لأي ملف HTML5",
+          "body": [
+            "أي ملف HTML لازم يبدأ بـ <code>&lt;!DOCTYPE html&gt;<\/code> — ده مش tag عادي، ده تعليمات للـ <bdi>browser<\/bdi> إن الملف مكتوب بأحدث إصدار HTML5.",
+            "جوا <code>&lt;html&gt;<\/code> بنقسم الصفحة لجزئين: <code>&lt;head&gt;<\/code> للمعلومات الوصفية (metadata) و <code>&lt;body&gt;<\/code> لكل المحتوى المرئي."
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "كده ببساطة 🪪",
+            "text": "الـ <code>&lt;head&gt;<\/code> زي بطاقة الهوية بتاعتك — معلومات عنك بس الناس مش بتشوفها أول ما تقابلك. الـ <code>&lt;body&gt;<\/code> هو إنت نفسك — اللي الناس بتشوفه وبتتعامل معاه."
+          },
+          "cards": [
+            {
+              "title": "<!DOCTYPE html>",
+              "desc": "أول سطر إجباري — بيقول للـ browser أنا HTML5."
+            },
+            {
+              "title": "<html lang=\"ar\" dir=\"rtl\">",
+              "desc": "الـ root element — بيحدد اللغة والاتجاه."
+            },
+            {
+              "title": "<head>",
+              "desc": "فيه metadata (العنوان، الوصف، CSS) مش بتظهر في الصفحة."
+            },
+            {
+              "title": "<body>",
+              "desc": "كل حاجة المستخدم بيشوفها: عناوين، فقرات، صور، لينكات."
+            }
+          ],
+          "filename": "index.html",
+          "code": "[[0|<!DOCTYPE html>]]\n<html [[1|lang=\"ar\" dir=\"rtl\"]]>\n  [[2|<head>]]\n    <meta [[3|charset=\"UTF-8\"]]>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>أول صفحة ويب<\/title>\n  <\/head>\n  [[4|<body>]]\n    <h1>أهلاً بيك في أول صفحة!<\/h1>\n    <p>دي أول فقرة في صفحتي.<\/p>\n  <\/body>\n<\/html>",
+          "spots": [
+            {
+              "title": "DOCTYPE",
+              "say": "لازم يكون أول سطر عشان المتصفح يشتغل بوضع HTML5 الحديث."
+            },
+            {
+              "title": "lang & dir",
+              "say": "لغة الصفحة عربي (ar) والاتجاه يمين لشمال (rtl)."
+            },
+            {
+              "title": "<head>",
+              "say": "معلومات وإعدادات عن الصفحة مش بتتعرض جوا التصميم."
+            },
+            {
+              "title": "UTF-8",
+              "say": "الترميز اللي بيضمن إن الحروف العربية تظهر صح."
+            },
+            {
+              "title": "<body>",
+              "say": "مساحة العرض الحقيقية لكل محتوى الصفحة."
+            }
+          ],
+          "preview": "<div dir='rtl'><h1 style='margin:0 0 6px'>أهلاً بيك في أول صفحة!<\/h1><p style='margin:0'>دي أول فقرة في صفحتي.<\/p><\/div>",
+          "previewUrl": "file:///index.html"
+        },
+        {
+          "tab": "الـ Meta Tags المهمة",
+          "heading": "الـ Meta Tags للـ SEO والموبايل والسوشيال",
+          "body": [
+            "الـ <bdi>meta tags<\/bdi> بتتحط جوا الـ <code>&lt;head&gt;<\/code> ومهمة جداً لظهور موقعك في جوجل (SEO)، وظبط المقاس على الموبايل (Responsive)، وشكل اللينك لما حد يشيره على فيسبوك أو واتساب (Open Graph)."
+          ],
+          "tip": "لو بتعمل موقع بالعربي، لازم تحط <code>charset=\"UTF-8\"<\/code> عشان الحروف العربية متبوظش. ولو نسيت الـ <code>viewport<\/code> موقعك هيبان صغير أوي على الموبايل.",
+          "filename": "meta-tags.html",
+          "code": "<head>\n  <!-- ❶ الترميز عشان العربي يظهر صح -->\n  [[0|<meta charset=\"UTF-8\">]]\n\n  <!-- ❷ ظبط الصفحة على الموبايل -->\n  [[1|<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">]]\n\n  <!-- ❸ الوصف اللي بيظهر في نتائج جوجل -->\n  [[2|<meta name=\"description\" content=\"تعلم HTML من الصفر\">]]\n\n  <!-- ❹ أيقونة الـ Tab -->\n  [[3|<link rel=\"icon\" href=\"favicon.ico\">]]\n\n  <!-- ❺ Open Graph لما حد يشير على فيسبوك -->\n  [[4|<meta property=\"og:title\" content=\"تعلم HTML\">]]\n  <meta property=\"og:image\" content=\"preview.jpg\">\n<\/head>",
+          "spots": [
+            {
+              "title": "charset=\"UTF-8\"",
+              "say": "بيمنع الحروف العربية إنها تتلخبط لرموز غريبة."
+            },
+            {
+              "title": "viewport",
+              "say": "بيخلي عرض الصفحة يساوي عرض شاشة الموبايل."
+            },
+            {
+              "title": "description",
+              "say": "النص المختصر اللي جوجل بيعرضه تحت رابط موقعك."
+            },
+            {
+              "title": "favicon",
+              "say": "الأيقونة الصغيرة جنب عنوان الصفحة في التاب."
+            },
+            {
+              "title": "Open Graph (og:)",
+              "say": "العنوان والصورة اللي بيظهروا لما تشير الرابط على السوشيال."
+            }
+          ]
+        }
+      ],
+      "stages": [
+        {
+          "id": "s2-1",
+          "type": "order",
+          "prompt": "رتّب أجزاء ملف HTML5 الأساسي من فوق لتحت:",
+          "items": [
+            "<!DOCTYPE html>",
+            "<html lang=\"ar\" dir=\"rtl\">",
+            "<head><title>موقعي<\/title><\/head>",
+            "<body><h1>أهلاً<\/h1><\/body>",
+            "<\/html>"
+          ],
+          "why": "أي ملف HTML5 يبدأ بـ DOCTYPE ثم html ثم head ثم body ثم إغلاق html.",
+          "hint": "الـ DOCTYPE دايماً فوق، والـ head قبل الـ body."
+        },
+        {
+          "id": "s2-2",
+          "type": "choice",
+          "prompt": "صاحبك عمل موقع بالعربي بس الحروف طلعت رموز غريبة! نسى يحط إيه في الـ <head>؟",
+          "options": [
+            {
+              "t": "<meta charset=\"UTF-8\">",
+              "preview": "<div dir='rtl'><strong>أهلاً بيك في موقعي!<\/strong><\/div>",
+              "why": "بالظبط! UTF-8 هو الترميز اللي بيظهر الحروف العربية صح."
+            },
+            {
+              "t": "<meta name=\"viewport\">",
+              "preview": "<div dir='rtl'>Ø£Ù‡Ù„Ø§Ù‹ Ø¨ÙŠÙƒ!<\/div>",
+              "why": "الـ viewport بيظبط مقاس الموقع على الموبايل، مش ترميز العربي."
+            },
+            {
+              "t": "<link rel=\"icon\" href=\"favicon.ico\">",
+              "preview": "<div dir='rtl'>Ø£Ù‡Ù„Ø§Ù‹ Ø¨ÙŠÙƒ!<\/div>",
+              "why": "ده بيضيف أيقونة الـ Tab فوق، ومش بيحل مشكلة الحروف العربية."
+            }
+          ],
+          "answer": 0,
+          "hint": "دور على الـ meta الخاصة بترميز الحروف (charset)."
+        },
+        {
+          "id": "s2-3",
+          "type": "match",
+          "prompt": "وصّل كل Tag جوا الـ <head> بالوظيفة بتاعته:",
+          "pairs": [
+            [
+              "viewport",
+              "يخلي الموقع يظهر بمقاس مظبوط على الموبايل"
+            ],
+            [
+              "description",
+              "الوصف اللي بيظهر تحت رابط موقعك في جوجل"
+            ],
+            [
+              "og:title & og:image",
+              "الشكل اللي بيظهر لما حد يشير اللينك على فيسبوك"
+            ],
+            [
+              "rel=\"icon\"",
+              "الأيقونة الصغيرة اللي بتظهر في الـ Tab فوق"
+            ]
+          ],
+          "hint": "Open Graph (og:) بتاعة السوشيال، و viewport بتاعة شاشة الموبايل."
+        }
+      ]
+    },
+    {
+      "id": "lvl-3",
+      "num": 3,
+      "title": "العناصر والتاجات",
+      "en": "Elements, Block vs Inline & Void Tags",
+      "docs": [
+        {
+          "tab": "يعني إيه Element؟",
+          "heading": "تشريح الـ HTML Element",
+          "body": [
+            "الـ <strong>Element<\/strong> هو الوحدة الأساسية في HTML. كل element بيتكون من ٣ أجزاء رئيسية: <strong>Opening Tag<\/strong> + <strong>Content<\/strong> + <strong>Closing Tag<\/strong> (وأحياناً جوا تاج الفتح Attributes)."
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "فكّر فيها زي الساندويتش 🥪",
+            "text": "العيشة الفوقانية هي الـ opening tag، الحشو هو الـ content، والعيشة التحتانية هي الـ closing tag. بعض الـ tags زي <code>&lt;img&gt;<\/code> مبيحتاجوش closing tag — ودول اسمهم Void Elements."
+          },
+          "filename": "element-anatomy.html",
+          "code": "[[0|<p]] [[1|class=\"intro\"]]>[[2|Hello World]][[3|<\/p>]]",
+          "spots": [
+            {
+              "title": "Opening Tag",
+              "say": "بداية العنصر وبيحدد نوعه (هنا فقرة p)."
+            },
+            {
+              "title": "Attribute",
+              "say": "معلومة إضافية جوا تاج الفتح (name=\"value\")."
+            },
+            {
+              "title": "Content",
+              "say": "المحتوى الحقيقي اللي بيظهر جوا العنصر."
+            },
+            {
+              "title": "Closing Tag",
+              "say": "نهاية العنصر — نفس الاسم مع علامة / قبله."
+            }
+          ]
+        },
+        {
+          "tab": "Block vs Inline",
+          "heading": "الفرق بين Block و Inline Elements",
+          "body": [
+            "عناصر HTML بتتقسم لنوعين أساسيين في طريقة أخذ المساحة على الشاشة: <strong>Block<\/strong> بياخد السطر كله ويبدأ سطر جديد، و <strong>Inline<\/strong> بياخد مساحة محتواه بس ويمشي جوا السطر."
+          ],
+          "warning": "متحطش Block Element جوا Inline Element! يعني <code>&lt;span&gt;&lt;div&gt;...&lt;/div&gt;&lt;/span&gt;<\/code> ده غلط. الـ Inline بيكون جوا الـ Block مش العكس.",
+          "cards": [
+            {
+              "title": "Block Elements",
+              "code": "div, p, h1, section, ul",
+              "desc": "بياخد العرض كله ويبدأ في سطر جديد زي الصناديق فوق بعض."
+            },
+            {
+              "title": "Inline Elements",
+              "code": "span, a, strong, em, img",
+              "desc": "بياخد مساحة محتواه بس ومش بيعمل سطر جديد."
+            }
+          ],
+          "filename": "block-vs-inline.html",
+          "code": "<!-- Block: كل واحد في سطر لوحده -->\n<div>صندوق أول<\/div>\n<p>فقرة بتاخد السطر كله<\/p>\n\n<!-- Inline: جوا نفس السطر -->\n<p>دي كلمة <strong>مهمة<\/strong> وده <a href=\"#\">لينك<\/a><\/p>"
+        },
+        {
+          "tab": "Void Elements",
+          "heading": "الـ Void Elements (Self-Closing)",
+          "body": [
+            "فيه عناصر معندهاش content ومش محتاجة closing tag خالص. دول اسمهم <strong>Void Elements<\/strong> — عناصر «مكتفية بذاتها»."
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "ليه ملهمش إغلاق؟",
+            "text": "الـ <code>&lt;img&gt;<\/code> مثلاً مش منطقي تكتب جواها نص — هي نفسها المحتوى!"
+          },
+          "table": {
+            "headers": [
+              "Element",
+              "الوظيفة",
+              "مثال"
+            ],
+            "rows": [
+              [
+                "<code>&lt;img&gt;<\/code>",
+                "صورة",
+                "<code>&lt;img src=\"photo.jpg\" alt=\"وصف\"&gt;<\/code>"
+              ],
+              [
+                "<code>&lt;br&gt;<\/code>",
+                "سطر جديد",
+                "<code>سطر&lt;br&gt;سطر تاني<\/code>"
+              ],
+              [
+                "<code>&lt;hr&gt;<\/code>",
+                "خط فاصل",
+                "<code>&lt;hr&gt;<\/code>"
+              ],
+              [
+                "<code>&lt;input&gt;<\/code>",
+                "حقل إدخال",
+                "<code>&lt;input type=\"text\"&gt;<\/code>"
+              ],
+              [
+                "<code>&lt;meta&gt;<\/code>",
+                "بيانات وصفية",
+                "<code>&lt;meta charset=\"UTF-8\"&gt;<\/code>"
+              ],
+              [
+                "<code>&lt;link&gt;<\/code>",
+                "ربط ملفات",
+                "<code>&lt;link rel=\"stylesheet\" href=\"style.css\"&gt;<\/code>"
+              ]
+            ]
+          }
+        }
+      ],
+      "stages": [
+        {
+          "id": "s3-1",
+          "type": "slot",
+          "prompt": "اسحب القطع عشان تكوّن Element كامل بـ Opening Tag و Attribute و Closing Tag:",
+          "coach": "فكّر في الـ element زي ساندويتش: عيشة فوق opening، حشو content، عيشة تحت closing!",
+          "code": "[[0]] [[1]]=\"intro\">Hello World[[2]]",
+          "tokens": [
+            "<p",
+            "class",
+            "<\/p>",
+            "<div>",
+            "<\/span"
+          ],
+          "answer": [
+            "<p",
+            "class",
+            "<\/p>"
+          ],
+          "why": "الـ element بيفتح بـ <p، جواه attribute اسمه class، وبيقفل بـ <\/p>.",
+          "hint": "اللي بيفتح بـ <p لازم يقفل بنفس الاسم <\/p>."
+        },
+        {
+          "id": "s3-2",
+          "type": "buckets",
+          "layout": "columns",
+          "prompt": "صنّف كل Element: بياخد السطر كله (Block) ولا على قد محتواه (Inline)؟",
+          "buckets": [
+            {
+              "id": "block",
+              "label": "Block (صندوق كامل)"
+            },
+            {
+              "id": "inline",
+              "label": "Inline (جوا السطر)"
+            }
+          ],
+          "items": [
+            {
+              "t": "<div>",
+              "b": "block",
+              "why": "div صندوق block بياخد العرض كله."
+            },
+            {
+              "t": "<p>",
+              "b": "block",
+              "why": "الفقرة p دايماً بتبدأ سطر جديد (block)."
+            },
+            {
+              "t": "<section>",
+              "b": "block",
+              "why": "section قسم block بياخد العرض كله."
+            },
+            {
+              "t": "<span>",
+              "b": "inline",
+              "why": "span عنصر inline بياخد مساحة كلامه بس."
+            },
+            {
+              "t": "<a>",
+              "b": "inline",
+              "why": "اللينك a بيمشي جوا السطر عادي (inline)."
+            },
+            {
+              "t": "<strong>",
+              "b": "inline",
+              "why": "strong بيميز كلمة جوا السطر (inline)."
+            }
+          ],
+          "hint": "الـ div و p و section صناديق كبيرة؛ الـ span و a و strong جوا النص."
+        },
+        {
+          "id": "s3-3",
+          "type": "bughunt",
+          "prompt": "في غلطة Nesting مشهورة في الكود ده! اضغط عليها عشان تصيدها:",
+          "code": "[[ok|<section class=\"hero\">]]\n  [[0|<span><div>مرحباً بكم<\/div><\/span>]]\n  [[ok|<p>دي <em>كلمة<\/em> جوا فقرة<\/p>]]\n<\/section>",
+          "bugs": [
+            {
+              "why": "ممنوع تحط block element (<div>) جوا inline element (<span>)! الـ inline هو اللي جوا الـ block مش العكس."
+            }
+          ],
+          "hint": "دوّر على block element محبوس جوا inline element!"
+        },
+        {
+          "id": "s3-4",
+          "type": "buckets",
+          "layout": "columns",
+          "prompt": "صنّف التاجات: مين Void Element (مكتفي بذاته من غير إغلاق) ومين محتاج Closing Tag؟",
+          "buckets": [
+            {
+              "id": "void",
+              "label": "Void (من غير إغلاق)"
+            },
+            {
+              "id": "pair",
+              "label": "محتاج Closing Tag"
+            }
+          ],
+          "items": [
+            {
+              "t": "<img>",
+              "b": "void",
+              "why": "img هي نفسها الصورة — ملهاش content فمش بتتقفل."
+            },
+            {
+              "t": "<br>",
+              "b": "void",
+              "why": "br بينزل سطر جديد بس — void element."
+            },
+            {
+              "t": "<hr>",
+              "b": "void",
+              "why": "hr خط فاصل — void element."
+            },
+            {
+              "t": "<input>",
+              "b": "void",
+              "why": "input حقل إدخال — void element."
+            },
+            {
+              "t": "<p>",
+              "b": "pair",
+              "why": "الفقرة جواها نص فلازم تقفل بـ <\/p>."
+            },
+            {
+              "t": "<ul>",
+              "b": "pair",
+              "why": "القائمة جواها عناصر <li> فلازم تقفل بـ <\/ul>."
+            }
+          ],
+          "hint": "اسأل نفسك: ينفع أكتب كلام جوا التاج ده؟ لو لأ، يبقى Void."
+        }
+      ]
+    },
+    {
+      "id": "lvl-4",
+      "num": 4,
+      "title": "الـ Attributes بالتفصيل",
+      "en": "Global, Boolean & Data Attributes",
+      "docs": [
+        {
+          "tab": "يعني إيه Attribute؟",
+          "heading": "الـ Global Attributes الأساسية",
+          "body": [
+            "الـ <strong>Attributes<\/strong> هي معلومات إضافية بتحطها جوا الـ opening tag بشكل <code>name=\"value\"<\/code> عشان تتحكم في سلوك أو شكل العنصر.",
+            "الـ <strong>Global Attributes<\/strong> ينفع تستخدمها مع <strong>أي<\/strong> عنصر HTML في الصفحة."
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "القاعدة الذهبية 🔑",
+            "text": "الـ <code>id<\/code> زي <strong>رقم البطاقة<\/strong> — فريد لكل عنصر ومينفعش يتكرر. الـ <code>class<\/code> زي <strong>اسم المدرسة<\/strong> — عناصر كتير ممكن تاخد نفس الـ class عادي!"
+          },
+          "cards": [
+            {
+              "title": "id",
+              "code": "id=\"main\"",
+              "desc": "اسم فريد مش بيتكرر في الصفحة (للـ CSS و JS)."
+            },
+            {
+              "title": "class",
+              "code": "class=\"card active\"",
+              "desc": "تصنيف يتكرر وينفع تحط أكتر من class."
+            },
+            {
+              "title": "style",
+              "code": "style=\"color:red\"",
+              "desc": "Inline CSS — مش مستحب في الشغل الحقيقي."
+            },
+            {
+              "title": "title",
+              "code": "title=\"توضيح\"",
+              "desc": "رسالة tooltip تظهر لما تحط الماوس فوق العنصر."
+            },
+            {
+              "title": "data-*",
+              "code": "data-price=\"299\"",
+              "desc": "بيانات مخصصة بتخزنها في HTML وتقراها بـ JS."
+            },
+            {
+              "title": "hidden",
+              "code": "hidden",
+              "desc": "Boolean attribute بيخفي العنصر من غير ما يحتاج قيمة."
+            }
+          ]
+        },
+        {
+          "tab": "Data Attributes عملياً",
+          "heading": "الـ Data Attributes في مواقع التسوق الحقيقية",
+          "body": [
+            "الـ <code>data-*<\/code> attributes مفيدة جداً لربط HTML بـ JavaScript في مشاريع زي الـ e-commerce. بتخزن رقم المنتج والسعر في الكارت نفسه وتقراهم بـ <code>element.dataset<\/code>."
+          ],
+          "tip": "ده pattern شائع جداً في الشغل الحقيقي: بدل ما تعمل API call كل مرة، بتخزن الـ data في الـ HTML وتقراها بـ JS وقت ما تحتاجها (الشرطة بتتحول لـ camelCase زي <code>dataset.productId<\/code>).",
+          "filename": "product-card.html",
+          "code": "<div class=\"product-card\"\n     [[0|data-product-id=\"12345\"]]\n     [[1|data-price=\"299.99\"]]\n     data-category=\"electronics\">\n  <h3>Samsung Galaxy S24<\/h3>\n  <button class=\"add-to-cart\">أضف للسلة<\/button>\n<\/div>\n\n<!-- في JavaScript بتقراهم كده: -->\n// card.dataset.productId => \"12345\"\n// card.dataset.price     => \"299.99\"",
+          "spots": [
+            {
+              "title": "data-product-id",
+              "say": "يتقرا في JS عن طريق card.dataset.productId (camelCase)."
+            },
+            {
+              "title": "data-price",
+              "say": "يتقرا في JS عن طريق card.dataset.price."
+            }
+          ]
+        }
+      ],
+      "stages": [
+        {
+          "id": "s4-1",
+          "type": "match",
+          "prompt": "وصّل كل Global Attribute بالوظيفة أو التشبيه بتاعه:",
+          "coach": "القاعدة الذهبية: الـ id زي رقم البطاقة (فريد)، والـ class زي اسم المدرسة (يتكرر عادي)!",
+          "pairs": [
+            [
+              "id",
+              "زي رقم البطاقة — فريد لكل عنصر في الصفحة"
+            ],
+            [
+              "class",
+              "زي اسم المدرسة — يتكرر ويتحط أكتر من واحد"
+            ],
+            [
+              "title",
+              "نص tooltip يظهر لما تحط الماوس فوق العنصر"
+            ],
+            [
+              "hidden",
+              "Boolean attribute يخفي العنصر من غير ما يطلب قيمة"
+            ]
+          ],
+          "hint": "مين فريد؟ ومين بيظهر لما تقف بالماوس؟"
+        },
+        {
+          "id": "s4-2",
+          "type": "patch",
+          "prompt": "زي مواقع التسوق الحقيقية: ضيف data-product-id=\"12345\" و data-price=\"299\" على كارت المنتج:",
+          "start": "<div class=\"product-card\">\n  <h3>Samsung Galaxy S24<\/h3>\n  <button>أضف للسلة<\/button>\n<\/div>",
+          "chips": [
+            "data-product-id=\"12345\"",
+            "data-price=\"299\""
+          ],
+          "checks": [
+            {
+              "selector": "div.product-card[data-product-id='12345']",
+              "fail": "ضيف data-product-id=\"12345\" جوا تاج الـ <div>."
+            },
+            {
+              "selector": "div.product-card[data-price='299']",
+              "fail": "عاش! لسه ناقص data-price=\"299\" جوا نفس الـ <div>."
+            }
+          ],
+          "solution": "<div class=\"product-card\" data-product-id=\"12345\" data-price=\"299\">\n  <h3>Samsung Galaxy S24<\/h3>\n  <button>أضف للسلة<\/button>\n<\/div>",
+          "why": "الله ينوّر! كده JavaScript تقدر تقرا البيانات مباشرة من card.dataset.",
+          "hint": "حط المؤشر قبل علامة > في السطر الأول واضغط على الـ chips فوق المحرر."
+        },
+        {
+          "id": "s4-3",
+          "type": "choice",
+          "prompt": "في JavaScript، إزاي تقرا قيمة data-product-id من الكارت card؟",
+          "code": "<div class=\"product-card\" data-product-id=\"12345\"><\/div>",
+          "options": [
+            {
+              "t": "card.dataset.productId",
+              "why": "بالظبط! JS بتحول الشرط لـ camelCase جوا dataset."
+            },
+            {
+              "t": "card.data.product-id",
+              "why": "الخاصية اسمها dataset مش data، ومينفعش شرطة في اسم property."
+            },
+            {
+              "t": "card.style.productId",
+              "why": "style دي للـ CSS inline بس، ملهاش علاقة بـ data-*."
+            }
+          ],
+          "answer": 0,
+          "hint": "في JS بنستخدم خاصية اسمها dataset مع camelCase."
+        }
+      ]
+    },
+    {
+      "id": "lvl-5",
+      "num": 5,
+      "title": "النصوص والعناوين",
+      "en": "Headings, Formatting & Quotes",
+      "docs": [
+        {
+          "tab": "العناوين h1–h6",
+          "heading": "التسلسل الهرمي للعناوين وقواعد الـ SEO",
+          "body": [
+            "HTML فيها ٦ مستويات عناوين من <code>&lt;h1&gt;<\/code> (الأكبر والأهم) لحد <code>&lt;h6&gt;<\/code> (الأصغر). الترتيب ده مش مجرد حجم خط — ده هيكل (hierarchy) بيفهم جوجل والقارئ ترتيب المحتوى."
+          ],
+          "warning": "قاعدة مهمة للـ SEO: متستخدمش <code>&lt;h1&gt;<\/code> أكتر من مرة في الصفحة! لازم يكون فيه <code>&lt;h1&gt;<\/code> واحد بس كعنوان رئيسي للصفحة.",
+          "filename": "headings.html",
+          "code": "<h1>عنوان الصفحة الرئيسي<\/h1> <!-- واحد بس! -->\n<h2>عنوان القسم<\/h2>\n<h3>عنوان فرعي<\/h3>\n<h4>عنوان فرعي أصغر<\/h4>\n<h5>عنوان صغير<\/h5>\n<h6>أصغر عنوان<\/h6>",
+          "preview": "<div dir='rtl'><h1 style='margin:2px 0;font-size:1.5em'>عنوان الصفحة الرئيسي<\/h1><h2 style='margin:2px 0;font-size:1.25em'>عنوان القسم<\/h2><h3 style='margin:2px 0;font-size:1.05em'>عنوان فرعي<\/h3><h4 style='margin:2px 0;font-size:.95em'>عنوان فرعي أصغر<\/h4><h6 style='margin:2px 0;font-size:.75em;color:#64748b'>أصغر عنوان<\/h6><\/div>",
+          "previewUrl": "file:///headings.html"
+        },
+        {
+          "tab": "تنسيق النصوص والاقتباسات",
+          "heading": "التنسيق الدلالي (Semantic) والاقتباسات",
+          "body": [
+            "كل tag لتنسيق النص ليه <strong>معنى دلالي<\/strong> مش مجرد شكل. وللاقتباسات عندنا <code>&lt;blockquote&gt;<\/code> للاقتباس الطويل مع <code>&lt;cite&gt;<\/code>، و <code>&lt;q&gt;<\/code> للاقتباس القصير جوا السطر."
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "الفرق بين <strong> و <b>",
+            "text": "الاتنين شكلهم bold، بس <code>&lt;strong&gt;<\/code> بيقول للـ screen reader «ده كلام مهم اقراه بتركيز»، إنما <code>&lt;b&gt;<\/code> مجرد شكل بس. دايماً اختار الـ semantic tag!"
+          },
+          "table": {
+            "headers": [
+              "Tag",
+              "المعنى الدلالي",
+              "مثال"
+            ],
+            "rows": [
+              [
+                "<code>&lt;strong&gt;<\/code>",
+                "أهمية قوية (Bold)",
+                "تحذير: <strong>ممنوع<\/strong> الدخول"
+              ],
+              [
+                "<code>&lt;em&gt;<\/code>",
+                "تأكيد / stress (Italic)",
+                "ده <em>مش<\/em> اختياري"
+              ],
+              [
+                "<code>&lt;mark&gt;<\/code>",
+                "نص مميز / Highlight",
+                "ابحث عن <mark style='background:#fbbf24;color:#000;padding:0 4px;border-radius:3px'>HTML<\/mark>"
+              ],
+              [
+                "<code>&lt;del&gt;<\/code>",
+                "نص محذوف",
+                "السعر: <del>500<\/del> 300 جنيه"
+              ],
+              [
+                "<code>&lt;code&gt;<\/code>",
+                "كود برمجي",
+                "<code>console.log()<\/code>"
+              ],
+              [
+                "<code>&lt;abbr&gt;<\/code>",
+                "اختصار مع tooltip",
+                "<abbr title='Application Programming Interface'>API<\/abbr>"
+              ],
+              [
+                "<code>&lt;blockquote&gt;<\/code> / <code>&lt;q&gt;<\/code>",
+                "اقتباس طويل / قصير",
+                "اقتباس من مصدر مع <code>&lt;cite&gt;<\/code>"
+              ]
+            ]
+          },
+          "preview": "<div dir='rtl'><blockquote><p style='margin:0'>HTML is the most basic building block of the Web.<\/p><small>— <cite>MDN Web Docs<\/cite><\/small><\/blockquote><p style='margin:6px 0 0'>قال Tim Berners-Lee: <q>الويب بيربط الناس ببعض.<\/q><\/p><\/div>",
+          "previewUrl": "file:///quotes.html"
+        }
+      ],
+      "stages": [
+        {
+          "id": "s5-1",
+          "type": "order",
+          "prompt": "رتّب هيكل العناوين من الأهم (عنوان الصفحة) للأصغر:",
+          "items": [
+            "<h1>عنوان الصفحة الرئيسي<\/h1>",
+            "<h2>عنوان القسم الرئيسي<\/h2>",
+            "<h3>عنوان فرعي جوا القسم<\/h3>",
+            "<h6>أصغر عنوان فرعي<\/h6>"
+          ],
+          "why": "دايماً نبدأ بـ h1 واحد فوق وبعده h2 ثم h3 لحد h6.",
+          "hint": "كل ما الرقم يكبر، العنوان يصغر في الأهمية."
+        },
+        {
+          "id": "s5-2",
+          "type": "bughunt",
+          "prompt": "غلطة SEO مشهورة! اضغط على السطر اللي بيكسر قاعدة العناوين:",
+          "code": "[[ok|<h1>تعلم HTML من الصفر<\/h1>]]\n[[ok|<p>أهلاً بيك في المحاضرة التانية.<\/p>]]\n[[0|<h1>العناوين والفقرات<\/h1>]]\n[[ok|<h3>أمثلة عملية<\/h3>]]",
+          "bugs": [
+            {
+              "why": "متستخدمش <h1> أكتر من مرة في الصفحة! العنوان التاني لازم يبقى <h2> عشان جوجل يفهم الهيكل صح."
+            }
+          ],
+          "hint": "كم <h1> مسموح في الصفحة الواحدة؟"
+        },
+        {
+          "id": "s5-3",
+          "type": "match",
+          "prompt": "وصّل كل Tag لتنسيق النص بالمعنى الدلالي بتاعه:",
+          "pairs": [
+            [
+              "<strong>",
+              "أهمية قوية (مش مجرد شكل bold)"
+            ],
+            [
+              "<em>",
+              "تأكيد ونبرة stress على الكلمة"
+            ],
+            [
+              "<mark>",
+              "تمييز نص (Highlight أصفر)"
+            ],
+            [
+              "<del>",
+              "نص محذوف زي السعر القديم قبل الخصم"
+            ]
+          ],
+          "hint": "mark للـ highlight، و del اختصار deleted."
+        },
+        {
+          "id": "s5-4",
+          "type": "choice",
+          "prompt": "شوف كود الاقتباس ده — توقّع هيظهر إزاي في الـ Browser؟",
+          "code": "<blockquote cite=\"https://mdn.io\">\n  <p>HTML builds the Web.<\/p>\n  <footer>— <cite>MDN<\/cite><\/footer>\n<\/blockquote>\n<p>قال تيم: <q>الويب للجميع<\/q><\/p>",
+          "options": [
+            {
+              "t": "اقتباس طويل بمسافة جانبية + اقتباس قصير بين علامتي تنصيص",
+              "preview": "<blockquote style='border-right:3px solid #94a3b8;padding:2px 6px;margin:0 0 4px'>HTML builds the Web. <small>— <i>MDN<\/i><\/small><\/blockquote><p style='margin:0'>قال تيم: «الويب للجميع»<\/p>",
+              "why": "عاش! blockquote بيعمل كتلة اقتباس منفصلة، و q بيحط تنصيص جوا السطر."
+            },
+            {
+              "t": "سطر واحد كله من غير تنسيق ولا تنصيص",
+              "preview": "<p style='margin:0'>HTML builds the Web. — MDN قال تيم: الويب للجميع<\/p>",
+              "why": "blockquote عنصر block بيفصل الاقتباس ويديله مسافة، و q بيضيف علامات تنصيص."
+            }
+          ],
+          "answer": 0,
+          "hint": "blockquote بيعمل صندوق اقتباس، و q بيحط علامات تنصيص تلقائياً."
+        }
+      ]
+    },
+    {
+      "id": "lvl-6",
+      "num": 6,
+      "title": "الروابط والصور والميديا",
+      "en": "Links, Images, Audio & Video",
+      "docs": [
+        {
+          "tab": "الروابط <a>",
+          "heading": "الـ Anchor Tag — أساس الويب كله",
+          "body": [
+            "كلمة <strong>HyperText<\/strong> في HTML معناها «نص مرتبط بنصوص تانية». والـ <code>&lt;a&gt;<\/code> tag مع attribute الـ <code>href<\/code> هو اللي بيعمل كل أنواع الروابط: مواقع خارجية، صفحات داخلية، أقسام في نفس الصفحة (<code>#id<\/code>)، إيميل (<code>mailto:<\/code>)، وتحميل ملفات (<code>download<\/code>)."
+          ],
+          "tip": "<strong>أمان مهم:<\/strong> لما تفتح لينك خارجي بـ <code>target=\"_blank\"<\/code>، دايماً حط <code>rel=\"noopener\"<\/code> عشان تمنع الصفحة الجديدة إنها تتحكم في صفحتك!",
+          "filename": "links.html",
+          "code": "[[0|<a href=\"https://google.com\" target=\"_blank\" rel=\"noopener\">جوجل<\/a>]]\n[[1|<a href=\"about.html\">من نحن<\/a>]]\n[[2|<a href=\"#contact\">قسم الاتصال<\/a>]]\n[[3|<a href=\"mailto:info@example.com\">ابعتلنا إيميل<\/a>]]\n[[4|<a href=\"notes.pdf\" download>حمل المذكرة<\/a>]]",
+          "spots": [
+            {
+              "title": "رابط خارجي آمن",
+              "say": "يفتح في تاب جديد ومؤمّن بـ rel=\"noopener\"."
+            },
+            {
+              "title": "رابط داخلي",
+              "say": "ينقلك لصفحة تانية في نفس الموقع."
+            },
+            {
+              "title": "Anchor (#contact)",
+              "say": "ينط لقسم معين في نفس الصفحة."
+            },
+            {
+              "title": "mailto:",
+              "say": "يفتح تطبيق الإيميل مباشرة."
+            },
+            {
+              "title": "download",
+              "say": "يحمل الملف بدل ما يفتحه."
+            }
+          ]
+        },
+        {
+          "tab": "الصور والميديا",
+          "heading": "الصور الاحترافية + Video و Audio في HTML5",
+          "body": [
+            "الصور مش مجرد <code>&lt;img&gt;<\/code>! عندك <code>loading=\"lazy\"<\/code> عشان التحميل السريع، و <code>&lt;figure&gt;<\/code> مع <code>&lt;figcaption&gt;<\/code> للصور اللي لها وصف، و <code>&lt;picture&gt;<\/code> للصور الـ responsive على الشاشات المختلفة.",
+            "و HTML5 جابت <code>&lt;video&gt;<\/code> (مع <code>controls<\/code> و <code>poster<\/code> و <code>&lt;track&gt;<\/code> للترجمة) و <code>&lt;audio&gt;<\/code> بدل ما كنا بنحتاج Flash زمان، بالإضافة لـ <code>&lt;iframe&gt;<\/code> لتضمين يوتيوب."
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "الـ alt مش اختياري! 👁",
+            "text": "لو مكتبتش <code>alt<\/code>، المكفوفين اللي بيستخدموا screen readers مش هيعرفوا إيه في الصورة، وجوجل مش هيفهمها. اكتب وصف مفيد مش مجرد «صورة»."
+          },
+          "filename": "media.html",
+          "code": "<!-- صورة مع وصف وتحميل ذكي -->\n<figure>\n  <img src=\"chart.png\" [[0|alt=\"رسم بياني للمبيعات\"]] [[1|loading=\"lazy\"]]>\n  <figcaption>مبيعات الربع الرابع<\/figcaption>\n<\/figure>\n\n<!-- فيديو HTML5 بترجمة وغلاف -->\n<video controls [[2|poster=\"thumbnail.jpg\"]]>\n  <source src=\"lecture.mp4\" type=\"video/mp4\">\n  [[3|<track src=\"subs-ar.vtt\" kind=\"subtitles\" srclang=\"ar\">]]\n<\/video>",
+          "spots": [
+            {
+              "title": "alt",
+              "say": "وصف دقيق للـ screen reader والـ SEO ولو الصورة محمّلتش."
+            },
+            {
+              "title": "loading=\"lazy\"",
+              "say": "بيأجل تحميل الصورة لحد ما المستخدم يقرب منها."
+            },
+            {
+              "title": "poster",
+              "say": "صورة الغلاف اللي بتظهر قبل ما الفيديو يشتغل."
+            },
+            {
+              "title": "<track>",
+              "say": "بيضيف ملف ترجمة (Subtitles) للفيديو."
+            }
+          ]
+        }
+      ],
+      "stages": [
+        {
+          "id": "s6-1",
+          "type": "patch",
+          "prompt": "خلي لينك جوجل يفتح في تاب جديد بأمان كامل (ضيف target و rel):",
+          "coach": "أمان مهم: من غير rel=\"noopener\" الصفحة الجديدة تقدر تتحكم في صفحتك الأصلية!",
+          "start": "<a href=\"https://google.com\">فتح جوجل<\/a>",
+          "chips": [
+            "target=\"_blank\"",
+            "rel=\"noopener\""
+          ],
+          "checks": [
+            {
+              "selector": "a[target='_blank']",
+              "fail": "لسه ناقص target=\"_blank\" عشان يفتح في تاب جديد."
+            },
+            {
+              "selector": "a[rel~='noopener']",
+              "fail": "عاش! بس ناقص rel=\"noopener\" عشان الأمان."
+            }
+          ],
+          "solution": "<a href=\"https://google.com\" target=\"_blank\" rel=\"noopener\">فتح جوجل<\/a>",
+          "why": "معلّم! كده اللينك بيفتح في تاب جديد ومأمن ١٠٠٪.",
+          "hint": "اضغط على الـ chips فوق المحرر وحطهم جوا تاج الفتح <a>."
+        },
+        {
+          "id": "s6-2",
+          "type": "choice",
+          "prompt": "في تاج <video> في HTML5، إيه وظيفة الـ attribute اللي اسمه poster؟",
+          "code": "<video controls width=\"640\" poster=\"thumb.jpg\">\n  <source src=\"lecture.mp4\" type=\"video/mp4\">\n  <track src=\"subs-ar.vtt\" kind=\"subtitles\" srclang=\"ar\">\n<\/video>",
+          "options": [
+            {
+              "t": "الصورة اللي بتظهر كغلاف قبل ما الفيديو يشتغل",
+              "why": "صح الصح! والـ <track> بيضيف الترجمة (subtitles)."
+            },
+            {
+              "t": "بيشغّل الفيديو تلقائياً من غير صوت",
+              "why": "التشغيل التلقائي ده autoplay و muted، مش poster."
+            },
+            {
+              "t": "بيحمل ملف الترجمة العربي",
+              "why": "الترجمة دي شغل تاج <track kind=\"subtitles\">."
+            }
+          ],
+          "answer": 0,
+          "hint": "فكّر في معنى كلمة Poster (بوستر الفيلم قبل ما يبدأ)."
+        },
+        {
+          "id": "s6-3",
+          "type": "patch",
+          "prompt": "صلّح الصورة دي: ضيف لها alt مفيد (مش فاضي) و loading=\"lazy\" للأداء:",
+          "start": "<img src=\"chart.png\" width=\"400\">",
+          "chips": [
+            "alt=\"رسم بياني للمبيعات\"",
+            "loading=\"lazy\""
+          ],
+          "checks": [
+            {
+              "selector": "img[alt]:not([alt=''])",
+              "fail": "لازم تحط alt فيه وصف حقيقي للصورة مش فاضي!"
+            },
+            {
+              "selector": "img[loading='lazy']",
+              "fail": "ضيف loading=\"lazy\" عشان الصورة تحمّل وقت ما تحتاجها بس."
+            }
+          ],
+          "solution": "<img src=\"chart.png\" width=\"400\" alt=\"رسم بياني للمبيعات\" loading=\"lazy\">",
+          "why": "تمام التمام! صورة سريعة ومفهومة للناس ومحركات البحث.",
+          "hint": "استخدم الـ chips فوق المحرر جوا تاج <img>."
+        }
+      ]
+    },
+    {
+      "id": "lvl-7",
+      "num": 7,
+      "title": "القوائم والجداول",
+      "en": "Lists (ul, ol, dl) & Data Tables",
+      "docs": [
+        {
+          "tab": "أنواع القوائم",
+          "heading": "إمتى تستخدم <ul> ولا <ol> ولا <dl>؟",
+          "body": [
+            "HTML فيها ٣ أنواع قوائم، وكل نوع ليه استخدامه الواضح حسب هل الترتيب مهم ولا لأ:"
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "القاعدة السريعة 📝",
+            "text": "الترتيب مش مهم (قائمة مشتريات) ← <code>&lt;ul&gt;<\/code>. الترتيب مهم (خطوات وصفة أكل) ← <code>&lt;ol&gt;<\/code>. مصطلح وتعريفه (قاموس) ← <code>&lt;dl&gt;<\/code> مع <code>&lt;dt&gt;<\/code> و <code>&lt;dd&gt;<\/code>."
+          },
+          "filename": "lists.html",
+          "code": "<!-- بدون ترتيب -->\n<ul><li>HTML<\/li><li>CSS<\/li><\/ul>\n\n<!-- مرتبة بأرقام -->\n<ol><li>افتح VS Code<\/li><li>اكتب الكود<\/li><\/ol>\n\n<!-- مصطلح + تعريف -->\n<dl><dt>HTML<\/dt><dd>لغة توصيف<\/dd><\/dl>",
+          "preview": "<div dir='rtl' style='display:flex;gap:24px;flex-wrap:wrap'><div><strong>Unordered:<\/strong><ul style='margin:4px 0;padding-right:18px'><li>HTML<\/li><li>CSS<\/li><\/ul><\/div><div><strong>Ordered:<\/strong><ol style='margin:4px 0;padding-right:18px'><li>افتح VS Code<\/li><li>اكتب الكود<\/li><\/ol><\/div><div><strong>Description:<\/strong><dl style='margin:4px 0'><dt><strong>HTML<\/strong><\/dt><dd style='margin:0;color:#64748b'>لغة توصيف<\/dd><\/dl><\/div><\/div>",
+          "previewUrl": "file:///lists.html"
+        },
+        {
+          "tab": "الجداول Tables",
+          "heading": "بناء جداول منظمة و Accessible",
+          "body": [
+            "الجداول للبيانات المنظمة بس — <strong>مش للـ Page Layout!<\/strong> زمان كان الناس بتعمل layout بـ tables وده كان غلط كبير.",
+            "الجدول الاحترافي بيتقسم لـ <code>&lt;caption&gt;<\/code> (وصف الجدول)، <code>&lt;thead&gt;<\/code> (عناوين الأعمدة <code>&lt;th scope=\"col\"&gt;<\/code>)، <code>&lt;tbody&gt;<\/code> (صفوف البيانات <code>&lt;td&gt;<\/code>)، و <code>&lt;tfoot&gt;<\/code> (المتوسط أو المجموع مع <code>colspan<\/code>)."
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "ليه scope و colspan مهمين؟",
+            "text": "الـ <code>scope=\"col\"<\/code> بيقول للـ screen reader ده عنوان عمود ولا صف، والـ <code>colspan<\/code> بيدمج خلايا جنب بعض في صف الملخص."
+          },
+          "filename": "table.html",
+          "code": "<table>\n  [[0|<caption>درجات الطلاب<\/caption>]]\n  <thead>\n    <tr><th [[1|scope=\"col\"]]>الطالب<\/th><th scope=\"col\">HTML<\/th><th scope=\"col\">CSS<\/th><\/tr>\n  <\/thead>\n  <tbody>\n    <tr><td>أحمد<\/td><td>95<\/td><td>88<\/td><\/tr>\n    <tr><td>سارة<\/td><td>92<\/td><td>97<\/td><\/tr>\n  <\/tbody>\n  <tfoot>\n    <tr><td [[2|colspan=\"2\"]]>المتوسط<\/td><td>93<\/td><\/tr>\n  <\/tfoot>\n<\/table>",
+          "spots": [
+            {
+              "title": "<caption>",
+              "say": "عنوان ووصف الجدول كله من فوق."
+            },
+            {
+              "title": "scope=\"col\"",
+              "say": "بيوضح للـ screen reader إن الـ th ده عنوان عمود."
+            },
+            {
+              "title": "colspan=\"2\"",
+              "say": "بيدمج عمودين في خلية واحدة."
+            }
+          ],
+          "preview": "<div dir='rtl'><table><caption style='font-weight:bold;margin-bottom:4px'>درجات الطلاب<\/caption><thead><tr><th>الطالب<\/th><th>HTML<\/th><th>CSS<\/th><\/tr><\/thead><tbody><tr><td>أحمد<\/td><td>95<\/td><td>88<\/td><\/tr><tr><td>سارة<\/td><td>92<\/td><td>97<\/td><\/tr><\/tbody><tfoot><tr><td colspan='2'><strong>المتوسط<\/strong><\/td><td><strong>93<\/strong><\/td><\/tr><\/tfoot><\/table><\/div>",
+          "previewUrl": "file:///table.html"
+        }
+      ],
+      "stages": [
+        {
+          "id": "s7-1",
+          "type": "match",
+          "prompt": "وصّل كل نوع قائمة في HTML بالاستخدام الصح بتاعه:",
+          "pairs": [
+            [
+              "<ul>",
+              "قائمة بدون ترتيب (نقط) زي قائمة مشتريات"
+            ],
+            [
+              "<ol>",
+              "قائمة مرتبة بأرقام زي خطوات وصفة أكل"
+            ],
+            [
+              "<dl>",
+              "قائمة وصفية زي قاموس مصطلحات (<dt> و <dd>)"
+            ],
+            [
+              "<li>",
+              "عنصر واحد جوا قائمة <ul> أو <ol>"
+            ]
+          ],
+          "hint": "اسأل: لو بدّلنا الترتيب المعنى هيبوظ؟ لو آه يبقى <ol>."
+        },
+        {
+          "id": "s7-2",
+          "type": "buckets",
+          "layout": "wireframe",
+          "prompt": "ابني هيكل الجدول الصح: اسحب كل جزء لمكانه في مخطط الـ <table>:",
+          "buckets": [
+            {
+              "id": "cap",
+              "label": "وصف الجدول فوق",
+              "area": "caption"
+            },
+            {
+              "id": "head",
+              "label": "رأس الجدول (العناوين)",
+              "area": "thead"
+            },
+            {
+              "id": "body",
+              "label": "جسم الجدول (صفوف البيانات)",
+              "area": "tbody"
+            },
+            {
+              "id": "foot",
+              "label": "ملخص الجدول (المتوسط/المجموع)",
+              "area": "tfoot"
+            }
+          ],
+          "items": [
+            {
+              "t": "<caption>",
+              "b": "cap",
+              "why": "caption بيوصف الجدول كله من فوق."
+            },
+            {
+              "t": "<thead>",
+              "b": "head",
+              "why": "thead بيشيل صف عناوين الأعمدة <th>."
+            },
+            {
+              "t": "<tbody>",
+              "b": "body",
+              "why": "tbody بيشيل صفوف البيانات <td>."
+            },
+            {
+              "t": "<tfoot>",
+              "b": "foot",
+              "why": "tfoot بيشيل صف الملخص أو المتوسط تحت."
+            }
+          ],
+          "hint": "الترتيب من فوق لتحت: caption ← thead ← tbody ← tfoot."
+        },
+        {
+          "id": "s7-3",
+          "type": "slot",
+          "prompt": "كمّل الجدول عشان يبقى accessible ويدمج ٣ خلايا في صف المتوسط:",
+          "code": "<thead>\n  <tr><th [[0]]=\"col\">الطالب<\/th><th scope=\"col\">المجموع<\/th><\/tr>\n<\/thead>\n<tfoot>\n  <tr><td [[1]]=\"3\">المتوسط<\/td><td>186<\/td><\/tr>\n<\/tfoot>",
+          "tokens": [
+            "scope",
+            "colspan",
+            "rowspan",
+            "merge"
+          ],
+          "answer": [
+            "scope",
+            "colspan"
+          ],
+          "why": "scope=\"col\" بيقول للـ screen reader ده عنوان عمود، و colspan=\"3\" بيدمج ٣ أعمدة.",
+          "hint": "scope للوصولية، و col+span لدمج الأعمدة."
+        },
+        {
+          "id": "s7-4",
+          "type": "choice",
+          "prompt": "توقّع شكل الجدول ده في الـ Browser بعد إضافة colspan=\"2\" على خلية المتوسط:",
+          "code": "<table>\n  <tr><th>الطالب<\/th><th>HTML<\/th><th>CSS<\/th><\/tr>\n  <tr><td>أحمد<\/td><td>95<\/td><td>88<\/td><\/tr>\n  <tr><td colspan=\"2\">المتوسط<\/td><td>91<\/td><\/tr>\n<\/table>",
+          "options": [
+            {
+              "t": "كلمة «المتوسط» بتاخد عرض عمودين جنب بعض وتحتها القيمة 91",
+              "preview": "<table><tr><th>الطالب<\/th><th>HTML<\/th><th>CSS<\/th><\/tr><tr><td>أحمد<\/td><td>95<\/td><td>88<\/td><\/tr><tr><td colspan='2'><strong>المتوسط<\/strong><\/td><td><strong>91<\/strong><\/td><\/tr><\/table>",
+              "why": "عاش! colspan=\"2\" دمجت عمودين في خلية واحدة مظبوطة."
+            },
+            {
+              "t": "كلمة «المتوسط» بتاخد عمود واحد ويفضل عمود فاضي",
+              "preview": "<table><tr><th>الطالب<\/th><th>HTML<\/th><th>CSS<\/th><\/tr><tr><td>أحمد<\/td><td>95<\/td><td>88<\/td><\/tr><tr><td>المتوسط<\/td><td>91<\/td><td><\/td><\/tr><\/table>",
+              "why": "ده كان هيحصل لو نسيت تحط colspan=\"2\"."
+            }
+          ],
+          "answer": 0,
+          "hint": "colspan=\"2\" بتمد الخلية عرضياً على عمودين."
+        }
+      ]
+    },
+    {
+      "id": "lvl-8",
+      "num": 8,
+      "title": "النماذج — Forms",
+      "en": "Forms, Input Types & HTML5 Validation",
+      "docs": [
+        {
+          "tab": "بناء الـ Form",
+          "heading": "إزاي تبني Form تفاعلية مع HTML5 Validation",
+          "body": [
+            "الـ <strong>Forms<\/strong> هي الطريقة الأساسية اللي المستخدم بيبعت بيها بيانات للـ server (تسجيل دخول، بحث، تعليق). الـ <code>&lt;form&gt;<\/code> بياخد <code>action<\/code> (الصفحة المستقبلة) و <code>method<\/code> (GET أو POST)."
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "HTML5 Validation + Defense in Depth 🛡️",
+            "text": "الـ <code>required<\/code> و <code>minlength<\/code> و <code>pattern<\/code> بتخلي الـ browser يتحقق تلقائياً من غير JS! بس متعتمدش عليهم لوحدهم — لازم Validation في الـ Server كمان."
+          },
+          "filename": "register-form.html",
+          "code": "<form [[0|action=\"/api/register\" method=\"POST\"]]>\n  [[1|<label for=\"user\">اسم المستخدم:<\/label>]]\n  <input type=\"text\" id=\"user\" [[2|required minlength=\"3\"]]>\n\n  <label for=\"email\">الإيميل:<\/label>\n  <input type=\"email\" id=\"email\" required>\n\n  [[3|<select name=\"country\"><option value=\"eg\">مصر<\/option><\/select>]]\n  [[4|<textarea rows=\"2\" placeholder=\"نبذة عنك\"><\/textarea>]]\n  <button type=\"submit\">تسجيل<\/button>\n<\/form>",
+          "spots": [
+            {
+              "title": "action & method",
+              "say": "مكان إرسال البيانات وطريقة الإرسال (POST للبيانات الحساسة)."
+            },
+            {
+              "title": "<label for>",
+              "say": "بيربط الاسم بالـ input عشان تضغط عليه يعمل focus ومهم للـ a11y."
+            },
+            {
+              "title": "Validation Attributes",
+              "say": "يمنع إرسال الفورم لو فاضي أو أقصر من ٣ حروف."
+            },
+            {
+              "title": "<select>",
+              "say": "قائمة منسدلة لاختيار البلد أو فئة."
+            },
+            {
+              "title": "<textarea>",
+              "say": "مربع نص متعدد الأسطر."
+            }
+          ]
+        },
+        {
+          "tab": "أنواع Input في HTML5",
+          "heading": "١٢ نوع Input بتغير كيبورد الموبايل تلقائياً",
+          "body": [
+            "HTML5 ضافت أنواع ذكية للـ <code>&lt;input&gt;<\/code> بتحسّن تجربة المستخدم جداً على الموبايل والكمبيوتر."
+          ],
+          "tip": "لما تستخدم <code>type=\"email\"<\/code> على الموبايل، الكيبورد بيظهر فيه @ و .com تلقائياً. ومع <code>type=\"tel\"<\/code> بتظهر لوحة الأرقام مباشرة!",
+          "cards": [
+            {
+              "title": "text / password",
+              "desc": "نص عادي أو كلمة سر مخفية بنقط."
+            },
+            {
+              "title": "email / url",
+              "desc": "تحقق تلقائي + كيبورد فيه @ و .com."
+            },
+            {
+              "title": "number / tel",
+              "desc": "أرقام فقط أو لوحة أرقام التليفون."
+            },
+            {
+              "title": "date / color",
+              "desc": "تقويم Date Picker أو منتقي ألوان جاهز."
+            },
+            {
+              "title": "range / file",
+              "desc": "شريط تمرير (Slider) أو رفع ملفات."
+            },
+            {
+              "title": "checkbox / radio",
+              "desc": "اختيار متعدد (checkbox) أو اختيار واحد فقط (radio)."
+            }
+          ]
+        }
+      ],
+      "stages": [
+        {
+          "id": "s8-1",
+          "type": "match",
+          "prompt": "وصّل كل نوع Input في HTML5 بالميزة اللي بيعملها للمستخدم على الموبايل:",
+          "pairs": [
+            [
+              "type=\"email\"",
+              "يظهر @ و .com في كيبورد الموبايل ويتأكد من صيغة الإيميل"
+            ],
+            [
+              "type=\"tel\"",
+              "يفتح لوحة الأرقام مباشرة لكتابة التليفون"
+            ],
+            [
+              "type=\"date\"",
+              "يفتح تقويم (Date Picker) جاهز لاختيار التاريخ"
+            ],
+            [
+              "type=\"password\"",
+              "يخفي الحروف بنقط لحماية كلمة السر"
+            ]
+          ],
+          "hint": "email للإيميل، tel للتليفون، date للتاريخ."
+        },
+        {
+          "id": "s8-2",
+          "type": "patch",
+          "prompt": "حوّل الحقل ده لإيميل إجباري (type=\"email\" و required) عشان الـ Browser يتحقق منه تلقائياً:",
+          "start": "<label for=\"em\">الإيميل:<\/label>\n<input type=\"text\" id=\"em\" name=\"email\">",
+          "chips": [
+            "type=\"email\"",
+            "required"
+          ],
+          "checks": [
+            {
+              "selector": "input[type='email']",
+              "fail": "غيّر type=\"text\" وخليها type=\"email\"."
+            },
+            {
+              "selector": "input[required]",
+              "fail": "ضيف attribute الـ required عشان الحقل ميتبعتش فاضي."
+            }
+          ],
+          "solution": "<label for=\"em\">الإيميل:<\/label>\n<input type=\"email\" id=\"em\" name=\"email\" required>",
+          "why": "عاش يا بطل! كده الـ browser هيمنع إرسال إيميل فاضي أو غلط.",
+          "hint": "بدّل text بـ email وضيف كلمة required جوا الـ <input>."
+        },
+        {
+          "id": "s8-3",
+          "type": "choice",
+          "prompt": "بعد ما حطّيت required و pattern في الـ HTML، هل كده محتاج Validation في الـ Server كمان؟",
+          "options": [
+            {
+              "t": "آه طبعاً! لأن أي حد يقدر يعدّل HTML في الـ Browser (Defense in Depth)",
+              "why": "بالظبط! التحقق في الـ HTML بيساعد المستخدم، والتحقق في الـ Server بيحمي التطبيق."
+            },
+            {
+              "t": "لأ، HTML5 Validation كافي لوحده ومحدش يقدر يتخطاه",
+              "why": "أي مستخدم يفتح DevTools ويمسح كلمة required في ثانية! الـ Server لازم يتحقق."
+            }
+          ],
+          "answer": 0,
+          "hint": "افتكر مبدأ Defense in Depth: هل ينفع تثق في الـ Browser لوحده؟"
+        }
+      ]
+    },
+    {
+      "id": "lvl-9",
+      "num": 9,
+      "title": "Semantic HTML",
+      "en": "Meaningful Layout & details/summary",
+      "docs": [
+        {
+          "tab": "يعني إيه Semantic؟",
+          "heading": "وداعاً لصفحة كلها <div> — اكتب HTML له معنى!",
+          "body": [
+            "<strong>Semantic HTML<\/strong> معناها تستخدم tags توصف <em>معنى<\/em> المحتوى مش مجرد شكله: <code>&lt;header&gt;<\/code> للرأس، <code>&lt;nav&gt;<\/code> للتنقل، <code>&lt;main&gt;<\/code> للمحتوى الرئيسي، <code>&lt;article&gt;<\/code> للمقال المستقل، <code>&lt;section&gt;<\/code> للقسم، <code>&lt;aside&gt;<\/code> للشريط الجانبي، و <code>&lt;footer&gt;<\/code> للتذييل مع <code>&lt;time&gt;<\/code> و <code>&lt;address&gt;<\/code>."
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "ليه دي مهمة؟ 🧠",
+            "text": "① جوجل يفهم صفحتك أحسن = SEO أقوى. ② الـ screen readers تنقل المستخدم للـ nav أو main مباشرة. ③ الكود أسهل في الصيانة. الصفحة اللي كلها <code>&lt;div&gt;<\/code> زي <strong>كتاب من غير فهرس<\/strong>!"
+          },
+          "filename": "semantic-layout.html",
+          "code": "<body>\n  [[0|<header>]]<h1>اسم الموقع<\/h1>[[1|<nav>]]<a href=\"/\">الرئيسية<\/a><\/nav><\/header>\n  [[2|<main>]]\n    [[3|<article>]]<h2>عنوان المقال<\/h2><time datetime=\"2026-02-16\">16 فبراير<\/time><\/article>\n    <section><h2>التعليقات<\/h2><\/section>\n  <\/main>\n  [[4|<aside>]]<h3>مقالات ذات صلة<\/h3><\/aside>\n  <footer><address>info@site.com<\/address><\/footer>\n<\/body>",
+          "spots": [
+            {
+              "title": "<header>",
+              "say": "رأس الصفحة أو القسم (اللوجو والعنوان)."
+            },
+            {
+              "title": "<nav>",
+              "say": "قائمة روابط التنقل الرئيسية."
+            },
+            {
+              "title": "<main>",
+              "say": "المحتوى الأساسي الفريد في الصفحة."
+            },
+            {
+              "title": "<article>",
+              "say": "محتوى مستقل ينفع يتشار لوحده (مقال/خبر/بوست)."
+            },
+            {
+              "title": "<aside>",
+              "say": "محتوى جانبي مساعد زي مقالات مقترحة."
+            }
+          ]
+        },
+        {
+          "tab": "details & summary",
+          "heading": "عناصر ذكية: Accordion تفاعلي بدون JavaScript!",
+          "body": [
+            "HTML5 فيها عناصر تفاعلية جاهزة من غير سطر JavaScript واحد! تاج <code>&lt;details&gt;<\/code> ومعاه <code>&lt;summary&gt;<\/code> بيعملوا قائمة أسئلة بتفتح وتقفل تلقائياً — جرّب تضغط عليها في المعاينة جنب الكود!"
+          ],
+          "filename": "details-summary.html",
+          "code": "<details>\n  <summary>إيه الفرق بين div و section؟<\/summary>\n  <p>الـ div مجرد container مالوش معنى، والـ section قسم مستقل ومترابط.<\/p>\n<\/details>",
+          "preview": "<div dir='rtl'><details open style='padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;margin-bottom:6px;cursor:pointer'><summary style='font-weight:800;color:#ea580c'>إيه الفرق بين div و section؟<\/summary><p style='margin:6px 0 0;font-size:.92em'>الـ div مجرد container مالوش معنى. الـ section بيقول ده قسم مستقل في المحتوى.<\/p><\/details><details style='padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;cursor:pointer'><summary style='font-weight:800;color:#ea580c'>إمتى أستخدم article؟<\/summary><p style='margin:6px 0 0;font-size:.92em'>لما المحتوى يكون مستقل ويقدر يتشار لوحده زي خبر أو بوست.<\/p><\/details><\/div>",
+          "previewUrl": "جرّب تضغط على السؤال 👆"
+        }
+      ],
+      "stages": [
+        {
+          "id": "s9-1",
+          "type": "buckets",
+          "layout": "wireframe",
+          "prompt": "ابني هيكل صفحة Semantic كاملة: اسحب كل Tag لمكانه الصح في الـ Layout:",
+          "buckets": [
+            {
+              "id": "header",
+              "label": "رأس الصفحة",
+              "area": "header"
+            },
+            {
+              "id": "nav",
+              "label": "قائمة التنقل",
+              "area": "nav"
+            },
+            {
+              "id": "main",
+              "label": "المحتوى الرئيسي",
+              "area": "main"
+            },
+            {
+              "id": "aside",
+              "label": "شريط جانبي",
+              "area": "aside"
+            },
+            {
+              "id": "footer",
+              "label": "تذييل الصفحة",
+              "area": "footer"
+            }
+          ],
+          "items": [
+            {
+              "t": "<header>",
+              "b": "header",
+              "why": "header لرأس الصفحة واللوجو."
+            },
+            {
+              "t": "<nav>",
+              "b": "nav",
+              "why": "nav للينكات التنقل الرئيسية."
+            },
+            {
+              "t": "<main>",
+              "b": "main",
+              "why": "main للمحتوى الأساسي (جواه article و section)."
+            },
+            {
+              "t": "<aside>",
+              "b": "aside",
+              "why": "aside للمقالات ذات الصلة أو الشريط الجانبي."
+            },
+            {
+              "t": "<footer>",
+              "b": "footer",
+              "why": "footer لحقوق النشر ومعلومات الـ <address>."
+            }
+          ],
+          "hint": "header فوق، تحته nav، في النص main وجنبه aside، وتحت footer."
+        },
+        {
+          "id": "s9-2",
+          "type": "choice",
+          "prompt": "إمتى تستخدم <article> بدل <div>؟",
+          "options": [
+            {
+              "t": "لما المحتوى يكون مستقل وينفع يتشار لوحده زي مقال أو خبر في جريدة",
+              "why": "مظبوط ١٠٠٪! والـ <section> لقسم جوا الصفحة، والـ <div> مجرد حاوية ملهاش معنى دلالي."
+            },
+            {
+              "t": "في أي مربع محتاج تلونه بـ CSS",
+              "why": "لو مجرد حاوية للتنسيق بس من غير معنى مستقل، ساعتها استخدم <div>."
+            },
+            {
+              "t": "للقائمة الرئيسية بتاعة الموقع",
+              "why": "القائمة الرئيسية لها التاج بتاعها وهو <nav>."
+            }
+          ],
+          "answer": 0,
+          "hint": "اسأل نفسك: هل الجزء ده يقف لوحده كبوست أو خبر؟"
+        },
+        {
+          "id": "s9-3",
+          "type": "slot",
+          "prompt": "اعمل Accordion تفاعلي في HTML5 من غير سطر JavaScript واحد:",
+          "code": "[[0]]\n  [[1]]إيه الفرق بين div و section؟<\/summary>\n  <p>الـ section ليه معنى دلالي، الـ div مجرد حاوية.<\/p>\n<\/details>",
+          "tokens": [
+            "<details>",
+            "<summary>",
+            "<accordion>",
+            "<header>"
+          ],
+          "answer": [
+            "<details>",
+            "<summary>"
+          ],
+          "why": "عاش! <details> هي الحاوية التفاعلية و <summary> هو العنوان اللي بتضغط عليه عشان يفتح ويقفل.",
+          "hint": "التاج الخارجي details والداخلي summary."
+        }
+      ]
+    },
+    {
+      "id": "lvl-10",
+      "num": 10,
+      "title": "الوصولية والأخطاء الشائعة",
+      "en": "Accessibility (a11y), ARIA & Common Mistakes",
+      "docs": [
+        {
+          "tab": "الوصولية و ARIA",
+          "heading": "يعني إيه a11y وإمتى نستخدم ARIA؟",
+          "body": [
+            "<strong>Accessibility<\/strong> (بنختصرها <code>a11y<\/code> لأن فيه ١١ حرف بين a و y) معناها موقعك يشتغل مع <strong>كل<\/strong> الناس — حتى اللي عندهم إعاقة بصرية أو بيستخدموا الكيبورد بس.",
+            "لما التاجات الدلالية مش كافية (زي زرار فيه أيقونة من غير كلام)، بنستخدم <strong>ARIA<\/strong> (<code>aria-label<\/code>, <code>aria-expanded<\/code>, <code>aria-hidden<\/code>, <code>role=\"presentation\"<\/code>)."
+          ],
+          "callout": {
+            "kind": "analogy",
+            "title": "القاعدة الأولى في ARIA ❤️",
+            "text": "لو تقدر تستخدم semantic HTML tag، <strong>متستخدمش ARIA<\/strong>! استخدم <code>&lt;button&gt;<\/code> بدل <code>&lt;div role=\"button\"&gt;<\/code> — الـ semantic tag بيديك accessibility مجاناً."
+          },
+          "filename": "aria-examples.html",
+          "code": "<!-- ❶ Skip Link لمستخدمي الكيبورد -->\n[[0|<a href=\"#main\" class=\"skip-link\">اذهب للمحتوى الرئيسي<\/a>]]\n\n<!-- ❷ زرار بأيقونة بس -->\n<button [[1|aria-label=\"إغلاق القائمة\"]]><i class=\"x\"><\/i><\/button>\n\n<!-- ❸ حالة عنصر متغيرة -->\n<button [[2|aria-expanded=\"false\"]]>عرض التفاصيل<\/button>\n\n<!-- ❹ صورة للزينة بس -->\n<img src=\"bg.svg\" [[3|alt=\"\" role=\"presentation\"]]>",
+          "spots": [
+            {
+              "title": "Skip Link",
+              "say": "أول لينك في الصفحة عشان مستخدم الكيبورد يتخطى الـ Navbar."
+            },
+            {
+              "title": "aria-label",
+              "say": "بيدي وصف مقروء للـ screen reader على زرار أيقونة."
+            },
+            {
+              "title": "aria-expanded",
+              "say": "بيقول هل القائمة مفتوحة ولا مقفولة حالياً."
+            },
+            {
+              "title": "صورة للزينة",
+              "say": "alt فاضية + role=\"presentation\" عشان يتخطاها القارئ."
+            }
+          ]
+        },
+        {
+          "tab": "أخطاء شائعة",
+          "heading": "أشهر ٤ أخطاء HTML لازم تتجنبها",
+          "body": [
+            "دي أكتر أخطاء المبتدئين بيقعوا فيها — لو حفظتها هتوفر على نفسك ساعات debugging:"
+          ],
+          "cards": [
+            {
+              "title": "❌ نسيان إقفال التاجات",
+              "code": "<p>فقرة أولى <p>تانية",
+              "desc": "لازم تقفل الفقرة الأولى بـ <\/p> قبل ما تبدأ التانية."
+            },
+            {
+              "title": "❌ تداخل خاطئ (Nesting)",
+              "code": "<strong><em>نص<\/strong><\/em>",
+              "desc": "اقفل التاج الداخلي <\/em> الأول قبل الخارجي <\/strong>."
+            },
+            {
+              "title": "❌ استخدام <br> للمسافات",
+              "code": "<br><br><br>",
+              "desc": "الـ <br> لسطر جديد بس — المسافات شغل CSS margin/padding."
+            },
+            {
+              "title": "❌ inline styles كتير",
+              "code": "style=\"color:red\"",
+              "desc": "بدل ما تكرر style على كل عنصر، اعمل CSS class واحد."
+            }
+          ]
+        }
+      ],
+      "stages": [
+        {
+          "id": "s10-1",
+          "type": "buckets",
+          "layout": "columns",
+          "prompt": "فرّز ممارسات الوصولية (a11y): إيه اللي نعمله ✅ وإيه اللي نبعد عنه ❌؟",
+          "buckets": [
+            {
+              "id": "do",
+              "label": "أعمل ده ✅"
+            },
+            {
+              "id": "dont",
+              "label": "متعملش كده ❌"
+            }
+          ],
+          "items": [
+            {
+              "t": "حط alt لكل صورة مفيدة",
+              "b": "do",
+              "why": "بيخلي الـ screen reader يوصف الصورة."
+            },
+            {
+              "t": "اربط <label> مع كل input",
+              "b": "do",
+              "why": "بيسهّل القراءة والضغط للجميع."
+            },
+            {
+              "t": "اعمل Skip Link للمحتوى الرئيسي",
+              "b": "do",
+              "why": "بيريّح مستخدمي الـ keyboard من تكرار الـ nav."
+            },
+            {
+              "t": "لينك مكتوب عليه «اضغط هنا» بس",
+              "b": "dont",
+              "why": "مش بيشرح اللينك رايح فين لمستخدم الـ screen reader."
+            },
+            {
+              "t": "إزالة الـ focus outline",
+              "b": "dont",
+              "why": "مستخدم الـ keyboard هيتوه ومش هيعرف هو واقف فين!"
+            },
+            {
+              "t": "فيديو من غير subtitles",
+              "b": "dont",
+              "why": "لازم ترجمة عشان الكل يقدر يفهم الفيديو."
+            }
+          ],
+          "hint": "فكّر: هل الممارسة دي بتساعد مستخدم الـ keyboard أو الكفيف؟"
+        },
+        {
+          "id": "s10-2",
+          "type": "bughunt",
+          "prompt": "اصطاد الغلطتين الشائعتين في الكود ده (نسيان إغلاق + تداخل خاطئ):",
+          "code": "[[0|<p>فقرة أولى <p>فقرة تانية<\/p>]]\n[[ok|<p>دي فقرة سليمة ومقفولة.<\/p>]]\n[[1|<strong><em>كلام مهم<\/strong><\/em>]]",
+          "bugs": [
+            {
+              "why": "نسيت تقفل الفقرة الأولى بـ <\/p> قبل ما تفتح التانية!"
+            },
+            {
+              "why": "تداخل غلط! فتحت <em> جوا <strong> فلازم تقفل الداخلي <\/em> الأول قبل <\/strong>."
+            }
+          ],
+          "hint": "بص على التاجات المفتوحة: مين متقفلش؟ ومين اتقفل بترتيب معكوس؟"
+        },
+        {
+          "id": "s10-3",
+          "type": "choice",
+          "prompt": "القاعدة الأولى في ARIA: عايز تعمل زرار في صفحتك، تختار إيه؟",
+          "options": [
+            {
+              "t": "<button>حفظ<\/button>",
+              "why": "عاش! لو تقدر تستخدم semantic tag متستخدمش ARIA — <button> بيديك accessibility وكيبورد مجاناً."
+            },
+            {
+              "t": "<div role=\"button\">حفظ<\/div>",
+              "why": "ده بيكسر القاعدة الأولى في ARIA! الـ div مش بيشتغل بالكيبورد تلقائياً زي <button>."
+            }
+          ],
+          "answer": 0,
+          "hint": "لو فيه Semantic HTML tag جاهز، هو دايماً الاختيار الأول."
+        }
+      ]
+    },
+    {
+      "id": "lvl-boss",
+      "num": 11,
+      "title": "الاختبار الشامل 👾",
+      "en": "Final Knowledge Check (10 Questions)",
+      "boss": true,
+      "stages": [
+        {
+          "id": "b1",
+          "type": "choice",
+          "prompt": "١/١٠ — إيه أول سطر لازم يكون في أي ملف HTML5؟",
+          "options": [
+            {
+              "t": "<!DOCTYPE html>",
+              "why": "صح! بيقول للـ browser إن الملف مكتوب بمعيار HTML5."
+            },
+            {
+              "t": "<html version=\"5\">",
+              "why": "مفيش attribute اسمه version في HTML5 — بنكتب <!DOCTYPE html>."
+            },
+            {
+              "t": "<head>",
+              "why": "الـ <head> بييجي جوا <html> بعد الـ DOCTYPE."
+            }
+          ],
+          "answer": 0,
+          "hint": "إعلان نوع المستند اللي بيبدأ بـ !"
+        },
+        {
+          "id": "b2",
+          "type": "choice",
+          "prompt": "٢/١٠ — إيه الفرق بين <head> و <body>؟",
+          "options": [
+            {
+              "t": "head للـ metadata المخفية (عنوان/وصف/CSS)، و body للمحتوى المرئي",
+              "why": "بالظبط كده! بطاقة الهوية vs المحتوى اللي قدام المستخدم."
+            },
+            {
+              "t": "head لأعلى الصفحة (الـ Navbar)، و body لبقية الصفحة",
+              "why": "أعلى الصفحة المرئي ده <header> جوا الـ <body> مش <head>!"
+            }
+          ],
+          "answer": 0,
+          "hint": "فرق بين <head> (بيانات الصفحة) و <header> (رأس التصميم)."
+        },
+        {
+          "id": "b3",
+          "type": "choice",
+          "prompt": "٣/١٠ — إيه الفرق بين Block و Inline elements؟",
+          "options": [
+            {
+              "t": "Block بياخد العرض كله وسطر جديد (div, p)، Inline على قد محتواه (span, a)",
+              "why": "صح الصح!"
+            },
+            {
+              "t": "Inline بياخد العرض كله، و Block بيمشي جوا النص",
+              "why": "العكس تماماً! Block = صندوق سطر كامل."
+            }
+          ],
+          "answer": 0,
+          "hint": "افتكر تشبيه الصناديق فوق بعضها."
+        },
+        {
+          "id": "b4",
+          "type": "choice",
+          "prompt": "٤/١٠ — أي مجموعة كلها Void Elements (مش محتاجة Closing Tag)؟",
+          "options": [
+            {
+              "t": "<img>, <br>, <input>, <hr>",
+              "why": "معلّم! كلها عناصر مكتفية بذاتها من غير إغلاق."
+            },
+            {
+              "t": "<img>, <p>, <div>, <a>",
+              "why": "الـ p و div و a لازم يتقفلوا."
+            },
+            {
+              "t": "<section>, <br>, <meta>, <span>",
+              "why": "section و span محتاجين closing tag."
+            }
+          ],
+          "answer": 0,
+          "hint": "مفيش ولا واحد فيهم ينفع تكتب جواه نص."
+        },
+        {
+          "id": "b5",
+          "type": "choice",
+          "prompt": "٥/١٠ — إيه الفرق الأساسي بين id و class؟",
+          "options": [
+            {
+              "t": "id فريد مش بيتكرر في الصفحة، و class ينفع يتكرر ويتحط أكتر من واحد",
+              "why": "عاش! رقم البطاقة vs اسم المدرسة."
+            },
+            {
+              "t": "class فريد لكل عنصر، و id بيتكرر عادي",
+              "why": "العكس! الـ id هو اللي فريد."
+            }
+          ],
+          "answer": 0,
+          "hint": "افتكر رقم البطاقة واسم المدرسة."
+        },
+        {
+          "id": "b6",
+          "type": "choice",
+          "prompt": "٦/١٠ — ليه الـ alt attribute مهم جداً في الصور؟",
+          "options": [
+            {
+              "t": "للـ screen readers، وللـ SEO في جوجل، وبيظهر لو الصورة محمّلتش",
+              "why": "إجابة نموذجية! ٣ فوايد في attribute واحد."
+            },
+            {
+              "t": "عشان يصغّر حجم الصورة ويخليها تفتح أسرع",
+              "why": "تأجيل التحميل ده loading=\"lazy\"، مش alt."
+            }
+          ],
+          "answer": 0,
+          "hint": "اسأل: مين غيرك محتاج يفهم الصورة لو مش شايفها؟"
+        },
+        {
+          "id": "b7",
+          "type": "choice",
+          "prompt": "٧/١٠ — إيه الفرق بين <strong> و <b>؟",
+          "options": [
+            {
+              "t": "<strong> ليه معنى دلالي (أهمية للـ screen reader)، و <b> مجرد شكل bold",
+              "why": "بالظبط! دايماً نفضل الـ semantic tag."
+            },
+            {
+              "t": "<strong> خطه أتخن من <b> بس",
+              "why": "الاتنين شكلهم bold — الفرق في المعنى الدلالي."
+            }
+          ],
+          "answer": 0,
+          "hint": "واحد ليه معنى دلالي والتاني شكل وبس."
+        },
+        {
+          "id": "b8",
+          "type": "choice",
+          "prompt": "٨/١٠ — إيه فايدة أنواع الـ Input في HTML5 زي email و number و date؟",
+          "options": [
+            {
+              "t": "Validation تلقائي + كيبورد أو Date Picker مناسب على الموبايل",
+              "why": "صح! بتحسن تجربة المستخدم بشكل رهيب."
+            },
+            {
+              "t": "ملهمش فرق عن type=\"text\" غير في الاسم بس",
+              "why": "لأ، كل نوع بيغير الكيبورد والتحقق تلقائياً."
+            }
+          ],
+          "answer": 0,
+          "hint": "جرب تفتح حقل email على تليفونك — إيه اللي بيظهر في الكيبورد؟"
+        },
+        {
+          "id": "b9",
+          "type": "choice",
+          "prompt": "٩/١٠ — أي مجموعة كلها Semantic Layout Tags صح؟",
+          "options": [
+            {
+              "t": "<header>, <nav>, <main>, <article>",
+              "why": "الله ينوّر! كل واحد بيوصف دور واضح في الصفحة."
+            },
+            {
+              "t": "<div>, <span>, <b>, <br>",
+              "why": "دول عناصر غير دلالية (Non-semantic)."
+            }
+          ],
+          "answer": 0,
+          "hint": "التاجات اللي بتشرح معنى الجزء في الصفحة."
+        },
+        {
+          "id": "b10",
+          "type": "choice",
+          "prompt": "١٠/١٠ — إمتى نستخدم ARIA Attributes؟",
+          "options": [
+            {
+              "t": "بس لما الـ Semantic HTML مش كافي (زي زرار فيه أيقونة من غير نص)",
+              "why": "وحش! ضربت الوحش بالضربة القاضية 🏆"
+            },
+            {
+              "t": "على كل <div> في الصفحة بدل التاجات العادية",
+              "why": "غلط! التاج الدلالي دايماً قبل ARIA."
+            }
+          ],
+          "answer": 0,
+          "hint": "القاعدة الأولى في ARIA: الـ Semantic أولاً!"
+        }
+      ]
+    }
+  ],
+  "recall": [
+    {
+      "q": "إيه أول سطر لازم يكون في أي ملف HTML5؟",
+      "a": "<!DOCTYPE html> — بيقول للـ browser إن الملف مكتوب بمعيار HTML5."
+    },
+    {
+      "q": "إيه الفرق بين <head> و <body>؟",
+      "a": "الـ <head> فيه metadata مش بتظهر للمستخدم (عنوان، وصف، CSS). الـ <body> فيه كل المحتوى المرئي."
+    },
+    {
+      "q": "إيه الفرق بين Block و Inline elements؟",
+      "a": "الـ Block بياخد الـ width كله وبيبدأ سطر جديد (زي div, p). الـ Inline بياخد مساحة محتواه بس (زي span, a)."
+    },
+    {
+      "q": "إيه هي الـ Void Elements؟ اذكر 3 أمثلة.",
+      "a": "عناصر مش محتاجة closing tag: <img>, <br>, <input>, <hr>, <meta>, <link>."
+    },
+    {
+      "q": "إيه الفرق بين id و class؟",
+      "a": "الـ id فريد مش ينفع يتكرر في الصفحة (رقم البطاقة). الـ class ينفع يتكرر ويتحط أكتر من واحد (اسم المدرسة)."
+    },
+    {
+      "q": "ليه الـ alt attribute مهم في الصور؟",
+      "a": "عشان الـ screen readers توصف الصورة للمكفوفين، وجوجل بيقراه للـ SEO، وبيظهر لو الصورة محمّلتش."
+    },
+    {
+      "q": "إيه الفرق بين <strong> و <b>؟",
+      "a": "<strong> ليه semantic meaning (أهمية للـ screen reader). <b> مجرد شكل bold بدون معنى دلالي."
+    },
+    {
+      "q": "اذكر 3 أنواع input في HTML5 مع فايدة كل واحد.",
+      "a": "email: validation تلقائي + كيبورد مناسب. number/tel: أرقام. date: date picker تلقائي."
+    },
+    {
+      "q": "اذكر 4 semantic tags وفايدة كل واحد.",
+      "a": "<header> رأس الصفحة، <nav> التنقل، <main> المحتوى الرئيسي، <article> محتوى مستقل قابل للمشاركة."
+    },
+    {
+      "q": "إيه هو الـ ARIA وإمتى نستخدمه؟",
+      "a": "Attributes توصف العناصر للـ screen readers — نستخدمها بس لما الـ semantic HTML مش كافي زي زرار بأيقونة فقط."
+    }
+  ]
+}
+</script>
+
+<script>
+(() => {
+'use strict';
+
+const LESSON = JSON.parse(document.getElementById('lesson-data').textContent);
+
+const VOICE = {
+  ok: ['عاش يا وحش!','بالظبط كده!','ممتاز، جبتها صح!','دماغك شغالة ١٠/١٠!','معلّم! إجابة دقيقة','صح الصح يا بطل!','تركيز عالي أوي!','شغل نضيف!'],
+  wrong: ['قرّبت جداً… ','مش دي، بص كده: ','حلو إنك جرّبت، بس ','استنى ثانية: ','فكّر فيها تاني: ','تكة صغيرة فاتتك: '],
+  okSpot: ['السطر ده سليم ١٠٠٪! دوّر في حتة تانية.','الكود هنا زي الفل، الغلطة مش هنا.','الجزء ده بريء! بص حواليه.'],
+  hint: ['تلميحة: ','بص يا سيدي: ','مفتاح الحل: ','فكّر فيها كده: '],
+  combo: ['كومبو ×2 شغال!','تركيز متواصل — ×2 XP','سلسلة صح — نقط مضاعفة!'],
+  reveal: ['ولا يهمك، المهم تفهمها! الحل الصح هنا:','عادي جداً، تعالى نشوف الحل الصح وليه:'],
+  levelDone: ['خلّصت تحديات القسم بنجاح!','أتممت القسم بالكامل!','أداء ممتاز في القسم ده!']
+};
+
+const TYPE_LABEL = {
+  explore:'استكشاف كود', choice:'اختيار وتوقّع', slot:'اسحب وركّب', buckets:'تصنيف وبناء',
+  order:'رتّب الخطوات', bughunt:'اصطاد الغلطة', match:'وصّل الصح', patch:'عدّل الكود حي'
+};
+
+const qs = new URLSearchParams(location.search);
+const QA_MODE = qs.get('qa') === '1';
+const AR = '٠١٢٣٤٥٦٧٨٩';
+const ar = n => String(n).replace(/\d/g, d => AR[+d]);
+const pad2 = n => (n < 10 ? '0' + n : String(n));
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ico = (id, cls='') => `<svg class="ic ${cls}" aria-hidden="true"><use href="#i-${id}"/></svg>`;
+const lastV = {};
+const say = k => { const a = VOICE[k]||['']; let i = Math.floor(Math.random()*a.length); if(a.length>1 && lastV[k]===i) i=(i+1)%a.length; lastV[k]=i; return a[i]; };
+const looksCode = s => {
+  const t = String(s).trim();
+  return t.startsWith('<') || (/^[.#@a-zA-Z0-9_$()[\]{}:;=+\-*/%!<>&|"'`.,\s]+$/.test(t) && /[a-zA-Z0-9<>:=#.]/.test(t) && !/[\u0600-\u06FF]/.test(t));
+};
+
+/* ─── Persistence (Existing Progress Schema Preserved 100%) ─────────────── */
+const KEY = `lg2:${LESSON.id}:v1`;
+const UI_RAIL_KEY = 'lg2:ui:railCollapsed';
+const defState = () => ({ v:1, xp:0, streak:0, solved:{}, levels:{} });
+let memState = defState();
+const Store = {
+  load(){
+    try{
+      const p = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if(p && p.v===1 && p.solved && p.levels) return (memState = p);
+    }catch{}
+    return memState;
+  },
+  save(st){ memState = st; try{ localStorage.setItem(KEY, JSON.stringify(st)); }catch{} },
+  getRailCollapsed(){ try{ return localStorage.getItem(UI_RAIL_KEY) === '1'; }catch{ return false; } },
+  setRailCollapsed(v){ try{ localStorage.setItem(UI_RAIL_KEY, v ? '1' : '0'); }catch{} }
+};
+let S = Store.load();
+
+/* ─── BiDi-Safe Syntax Highlighter & Line-Numbered Code Renderer ────────── */
+function isolateArText(segment){
+  return segment.replace(/([\u0600-\u06FF][^\n<&]*[\u0600-\u06FF.!؟،]|[ \u0600-\u06FF]*[\u0600-\u06FF]+[!؟.]?)/g, m => `<bdi class="syn-ar">${m}</bdi>`);
+}
+function hl(text, lang){
+  const l = lang || LESSON.lang || 'html';
+  let s = esc(text);
+  if(l === 'plain') return s;
+  if(l === 'html'){
+    const parts = s.split(/(&lt;!--[\s\S]*?--&gt;|&lt;\/?[a-zA-Z!][a-zA-Z0-9-]*[\s\S]*?\/?&gt;)/g);
+    return parts.map(p => {
+      if(/^&lt;!--/.test(p)) return `<span class="syn-com">${p}</span>`;
+      if(/^&lt;/.test(p)){
+        return p.replace(/^(&lt;\/?[a-zA-Z!][a-zA-Z0-9-]*)([\s\S]*?)(\/?&gt;)$/, (_, o, attrs, c) => {
+          const a = attrs.replace(/([a-zA-Z_:][-a-zA-Z0-9_:.]*)(\s*=\s*)(&quot;[^&]*?&quot;)/g,
+            '<span class="syn-attr">$1</span>$2<span class="syn-val">$3</span>');
+          return `<span class="syn-tag">${o}</span>${a}<span class="syn-tag">${c}</span>`;
+        });
+      }
+      return isolateArText(p);
+    }).join('');
+  }
+  if(l === 'css'){
+    return s.replace(/(\/\*[\s\S]*?\*\/)|(@[a-z-]+)\b|((?:--[a-z0-9-]+|[a-z-]+)\s*:\s*[^;{}\n]+)/gi, (m, com, at, decl) => {
+      if(com) return `<span class="syn-com">${isolateArText(com)}</span>`;
+      if(at) return `<span class="syn-kw">${at}</span>`;
+      return decl.replace(/^(--[a-z0-9-]+|[a-z-]+)(\s*:\s*)([\s\S]+)$/i, '<span class="syn-attr">$1</span>$2<span class="syn-val">$3</span>');
+    });
+  }
+  if(l === 'js'){
+    return s.replace(/(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|(&quot;[\s\S]*?&quot;|&#39;[\s\S]*?&#39;|`[^`]*?`)|\b(const|let|var|function|return|if|else|for|while|switch|case|break|default|of|in|typeof|class|new|true|false|null|undefined|async|await)\b|\b(console|document|window|Math|Array|Object)\b/g, (m, com, str, kw, fn) => {
+      if(com) return `<span class="syn-com">${isolateArText(com)}</span>`;
+      if(str) return `<span class="syn-val">${isolateArText(str)}</span>`;
+      if(kw) return `<span class="syn-kw">${kw}</span>`;
+      if(fn) return `<span class="syn-fn">${fn}</span>`;
+      return m;
+    });
+  }
+  if(l === 'sql'){
+    return s.replace(/\b(SELECT|FROM|WHERE|JOIN|ON|GROUP BY|ORDER BY|HAVING|INSERT|INTO|VALUES|UPDATE|SET|DELETE|CREATE|TABLE|AS|AND|OR|NOT|NULL)\b/gi, '<span class="syn-kw">$1</span>');
+  }
+  return s;
+}
+function renderMarkedLine(line, lang, fn){
+  return String(line).split(/(\[\[(?:ok|\d+)(?:\|[^\]]+)?\]\])/g).map(p => {
+    const m = p.match(/^\[\[(ok|\d+)(?:\|([^\]]+))?\]\]$/);
+    return m ? fn(m[1], m[2] || '') : hl(p, lang);
+  }).join('');
+}
+function renderCodeLines(code, lang, markerFn){
+  const lines = String(code).split('\n');
+  return `<div class="code-box scroll"><div class="code-lines-inner">${lines.map((ln, idx) => {
+    const content = markerFn ? renderMarkedLine(ln, lang, markerFn) : hl(ln, lang);
+    return `<div class="code-line"><span class="ln" aria-hidden="true">${idx+1}</span><span class="lc">${content || ' '}</span></div>`;
+  }).join('')}</div></div>`;
+}
+
+function shuffled(arr, seed){
+  const out = arr.map((v,i)=>({v,i}));
+  let h = 2166136261;
+  for(const c of String(seed)) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
+  for(let i=out.length-1;i>0;i--){
+    h = Math.imul(h ^ (h>>>13), 1274126177);
+    const j = Math.abs(h) % (i+1);
+    [out[i],out[j]] = [out[j],out[i]];
+  }
+  if(out.length > 1 && out.every((x,i)=>x.i===i)) [out[0],out[1]] = [out[1],out[0]];
+  return out;
+}
+
+/* ─── Runtime Studio State ──────────────────────────────────────────────── */
+let view = 'section';
+let curL = 0;
+let mode = 'explain';
+let curDoc = 0;
+let curS = 0;
+let stageSolved = false, stageMisses = 0, stageHintUsed = false;
+let hearts = 3, levelMisses = 0, levelXP = 0, levelMistakes = [];
+let checkHandler = null, revealHandler = null, lastFocus = null, bumpXpNext = false;
+let recallQ = [], recallIdx = 0, recallFlipped = false;
+let railCollapsed = Store.getRailCollapsed();
+let drawerOpen = false;
+
+const $top = document.getElementById('topbar');
+const $studio = document.getElementById('studio');
+const $rail = document.getElementById('rail');
+const $backdrop = document.getElementById('drawerBackdrop');
+const $ws = document.getElementById('workspace');
+const $overlay = document.getElementById('overlay');
+const $modal = document.getElementById('modal');
+
+const isDrawerMode = () => innerWidth < 1120;
+const totalStagesAll = LESSON.levels.reduce((a,l)=>a+l.stages.length, 0);
+const solvedCountAll = () => LESSON.levels.reduce((a,l)=>a+l.stages.filter(st=>S.solved[st.id]).length, 0);
+const sectionSolvedCount = L => L.stages.filter(st=>S.solved[st.id]).length;
+const emblemId = () => {
+  const t = (LESSON.theme || LESSON.lang || 'html').toLowerCase();
+  return ['it','html','css','js'].includes(t) ? `emblem-${t}` : 'emblem-html';
+};
+
+function syncRailState(){
+  $studio.classList.toggle('rail-collapsed', !isDrawerMode() && railCollapsed);
+  $rail.classList.toggle('drawer-open', isDrawerMode() && drawerOpen);
+  $backdrop.classList.toggle('open', isDrawerMode() && drawerOpen);
+  const tb = document.getElementById('railToggle');
+  if(tb) tb.setAttribute('aria-expanded', String(isDrawerMode() ? drawerOpen : !railCollapsed));
+}
+function toggleRail(){
+  if(isDrawerMode()){
+    drawerOpen = !drawerOpen;
+    syncRailState();
+    if(drawerOpen) $rail.querySelector('.sec-tab.active, .sec-tab')?.focus();
+    else document.getElementById('railToggle')?.focus();
+  } else {
+    railCollapsed = !railCollapsed;
+    Store.setRailCollapsed(railCollapsed);
+    syncRailState();
+  }
+}
+function closeDrawer(restoreFocus=false){
+  if(!drawerOpen) return;
+  drawerOpen = false;
+  syncRailState();
+  if(restoreFocus) document.getElementById('railToggle')?.focus();
+}
+$backdrop.addEventListener('click', () => closeDrawer(true));
+window.addEventListener('resize', () => { if(!isDrawerMode() && drawerOpen) drawerOpen = false; syncRailState(); });
+
+function toast(msg, kind='info'){
+  const t = document.getElementById('toast');
+  if(t){ t.className = `toast ${kind}`; t.textContent = msg; }
+}
+
+function openModal(title, bodyHtml, footHtml){
+  lastFocus = document.activeElement;
+  $modal.innerHTML = `<h3 id="modalTitle"><span>${title}</span><button class="icon-btn" id="mClose" aria-label="إغلاق">${ico('close','ic-sm')}</button></h3><div class="modal-body scroll">${bodyHtml}</div><div class="modal-foot">${footHtml||''}</div>`;
+  $overlay.hidden = false;
+  $modal.querySelector('#mClose').onclick = closeModal;
+  $modal.querySelector('#mClose').focus();
+}
+function closeModal(){
+  if($overlay.hidden) return;
+  $overlay.hidden = true; $modal.innerHTML = '';
+  if(lastFocus && lastFocus.isConnected) lastFocus.focus();
+}
+$overlay.addEventListener('click', e => { if(e.target === $overlay) closeModal(); });
+
+/* ─── Pointer-Events Drag Helper ────────────────────────────────────────── */
+function attachDrag(el, { onTap, onDrop }){
+  let sx=0, sy=0, dragging=false, ghost=null, lastDrop=null, pid=null;
+  el.addEventListener('pointerdown', e => {
+    if(e.button && e.button !== 0) return;
+    if(e.target.closest('.mv-btn')) return;
+    if(el.classList.contains('used') || el.classList.contains('locked')) return;
+    pid = e.pointerId; sx = e.clientX; sy = e.clientY; dragging = false;
+  });
+  el.addEventListener('pointermove', e => {
+    if(pid !== e.pointerId) return;
+    if(!dragging && Math.hypot(e.clientX-sx, e.clientY-sy) > 7){
+      dragging = true;
+      try{ el.setPointerCapture(pid); }catch{}
+      ghost = el.cloneNode(true); ghost.classList.add('drag-ghost');
+      ghost.style.width = el.offsetWidth + 'px';
+      document.body.appendChild(ghost);
+    }
+    if(dragging && ghost){
+      ghost.style.left = e.clientX + 'px'; ghost.style.top = e.clientY + 'px';
+      const u = document.elementFromPoint(e.clientX, e.clientY);
+      const dz = u && u.closest('[data-drop]');
+      if(lastDrop && lastDrop !== dz) lastDrop.classList.remove('drop-over');
+      if(dz) dz.classList.add('drop-over');
+      lastDrop = dz;
+    }
+  });
+  const end = e => {
+    if(pid !== e.pointerId) return;
+    pid = null;
+    if(ghost){ ghost.remove(); ghost = null; }
+    if(lastDrop) lastDrop.classList.remove('drop-over');
+    if(dragging){ const dz = lastDrop; lastDrop = null; if(dz && onDrop) onDrop(dz); }
+    else if(onTap) onTap();
+    dragging = false;
+  };
+  el.addEventListener('pointerup', end);
+  el.addEventListener('pointercancel', end);
+}
+
+/* ─── Render Global Header & Collapsible Chapter Sidebar ────────────────── */
+function renderChrome(){
+  const doneS = solvedCountAll();
+  const pct = totalStagesAll ? Math.round((doneS / totalStagesAll) * 100) : 0;
+  const comboHtml = S.streak >= 3 ? `<span class="combo-chip" title="سلسلة إجابات صحيحة">×2</span>` : '';
+  const xpCls = bumpXpNext ? 'xp-chip bump' : 'xp-chip';
+  bumpXpNext = false;
+
+  $top.innerHTML = `
+    <div class="top-start">
+      <button class="icon-btn" id="railToggle" aria-label="إظهار أو إخفاء فهرس الأقسام" aria-controls="rail" aria-expanded="${isDrawerMode() ? drawerOpen : !railCollapsed}">${ico('panel')}</button>
+      <div class="brand">
+        <span class="brand-mark">${ico(emblemId())}</span>
+        <div class="brand-txt">
+          <div class="brand-title">${esc(LESSON.title)}</div>
+          <div class="brand-sub">${esc(LESSON.subtitle || '')}</div>
+        </div>
+      </div>
+    </div>
+    <div class="top-end">
+      <div class="prog-meter" aria-label="التقدم الإجمالي ${pct}% (${doneS} من ${totalStagesAll})">
+        <span class="prog-lbl">التقدّم</span>
+        <div class="prog-bar"><div class="prog-fill ${pct===100?'full':''}" style="width:${pct}%"></div></div>
+        <span class="prog-val">${doneS}/${totalStagesAll}</span>
+      </div>
+      ${comboHtml}
+      <span class="${xpCls}" aria-label="${S.xp} نقطة خبرة">${ico('bolt','ic-sm')} ${S.xp} XP</span>
+      <span class="top-div" aria-hidden="true"></span>
+      ${LESSON.recall?.length ? `<button class="util-btn ${view==='recall'?'active':''}" id="navRecall">${ico('cards','ic-sm')} <span class="util-lbl">مراجعة (${ar(LESSON.recall.length)})</span></button>` : ''}
+      <button class="util-btn ${view==='summary'?'active':''}" id="navSummary">${ico('summary','ic-sm')} <span class="util-lbl">ملخص التسليم</span></button>
+    </div>`;
+
+  document.getElementById('railToggle').onclick = toggleRail;
+  const nr = document.getElementById('navRecall');
+  if(nr) nr.onclick = () => { view = 'recall'; closeDrawer(); renderAll(); };
+  document.getElementById('navSummary').onclick = () => { view = 'summary'; closeDrawer(); renderAll(); };
+
+  const readLink = LESSON.readUrl ? `<a class="rail-link" href="${esc(LESSON.readUrl)}" target="_blank" rel="noopener">نسخة القراءة ${ico('ext','ic-sm')}</a>` : '<span></span>';
+  $rail.innerHTML = `
+    <div class="rail-head">
+      <div class="rail-head-title">
+        <span>فهرس المحاضرة</span>
+        <span class="rail-count">${ar(LESSON.levels.length)}</span>
+      </div>
+      <button class="icon-btn" id="railClose" aria-label="طي الفهرس">${ico('close','ic-sm')}</button>
+    </div>
+    <nav class="rail-list scroll" role="tablist" aria-label="التنقل بين أقسام المحاضرة">
+      ${LESSON.levels.map((L,i) => {
+        const sc = sectionSolvedCount(L);
+        const tot = L.stages.length;
+        const isDone = sc === tot && tot > 0;
+        const isAct = view === 'section' && i === curL;
+        const numInner = isDone ? ico('check','ic-sm') : (L.boss ? ico('boss','ic-sm') : pad2(L.num));
+        return `<button class="sec-tab ${isAct?'active':''} ${isDone?'done':''} ${L.boss?'boss':''}" data-li="${i}" role="tab" aria-selected="${isAct}">
+          <span class="sec-num">${numInner}</span>
+          <span class="sec-info">
+            <span class="sec-title">${esc(L.title)}</span>
+          </span>
+          <span class="sec-stat">${sc}/${tot}</span>
+        </button>`;
+      }).join('')}
+    </nav>
+    <div class="rail-foot">
+      <span class="rail-foot-note">كل الأقسام متاحة مباشرة</span>
+      ${readLink}
+    </div>`;
+
+  document.getElementById('railClose').onclick = toggleRail;
+  $rail.querySelectorAll('.sec-tab').forEach(btn => {
+    btn.onclick = () => { selectSection(+btn.dataset.li); closeDrawer(); };
+  });
+  syncRailState();
+}
+
+function selectSection(li, forceMode){
+  view = 'section';
+  curL = li;
+  const L = LESSON.levels[curL];
+  curDoc = 0;
+  curS = 0;
+  hearts = 3; levelMisses = 0; levelXP = 0; levelMistakes = [];
+  if(forceMode) mode = forceMode;
+  else mode = (L.docs && L.docs.length && !L.boss) ? 'explain' : 'play';
+  renderAll();
+  const activeTab = $rail.querySelector('.sec-tab.active');
+  if(activeTab) activeTab.scrollIntoView({ block:'nearest' });
+}
+
+function renderAll(){
+  renderChrome();
+  if(view === 'recall') return renderRecallView();
+  if(view === 'summary') return renderSummaryView();
+  renderSectionWorkspace();
+}
+
+function renderHeartsHtml(h){
+  return [1,2,3].map(n => `<svg class="${n<=h?'':'lost'}" aria-hidden="true"><use href="#i-heart"/></svg>`).join('');
+}
+
+/* ─── Active Section Workspace (Consolidated Header + Tabs) ─────────────── */
+function renderSectionWorkspace(){
+  const L = LESSON.levels[curL];
+  const hasDocs = !!(L.docs && L.docs.length);
+  if(!hasDocs && mode === 'explain') mode = 'play';
+  const sc = sectionSolvedCount(L);
+
+  $ws.innerHTML = `
+    <div class="ws-head">
+      <div class="ws-head-top">
+        <div class="ws-heading">
+          <span class="ws-sec-id ${L.boss?'boss':''}">${L.boss ? 'التحدي النهائي' : `قسم ${pad2(L.num)}`}</span>
+          <h1>${esc(L.title)}</h1>
+          ${L.en ? `<span class="ws-en">${esc(L.en)}</span>` : ''}
+        </div>
+        ${hasDocs ? `
+          <div class="mode-switch" role="tablist" aria-label="وضع التعلم">
+            <button class="mode-btn ${mode==='explain'?'active':''}" id="mExplain" role="tab" aria-selected="${mode==='explain'}">${ico('book','ic-sm')} افهم الشرح</button>
+            <button class="mode-btn ${mode==='play'?'active':''}" id="mPlay" role="tab" aria-selected="${mode==='play'}">${ico('play','ic-sm')} العب وطبّق (${ar(sc)}/${ar(L.stages.length)})</button>
+          </div>` : `<div class="hearts-bar">${renderHeartsHtml(hearts)} <span>${sc}/${L.stages.length}</span></div>`}
+      </div>
+      <div class="ws-tabs-row" id="subBar"></div>
+    </div>
+    <div class="ws-body" id="wsBody"></div>
+    <footer class="ws-dock" id="wsDock"></footer>`;
+
+  const me = document.getElementById('mExplain');
+  const mp = document.getElementById('mPlay');
+  if(me) me.onclick = () => { mode = 'explain'; renderSectionWorkspace(); };
+  if(mp) mp.onclick = () => { mode = 'play'; renderSectionWorkspace(); };
+
+  if(mode === 'explain') renderExplainMode(L);
+  else renderPlayMode(L);
+}
+
+/* ─── EXPLAIN MODE: Unboxed Editorial Content + Unified Coding Lab ──────── */
+function renderExplainMode(L){
+  checkHandler = revealHandler = null;
+  const docs = L.docs;
+  const d = docs[curDoc] || docs[0];
+  const $sub = document.getElementById('subBar');
+  const $body = document.getElementById('wsBody');
+  const $dock = document.getElementById('wsDock');
+
+  $sub.innerHTML = `
+    <div class="ws-tabs scroll-x" role="tablist" aria-label="موضوعات القسم">
+      ${docs.map((item, idx) => `
+        <button class="ws-tab ${idx===curDoc?'active':''}" data-di="${idx}" role="tab" aria-selected="${idx===curDoc}">
+          <span>${ar(idx+1)}. ${esc(item.tab)}</span>
+        </button>`).join('')}
+    </div>
+    <span class="ws-meta">موضوع ${ar(curDoc+1)} من ${ar(docs.length)}</span>`;
+
+  $sub.querySelectorAll('[data-di]').forEach(b => b.onclick = () => { curDoc = +b.dataset.di; renderExplainMode(L); });
+
+  const calloutIconId = { analogy:'spark', tip:'tip', warn:'warn' };
+  const showH2 = d.heading && d.heading.trim() !== L.title.trim();
+  const renderCard = c => {
+    const isCodeTitle = looksCode(c.title);
+    return `<div class="ref-card"><div class="ref-card-h"><span class="${isCodeTitle?'code-lbl':''}">${esc(c.title)}</span>${c.code?`<code>${esc(c.code)}</code>`:''}</div><div class="ref-card-d">${c.desc}</div></div>`;
+  };
+
+  const rightHtml = `
+    <div class="doc-prose">
+      ${showH2 ? `<h2 class="doc-h2">${esc(d.heading)}</h2>` : ''}
+      ${(d.body || []).map(p => `<p class="doc-p">${p}</p>`).join('')}
+      ${d.callout ? `<div class="insight ${esc(d.callout.kind||'analogy')}"><span class="insight-ico">${ico(calloutIconId[d.callout.kind]||'spark')}</span><div><strong>${esc(d.callout.title)}:</strong> ${d.callout.text}</div></div>` : ''}
+      ${d.tip ? `<div class="insight tip"><span class="insight-ico">${ico('tip')}</span><div><strong>نصيحة:</strong> ${d.tip}</div></div>` : ''}
+      ${d.warning ? `<div class="insight warn"><span class="insight-ico">${ico('warn')}</span><div><strong>خد بالك:</strong> ${d.warning}</div></div>` : ''}
+      ${(d.cards && d.cards.length && (d.code || d.preview || d.console)) ? `<div class="ref-grid">${d.cards.map(renderCard).join('')}</div>` : ''}
+    </div>`;
+
+  const labBlocks = [];
+  const hasLabUnit = !!(d.code || d.preview || (d.console && d.console.length));
+  if(hasLabUnit){
+    const hasSpots = !!(d.code && d.spots && d.spots.length);
+    const codeLang = d.lang || LESSON.lang || 'html';
+    const editorHtml = d.code ? `
+      <div class="lab-bar">
+        <span class="lab-tab">${ico('file','ic-sm')} ${esc(d.filename || 'index.html')}</span>
+        <div class="lab-bar-meta">
+          ${hasSpots ? `<span id="docSpotProg" dir="rtl">اضغط الأجزاء المظللة لشرحها</span>` : ''}
+          <span class="lang-pill">${esc(codeLang)}</span>
+        </div>
+      </div>
+      ${renderCodeLines(d.code, codeLang, hasSpots ? (id, txt) => `<button type="button" class="spot" data-si="${id}">${esc(txt)}</button>` : null)}
+      ${hasSpots ? `<div class="lab-inspector" id="docSpotBox">${ico('xray','ic-sm')}<span>اضغط على أي جزء مظلّل جوا الكود فوق عشان تشوف شرحه بالتفصيل هنا.</span></div>` : ''}
+    ` : '';
+
+    const consoleHtml = (d.console && d.console.length) ? `
+      <div class="console-pane">
+        <div class="console-head"><span>Console Output</span><span>F12</span></div>
+        <div class="console-body">${d.console.map(l => `<div class="console-line"><span>${esc(l)}</span></div>`).join('')}</div>
+      </div>` : '';
+
+    const previewHtml = d.preview ? `
+      <div class="lab-preview">
+        <div class="preview-chrome">
+          <span class="preview-nav" aria-hidden="true"><span>‹</span><span>›</span><span>↻</span></span>
+          <div class="preview-url">${ico('lock','ic-sm')} <span>${esc(d.previewUrl || 'file:///index.html')}</span></div>
+          <span class="live-badge"><i class="live-dot"></i> معاينة مباشرة</span>
+        </div>
+        <div class="browser-body">${d.preview}</div>
+      </div>` : '';
+
+    labBlocks.push(`<section class="coding-lab" aria-label="بيئة الكود والمعاينة">${editorHtml}${consoleHtml}${previewHtml}</section>`);
+  }
+  if(d.table){
+    labBlocks.push(`
+      <div class="doc-table-wrap">
+        <table class="doc-table">
+          <thead><tr>${d.table.headers.map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead>
+          <tbody>${d.table.rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody>
+        </table>
+      </div>`);
+  }
+  if(d.cards && d.cards.length && !hasLabUnit){
+    labBlocks.push(`<div class="ref-grid">${d.cards.map(renderCard).join('')}</div>`);
+  }
+
+  const isSingle = labBlocks.length === 0;
+  $body.innerHTML = `
+    <div class="doc-split ${isSingle?'single':''}">
+      <div class="doc-prose-wrap scroll">${rightHtml}</div>
+      ${isSingle ? '' : `<div class="lab-col scroll">${labBlocks.join('')}</div>`}
+    </div>`;
+
+  const seenDoc = new Set();
+  $body.querySelectorAll('.spot').forEach(btn => {
+    btn.onclick = () => {
+      const idx = +btn.dataset.si, sp = d.spots[idx];
+      seenDoc.add(idx);
+      $body.querySelectorAll('.spot.active').forEach(x=>x.classList.remove('active'));
+      btn.classList.add('seen','active');
+      const box = document.getElementById('docSpotBox');
+      if(box && sp){
+        box.classList.add('has-active');
+        box.innerHTML = `${ico('spark','ic-sm')}<div><span class="insp-tok">${esc(sp.title)}</span> ${esc(sp.say)}</div>`;
+      }
+      const prog = document.getElementById('docSpotProg');
+      if(prog) prog.textContent = `${ar(seenDoc.size)}/${ar(d.spots.length)} مفحوص`;
+    };
+  });
+
+  const hasNextDoc = curDoc < docs.length - 1;
+  $dock.innerHTML = `
+    <div class="dock-g">
+      <button class="btn-sec" id="prevDoc" ${curDoc===0?'disabled':''}>السابق</button>
+      ${hasNextDoc ? `<button class="btn-sec" id="nextDoc">الموضوع الجاي</button>` : ''}
+    </div>
+    <div class="toast info" id="toast" aria-live="polite">افهم الفكرة من الشرح وجرّب تضغط على الكود، وبعدين انتقل للتطبيق العملي.</div>
+    <button class="btn-primary" id="jumpPlay">${ico('play','ic-sm')} العب<span class="dock-lbl"> وطبّق (${ar(L.stages.length)} تحديات)</span></button>`;
+
+  document.getElementById('prevDoc').onclick = () => { curDoc--; renderExplainMode(L); };
+  const nd = document.getElementById('nextDoc');
+  if(nd) nd.onclick = () => { curDoc++; renderExplainMode(L); };
+  document.getElementById('jumpPlay').onclick = () => { mode = 'play'; renderSectionWorkspace(); };
+}
+
+/* ─── PLAY MODE: Tactile Game Workspace ─────────────────────────────────── */
+function renderPlayMode(L, freeHints=false){
+  stageSolved = false; stageMisses = 0; stageHintUsed = freeHints;
+  checkHandler = revealHandler = null;
+  const st = L.stages[curS] || L.stages[0];
+  const $sub = document.getElementById('subBar');
+  const $body = document.getElementById('wsBody');
+  const $dock = document.getElementById('wsDock');
+
+  $sub.innerHTML = `
+    <div class="ws-tabs scroll-x" role="tablist" aria-label="تحديات القسم">
+      ${L.stages.map((item, idx) => `
+        <button class="ws-tab ${idx===curS?'active':''} ${S.solved[item.id]?'solved':''}" data-si="${idx}" role="tab" aria-selected="${idx===curS}">
+          ${S.solved[item.id] ? ico('check','ic-sm') : ''}<span>تحدي ${ar(idx+1)}</span>
+        </button>`).join('')}
+    </div>
+    ${L.boss ? `<div class="hearts-bar">${renderHeartsHtml(hearts)}</div>` : `<span class="ws-meta">${ar(sectionSolvedCount(L))}/${ar(L.stages.length)} مكتمل</span>`}`;
+
+  $sub.querySelectorAll('[data-si]').forEach(b => b.onclick = () => { curS = +b.dataset.si; renderPlayMode(L); });
+
+  $body.innerHTML = `
+    <div class="game-shell scroll" id="gameShell">
+      <div class="game-inner">
+        <div class="mission-head">
+          <h2 id="stageTitle" tabindex="-1">${esc(st.prompt)}</h2>
+          <span class="type-pill">${TYPE_LABEL[st.type] || st.type}</span>
+        </div>
+        ${st.coach ? `<div class="insight analogy"><span class="insight-ico">${ico('spark')}</span><div><strong>كابتن كود:</strong> ${esc(st.coach)}</div></div>` : ''}
+        <div class="playfield" id="playfield"></div>
+      </div>
+    </div>`;
+
+  const hasDocs = !!(L.docs && L.docs.length);
+  $dock.innerHTML = `
+    <div class="dock-g">
+      ${hasDocs ? `<button class="btn-sec" id="backExplain">${ico('book','ic-sm')} <span class="dock-lbl">راجع الشرح</span></button>` : ''}
+      <button class="btn-sec" id="hintBtn" ${st.hint?'':'disabled'}>${ico('spark','ic-sm')} <span class="dock-lbl">تلميحة</span></button>
+    </div>
+    <div class="toast info" id="toast" aria-live="polite">${L.boss && curS===0 ? 'جه وقت الاختبار الشامل — معاك ٣ قلوب، ركّز وانطلق!' : ''}</div>
+    <button class="btn-primary" id="primaryBtn">${ico('check','ic-sm')} اتأكد</button>`;
+
+  const be = document.getElementById('backExplain');
+  if(be) be.onclick = () => { mode = 'explain'; renderSectionWorkspace(); };
+  const hb = document.getElementById('hintBtn');
+  if(hb && st.hint){
+    hb.onclick = () => {
+      stageHintUsed = true; hb.classList.remove('pulse');
+      toast(`${say('hint')}${st.hint}`, 'warn');
+    };
+  }
+  if(freeHints && st.hint) toast(`${say('hint')}${st.hint}`, 'warn');
+
+  const pf = document.getElementById('playfield');
+  const pb = document.getElementById('primaryBtn');
+  if(MECHANICS[st.type]) MECHANICS[st.type](st, pf, pb);
+  if(!QA_MODE) document.getElementById('stageTitle')?.focus({ preventScroll:true });
+}
+
+/* ─── Scoring, Miss Handling & Section Completion ───────────────────────── */
+function onMiss(whyMsg, st){
+  stageMisses++; levelMisses++;
+  S.streak = 0; Store.save(S);
+  const L = LESSON.levels[curL];
+  if(L.boss){
+    hearts = Math.max(0, hearts - 1);
+    renderChrome();
+    $ws.querySelectorAll('.hearts-bar').forEach(x => x.innerHTML = renderHeartsHtml(hearts));
+    if(hearts === 0){
+      openModal('خلصت القلوب', `<p>عاش إنك وصلت لحد هنا — هنرجع نبدأ التحدي والتلميحات مفتوحة ليك مجاناً.</p>`,
+        `<button class="btn-primary" id="bossRetry">جرّب تاني</button>`);
+      document.getElementById('bossRetry').onclick = () => { closeModal(); hearts=3; curS=0; renderPlayMode(L, true); };
+      return;
+    }
+  }
+  if(whyMsg && !levelMistakes.includes(whyMsg)) levelMistakes.push(whyMsg);
+  if(stageMisses >= 3 && revealHandler){
+    toast(`${say('reveal')} ${whyMsg || ''}`, 'warn');
+    revealHandler();
+    markSolved({ xpOverride:0, revealed:true });
+    return;
+  }
+  toast(`${say('wrong')}${whyMsg || ''}`, 'bad');
+  const hbBtn = document.getElementById('hintBtn');
+  if(hbBtn && st.hint){
+    hbBtn.classList.add('pulse');
+    if(stageMisses === 2 && !stageHintUsed){ stageHintUsed = true; toast(`${say('hint')}${st.hint}`, 'warn'); }
+  }
+  renderChrome();
+}
+
+function markSolved({ xpOverride, revealed=false, msg } = {}){
+  if(stageSolved) return;
+  stageSolved = true;
+  const L = LESSON.levels[curL];
+  const st = L.stages[curS];
+  const firstClear = !S.solved[st.id];
+  S.solved[st.id] = true;
+
+  let gained = xpOverride !== undefined ? xpOverride : (stageMisses===0 ? 10 : stageMisses===1 ? 6 : 3);
+  if(!firstClear) gained = Math.min(gained, 2);
+  if(!revealed && stageHintUsed && gained > 0) gained = Math.max(0, gained - 2);
+  let comboMsg = '';
+  if(!revealed && stageMisses === 0 && xpOverride === undefined){
+    S.streak = (S.streak || 0) + 1;
+    if(S.streak >= 3){ gained *= 2; comboMsg = ' · ' + say('combo'); }
+  }
+  S.xp += gained; levelXP += gained;
+  if(gained > 0) bumpXpNext = true;
+
+  if(sectionSolvedCount(L) === L.stages.length){
+    const stars = levelMisses === 0 ? 3 : levelMisses <= 2 ? 2 : 1;
+    const prev = S.levels[L.id]?.stars || 0;
+    S.levels[L.id] = { done:true, stars:Math.max(prev, stars) };
+  }
+  Store.save(S);
+  if(!revealed) toast(`${msg || say('ok')} (+${gained} XP)${comboMsg}`, 'ok');
+  renderChrome();
+
+  const curPill = $ws.querySelector(`.ws-tab[data-si="${curS}"]`);
+  if(curPill){ curPill.classList.add('solved'); curPill.innerHTML = `${ico('check','ic-sm')}<span>تحدي ${ar(curS+1)}</span>`; }
+
+  const pb = document.getElementById('primaryBtn');
+  if(pb){
+    pb.disabled = false;
+    const isLast = curS >= L.stages.length - 1;
+    pb.innerHTML = isLast ? `${ico('check','ic-sm')} خلصت القسم` : `التحدي اللي بعده`;
+    pb.onclick = goNextChallenge;
+  }
+}
+
+function goNextChallenge(){
+  const L = LESSON.levels[curL];
+  if(curS < L.stages.length - 1){
+    curS++;
+    renderPlayMode(L);
+  } else {
+    const hasNext = curL < LESSON.levels.length - 1;
+    const nextL = hasNext ? LESSON.levels[curL + 1] : null;
+    openModal(
+      `${say('levelDone')}`,
+      `<div class="clear-ring">${ico('check')}</div>
+       <div style="text-align:center;font-family:var(--mono);color:var(--amber);font-weight:600">+${levelXP} XP · إجمالي ${S.xp} XP</div>
+       ${levelMistakes.length ? `<div class="insight warn"><span class="insight-ico">${ico('warn')}</span><div><strong>افتكر دايماً:</strong> ${esc(levelMistakes[0])}</div></div>` : `<div class="insight tip"><span class="insight-ico">${ico('tip')}</span><div>ولا غلطة! أداء نضيف ١٠٠٪ في القسم ده.</div></div>`}`,
+      `<button class="btn-sec" id="mStay">أراجع القسم</button>
+       <button class="btn-primary" id="mNext">${hasNext ? `القسم الجاي: ${esc(nextL.title)}` : 'بطاقات المراجعة والملخص'}</button>`
+    );
+    document.getElementById('mStay').onclick = closeModal;
+    document.getElementById('mNext').onclick = () => {
+      closeModal();
+      if(hasNext) selectSection(curL + 1);
+      else { view = 'recall'; renderAll(); }
+    };
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   THE 8 INTERACTIVE MECHANICS
+   ═══════════════════════════════════════════════════════════════════════════ */
+const MECHANICS = {
+  explore(st, root, pb){
+    const seen = new Set(); const total = st.spots.length;
+    const codeLang = st.lang || LESSON.lang || 'html';
+    root.innerHTML = `
+      <div class="coding-lab">
+        <div class="lab-bar">
+          <span class="lab-tab">${ico('file','ic-sm')} explore.${esc(codeLang)}</span>
+          <div class="lab-bar-meta"><span id="expCnt" dir="rtl">فحصت ${ar(0)} من ${ar(total)}</span><span class="lang-pill">${esc(codeLang)}</span></div>
+        </div>
+        ${renderCodeLines(st.code, codeLang, (id, txt) => `<button type="button" class="spot" data-si="${id}">${esc(txt)}</button>`)}
+        <div class="lab-inspector" id="spotCard">${ico('xray','ic-sm')}<span>اضغط على كل جزء مظلّل جوا الكود فوق عشان تشوف دوره بالتفصيل.</span></div>
+      </div>`;
+    pb.disabled = true; pb.textContent = `استكشف (${ar(0)}/${ar(total)})`;
+    root.querySelectorAll('.spot').forEach(btn => {
+      btn.onclick = () => {
+        const idx = +btn.dataset.si, sp = st.spots[idx];
+        root.querySelectorAll('.spot.active').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('seen','active'); seen.add(idx);
+        const card = document.getElementById('spotCard');
+        card.classList.add('has-active');
+        card.innerHTML = `${ico('spark','ic-sm')}<div><span class="insp-tok">${esc(sp.title)}</span> ${esc(sp.say)}</div>`;
+        const ec = document.getElementById('expCnt');
+        if(ec) ec.textContent = `فحصت ${ar(seen.size)} من ${ar(total)}`;
+        if(seen.size >= total) markSolved({ xpOverride:5, msg:'عاش! استكشفت الكود كله!' });
+        else pb.textContent = `استكشف (${ar(seen.size)}/${ar(total)})`;
+      };
+    });
+  },
+
+  choice(st, root, pb){
+    pb.disabled = true; pb.textContent = 'اختار الإجابة';
+    const codeLang = st.lang || LESSON.lang || 'html';
+    root.innerHTML = `
+      ${st.code ? `<div class="coding-lab"><div class="lab-bar"><span class="lab-tab">${ico('file','ic-sm')} snippet.${esc(codeLang)}</span><span class="lang-pill">${esc(codeLang)}</span></div>${renderCodeLines(st.code, codeLang)}</div>` : ''}
+      <div class="opt-grid" role="radiogroup">
+        ${st.options.map((o,i) => `
+          <button type="button" class="opt-btn" data-oi="${i}">
+            <div class="opt-row"><span class="opt-k">${ar(i+1)}</span><span ${looksCode(o.t||'')?'class="ltr" style="font-family:var(--mono);font-size:13px"':''}>${esc(o.t || `النتيجة ${ar(i+1)}`)}</span></div>
+            ${o.preview ? `<div class="opt-prev-box"><div class="browser-body">${o.preview}</div></div>` : ''}
+          </button>`).join('')}
+      </div>`;
+    revealHandler = () => root.querySelectorAll('.opt-btn').forEach((b,i)=>{ b.disabled=true; if(i===st.answer) b.classList.add('ok'); });
+    root.querySelectorAll('.opt-btn').forEach(btn => {
+      btn.onclick = () => {
+        if(stageSolved) return;
+        const idx = +btn.dataset.oi, opt = st.options[idx];
+        if(idx === st.answer){
+          btn.classList.add('ok'); root.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+          markSolved({ msg: opt.why || say('ok') });
+        } else {
+          btn.classList.add('bad'); btn.disabled = true;
+          onMiss(opt.why || st.options[st.answer].why, st);
+        }
+      };
+    });
+  },
+
+  slot(st, root, pb){
+    const filled = Array(st.answer.length).fill(null);
+    let picked = null;
+    const toks = shuffled(st.tokens, st.id);
+    const codeLang = st.lang || LESSON.lang || 'html';
+    root.innerHTML = `
+      <div class="coding-lab">
+        <div class="lab-bar"><span class="lab-tab">${ico('file','ic-sm')} build.${esc(codeLang)}</span><span class="lab-bar-meta" dir="rtl">اسحب القطع أو اضغط للتركيب</span></div>
+        ${renderCodeLines(st.code, codeLang, id => `<button type="button" class="slot-blank" data-drop="slot" data-si="${id}">___</button>`)}
+      </div>
+      <div class="tray" id="tokTray">${toks.map((t,ti)=>`<button type="button" class="chip code-chip" data-ti="${ti}">${esc(t.v)}</button>`).join('')}</div>`;
+    const slotEls = [...root.querySelectorAll('.slot-blank')];
+    const chipEls = [...root.querySelectorAll('.chip')];
+    function sync(){
+      slotEls.forEach((s,i)=>{ const ti=filled[i]; s.textContent = ti===null?'___':toks[ti].v; s.classList.toggle('filled',ti!==null); s.classList.remove('ok','bad'); });
+      chipEls.forEach((c,ti)=>{ c.classList.toggle('used', filled.includes(ti)); c.classList.toggle('picked', picked===ti); });
+      pb.disabled = filled.some(x=>x===null);
+    }
+    function place(ti, si){
+      if(stageSolved) return;
+      const old = filled.indexOf(ti); if(old!==-1) filled[old]=null;
+      filled[si] = ti; picked = null; sync();
+    }
+    chipEls.forEach((c,ti)=>attachDrag(c, { onTap(){ picked=(picked===ti?null:ti); sync(); }, onDrop(dz){ if(dz.dataset.drop==='slot') place(ti, +dz.dataset.si); } }));
+    slotEls.forEach((s,si)=> s.onclick = () => { if(stageSolved) return; if(picked!==null) place(picked, si); else if(filled[si]!==null){ filled[si]=null; sync(); } });
+    revealHandler = () => { slotEls.forEach((s,i)=>{ s.textContent=st.answer[i]; s.classList.add('filled','ok'); }); chipEls.forEach(c=>c.classList.add('used')); };
+    checkHandler = () => {
+      if(stageSolved || filled.some(x=>x===null)) return;
+      let ok = true;
+      slotEls.forEach((s,i)=>{ const r = toks[filled[i]].v === st.answer[i]; s.classList.toggle('ok',r); s.classList.toggle('bad',!r); if(!r) ok=false; });
+      if(ok) markSolved({ msg: st.why || say('ok') }); else onMiss(st.why || 'في خانة لسه مش مظبوطة — راجع الحمرا!', st);
+    };
+    pb.onclick = checkHandler; sync();
+  },
+
+  buckets(st, root, pb){
+    pb.disabled = true; pb.textContent = 'اسحب أو اضغط كل عنصر لمكانه';
+    const items = shuffled(st.items, st.id);
+    const placed = new Set(); let picked = null;
+    const isWire = st.layout === 'wireframe';
+    const isTable = isWire && st.buckets.every(b=>['caption','thead','tbody','tfoot'].includes(b.area));
+    const cls = isWire ? (isTable ? 'wireframe-table' : 'wireframe-page') : 'buckets-grid';
+    root.innerHTML = `
+      <div class="${cls}">${st.buckets.map(b=>`<div class="bucket" data-drop="bucket" data-bid="${esc(b.id)}" ${b.area&&!isTable?`style="grid-area:${esc(b.area)}"`:''}><div class="bucket-h">${esc(b.label)}</div><div class="bucket-items" data-bi="${esc(b.id)}"></div></div>`).join('')}</div>
+      <div class="tray" id="bTray">${items.map((it,idx)=>`<button type="button" class="chip ${looksCode(it.v.t)?'code-chip':''}" data-ii="${idx}">${esc(it.v.t)}</button>`).join('')}</div>`;
+    const chips = [...root.querySelectorAll('#bTray .chip')];
+    const bkts = [...root.querySelectorAll('.bucket')];
+    function tryDrop(idx, bid){
+      if(stageSolved || placed.has(idx)) return;
+      const item = items[idx].v, chip = chips[idx];
+      picked = null; chips.forEach(c=>c.classList.remove('picked')); bkts.forEach(b=>b.classList.remove('hint-glow'));
+      if(item.b === bid){
+        placed.add(idx); chip.classList.add('locked');
+        root.querySelector(`[data-bi="${CSS.escape(bid)}"]`).appendChild(chip);
+        toast(item.why || say('ok'), 'ok');
+        if(placed.size === items.length) markSolved();
+      } else {
+        chip.classList.remove('bad'); void chip.offsetWidth; chip.classList.add('bad');
+        onMiss(item.why || 'جرّب خانة تانية!', st);
+        if(stageMisses >= 2) root.querySelector(`[data-bid="${CSS.escape(item.b)}"]`)?.classList.add('hint-glow');
+      }
+    }
+    chips.forEach((c,idx)=>attachDrag(c, { onTap(){ if(placed.has(idx)) return; picked=(picked===idx?null:idx); chips.forEach((x,i)=>x.classList.toggle('picked',i===picked)); }, onDrop(dz){ if(dz.dataset.drop==='bucket') tryDrop(idx, dz.dataset.bid); } }));
+    bkts.forEach(b=> b.onclick = () => { if(picked !== null) tryDrop(picked, b.dataset.bid); });
+    revealHandler = () => items.forEach((it,idx)=>{ if(!placed.has(idx)){ placed.add(idx); chips[idx].classList.add('locked'); root.querySelector(`[data-bi="${CSS.escape(it.v.b)}"]`).appendChild(chips[idx]); } });
+  },
+
+  order(st, root, pb){
+    let arr = shuffled(st.items, st.id);
+    const isCode = !!st.mono || st.items.every(x => looksCode(x));
+    function draw(){
+      root.innerHTML = `<div class="order-list">${arr.map((it,pos)=>`
+        <div class="order-row" data-drop="order" data-pos="${pos}">
+          <span class="order-idx">${ar(pos+1)}</span>
+          <span class="order-txt ${isCode?'mono':''}">${esc(it.v)}</span>
+          <div class="mv-btns">
+            <button type="button" class="mv-btn" data-up="${pos}" aria-label="أعلى" ${pos===0?'disabled':''}>▲</button>
+            <button type="button" class="mv-btn" data-dn="${pos}" aria-label="أسفل" ${pos===arr.length-1?'disabled':''}>▼</button>
+          </div>
+        </div>`).join('')}</div>`;
+      root.querySelectorAll('[data-up]').forEach(b=> b.onclick = e => { e.stopPropagation(); swap(+b.dataset.up, +b.dataset.up-1); });
+      root.querySelectorAll('[data-dn]').forEach(b=> b.onclick = e => { e.stopPropagation(); swap(+b.dataset.dn, +b.dataset.dn+1); });
+      root.querySelectorAll('.order-row').forEach(r=> attachDrag(r, {
+        onDrop(dz){ if(dz.dataset.drop==='order'){ const f=+r.dataset.pos, t=+dz.dataset.pos; if(f!==t){ const [m]=arr.splice(f,1); arr.splice(t,0,m); draw(); } } }
+      }));
+    }
+    function swap(a,b){ if(stageSolved) return; [arr[a],arr[b]]=[arr[b],arr[a]]; draw(); }
+    revealHandler = () => { arr = st.items.map((v,i)=>({v,i})); draw(); root.querySelectorAll('.order-row').forEach(r=>r.classList.add('ok')); };
+    checkHandler = () => {
+      if(stageSolved) return;
+      let ok = true;
+      root.querySelectorAll('.order-row').forEach((r,pos)=>{ const rt = arr[pos].i===pos; r.classList.toggle('ok',rt); r.classList.toggle('bad',!rt); if(!rt) ok=false; });
+      if(ok) markSolved({ msg: st.why || say('ok') }); else onMiss(st.why || 'السطور الحمرا مش في ترتيبها الصح!', st);
+    };
+    pb.disabled = false; pb.onclick = checkHandler; draw();
+  },
+
+  bughunt(st, root, pb){
+    const found = new Set(), total = st.bugs.length;
+    const codeLang = st.lang || LESSON.lang || 'html';
+    pb.disabled = true; pb.textContent = `اصطدت ${ar(0)}/${ar(total)}`;
+    root.innerHTML = `
+      <div class="coding-lab">
+        <div class="lab-bar"><span class="lab-tab">${ico('target','ic-sm')} debug.${esc(codeLang)}</span><span class="lab-bar-meta" dir="rtl">اضغط على الغلطة جوا الكود</span></div>
+        ${renderCodeLines(st.code, codeLang, (id, txt) => `<button type="button" class="bug-tok" data-bk="${id}">${hl(txt, codeLang)}</button>`)}
+        <div class="lab-inspector" id="bugCard" hidden></div>
+      </div>`;
+    revealHandler = () => {
+      root.querySelectorAll('.bug-tok').forEach(b=>{ if(b.dataset.bk!=='ok') b.classList.add('found'); });
+      const bc = document.getElementById('bugCard'); bc.hidden=false; bc.classList.add('has-active');
+      bc.innerHTML=`${ico('target','ic-sm')}<div><strong>الغلطة:</strong> ${esc(st.bugs.map(x=>x.why).join(' · '))}</div>`;
+    };
+    root.querySelectorAll('.bug-tok').forEach(btn => {
+      btn.onclick = () => {
+        if(stageSolved) return;
+        const k = btn.dataset.bk;
+        if(k === 'ok'){ btn.classList.remove('safe-hit'); void btn.offsetWidth; btn.classList.add('safe-hit'); onMiss(say('okSpot'), st); }
+        else {
+          const bi = +k; if(found.has(bi)) return;
+          found.add(bi); btn.classList.add('found');
+          const bc = document.getElementById('bugCard'); bc.hidden=false; bc.classList.add('has-active');
+          bc.innerHTML=`${ico('check','ic-sm')}<div><strong>صِدتَها!</strong> ${esc(st.bugs[bi].why)}</div>`;
+          if(found.size >= total) markSolved({ msg: st.bugs[bi].why });
+          else { pb.textContent = `اصطدت ${ar(found.size)}/${ar(total)}`; toast(st.bugs[bi].why, 'ok'); }
+        }
+      };
+    });
+  },
+
+  match(st, root, pb){
+    pb.disabled = true; pb.textContent = `وصّل ${ar(st.pairs.length)} أزواج`;
+    const lefts = st.pairs.map((p,i)=>({v:p[0],i}));
+    const rights = shuffled(st.pairs.map(p=>p[1]), st.id);
+    const done = new Set(); let pL = null, pR = null;
+    root.innerHTML = `<div class="match-grid">
+      <div class="match-col">${lefts.map(x=>`<button type="button" class="m-btn ${looksCode(x.v)?'mono-m':''}" data-ml="${x.i}">${esc(x.v)}</button>`).join('')}</div>
+      <div class="match-col">${rights.map(x=>`<button type="button" class="m-btn ${looksCode(x.v)?'mono-m':''}" data-mr="${x.i}">${esc(x.v)}</button>`).join('')}</div>
+    </div>`;
+    const lBtns = [...root.querySelectorAll('[data-ml]')], rBtns = [...root.querySelectorAll('[data-mr]')];
+    function chk(){
+      if(pL===null || pR===null) return;
+      const lb = root.querySelector(`[data-ml="${pL}"]`), rb = root.querySelector(`[data-mr="${pR}"]`);
+      if(pL === pR){
+        done.add(pL); lb.classList.remove('picked','hint-glow'); rb.classList.remove('picked','hint-glow');
+        lb.classList.add('ok'); rb.classList.add('ok'); lb.disabled=rb.disabled=true; pL=pR=null;
+        if(done.size === st.pairs.length) markSolved();
+        else toast(`${say('ok')} (${ar(done.size)}/${ar(st.pairs.length)})`, 'ok');
+      } else {
+        lb.classList.add('bad'); rb.classList.add('bad'); const curPL = pL;
+        setTimeout(()=>{ lb.classList.remove('bad','picked'); rb.classList.remove('bad','picked'); }, 280);
+        pL=pR=null; onMiss('التوصيلة دي مش مظبوطة — فكّر في معنى المصطلح وجرّب تاني!', st);
+        if(stageMisses >= 2){ root.querySelector(`[data-ml="${curPL}"]`)?.classList.add('hint-glow'); root.querySelector(`[data-mr="${curPL}"]`)?.classList.add('hint-glow'); }
+      }
+    }
+    lBtns.forEach(b=> b.onclick = () => { if(stageSolved||b.disabled) return; lBtns.forEach(x=>x.classList.remove('picked')); pL=+b.dataset.ml; b.classList.add('picked'); chk(); });
+    rBtns.forEach(b=> b.onclick = () => { if(stageSolved||b.disabled) return; rBtns.forEach(x=>x.classList.remove('picked')); pR=+b.dataset.mr; b.classList.add('picked'); chk(); });
+    revealHandler = () => { lBtns.forEach(b=>{ b.classList.add('ok'); b.disabled=true; }); rBtns.forEach(b=>{ b.classList.add('ok'); b.disabled=true; }); };
+  },
+
+  patch(st, root, pb){
+    const chipsHtml = (st.chips||[]).map(c=>`<button type="button" class="ins-chip" data-ins="${esc(c)}">+ ${esc(c)}</button>`).join('');
+    const codeLang = st.lang || LESSON.lang || 'html';
+    const isCodeCheckOnly = codeLang === 'js' && !st.previewHtml;
+    root.innerHTML = `<div class="patch-lab">
+      <div class="patch-pane">
+        <div class="patch-tools">
+          <div class="chip-bar">${chipsHtml}</div>
+          <button type="button" class="util-btn" id="pReset">${ico('reset','ic-sm')} رجّع الكود</button>
+        </div>
+        <textarea class="patch-ta" id="pTa" spellcheck="false" aria-label="محرر الكود">${esc(st.start)}</textarea>
+      </div>
+      ${isCodeCheckOnly ? `
+        <div class="patch-out js-out">
+          <div class="lab-bar"><span class="lab-tab">${ico('check','ic-sm')} فحص الكود المباشر</span><span class="lang-pill">JS</span></div>
+          <div class="patch-check-list" id="pChecklist"></div>
+        </div>` : `
+        <div class="patch-out">
+          <div class="preview-chrome">
+            <div class="preview-url">${ico('eye','ic-sm')} <span>live-preview</span></div>
+            <span class="live-badge"><i class="live-dot"></i> معاينة حية</span>
+          </div>
+          <iframe id="pFrame" sandbox="" title="معاينة حية"></iframe>
+        </div>`}
+    </div>`;
+    const ta = document.getElementById('pTa');
+    const fr = document.getElementById('pFrame');
+    const cl = document.getElementById('pChecklist');
+    let tm = null;
+    const evalCheck = (c, val, doc) => {
+      if(c.selector && !doc.querySelector(c.selector)) return false;
+      if(c.notSelector && doc.querySelector(c.notSelector)) return false;
+      if(c.regex && !(new RegExp(c.regex, c.flags||'i').test(val))) return false;
+      if(c.notRegex && (new RegExp(c.notRegex, c.flags||'i').test(val))) return false;
+      return true;
+    };
+    const upd = () => {
+      const val = ta.value;
+      if(fr){
+        const bodyContent = st.previewHtml ? `<style>${val}</style>${st.previewHtml}` : val;
+        fr.srcdoc = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><style>body{font-family:system-ui,sans-serif;padding:12px;margin:0;background:#FDFCF9;color:#182230;font-size:14px}img{max-width:100%}a{color:#0E7C90}</style></head><body>${bodyContent}</body></html>`;
+      }
+      if(cl){
+        const doc = new DOMParser().parseFromString(val, 'text/html');
+        cl.innerHTML = st.checks.map((c, idx) => {
+          const ok = evalCheck(c, val.trim(), doc);
+          return `<div class="pchk ${ok?'pass':''}">${ok ? ico('check','ic-sm') : ico('target','ic-sm')}<span>شرط ${ar(idx+1)}: ${esc(c.label || c.fail)}</span></div>`;
+        }).join('');
+      }
+    };
+    upd();
+    ta.addEventListener('input', () => { clearTimeout(tm); tm = setTimeout(upd, 180); });
+    ta.addEventListener('keydown', e => {
+      if(e.key==='Tab'){ e.preventDefault(); const s=ta.selectionStart,en=ta.selectionEnd; ta.value=ta.value.slice(0,s)+'  '+ta.value.slice(en); ta.selectionStart=ta.selectionEnd=s+2; }
+    });
+    root.querySelectorAll('[data-ins]').forEach(btn => btn.onclick = () => {
+      const ins = btn.dataset.ins, pos = ta.selectionStart ?? ta.value.length;
+      const b = ta.value.slice(0,pos), a = ta.value.slice(ta.selectionEnd ?? pos);
+      const pad = b.length && !/\s$/.test(b) && !b.endsWith('<') ? ' ' : '';
+      ta.value = b + pad + ins + a; ta.focus(); ta.selectionStart = ta.selectionEnd = (b+pad+ins).length; upd();
+    });
+    document.getElementById('pReset').onclick = () => { ta.value = st.start; upd(); ta.focus(); };
+    revealHandler = () => { if(st.solution){ ta.value = st.solution; upd(); } };
+    checkHandler = () => {
+      if(stageSolved) return;
+      const val = ta.value.trim(), doc = new DOMParser().parseFromString(val, 'text/html');
+      for(const c of st.checks){
+        if(!evalCheck(c, val, doc)) return onMiss(c.fail, st);
+      }
+      markSolved({ msg: st.why || 'كودك شغال ١٠٠٪!' });
+    };
+    pb.disabled = false; pb.onclick = checkHandler;
+  }
+};
+
+/* ─── Recall Flashcards & Submission Summary Views ──────────────────────── */
+function renderRecallView(){
+  checkHandler = revealHandler = null;
+  if(!recallQ.length && LESSON.recall?.length){
+    recallQ = LESSON.recall.map((r,i)=>({...r, id:i, retried:false}));
+    recallIdx = 0; recallFlipped = false;
+  }
+  const finished = recallIdx >= recallQ.length;
+  const card = recallQ[recallIdx];
+  $ws.innerHTML = `
+    <div class="ws-head"><div class="ws-head-top"><div class="ws-heading"><span class="ws-sec-id">مراجعة سريعة</span><h1>ثبّت أهم أفكار المحاضرة</h1></div></div></div>
+    <div class="recall-wrap scroll">
+      ${finished ? `<div class="flashcard"><div class="clear-ring">${ico('check')}</div><div class="flash-q">خلّصت كل بطاقات المراجعة!</div><div><button class="btn-sec" id="recRestart">${ico('reset','ic-sm')} راجع من الأول</button></div></div>` : `
+        <div class="flashcard">
+          <div style="font-family:var(--mono);font-size:12px;color:var(--muted)">بطاقة ${ar(recallIdx+1)} من ${ar(recallQ.length)}</div>
+          <div class="flash-q">${esc(card.q)}</div>
+          ${recallFlipped
+            ? `<div class="flash-a">${esc(card.a)}</div><div style="display:flex;gap:8px;justify-content:center"><button class="btn-primary" id="recOk">${ico('check','ic-sm')} عرفتها</button><button class="btn-sec" id="recNo">${ico('reset','ic-sm')} لسه شوية</button></div>`
+            : `<div><button class="btn-primary" id="recFlip">${ico('eye','ic-sm')} ورّيني الإجابة</button></div>`}
+        </div>`}
+    </div>
+    <footer class="ws-dock">
+      <button class="btn-sec" id="backSec">ارجع للأقسام</button>
+      <div class="toast info">اضغط على أي قسم من الفهرس في أي وقت</div>
+      <button class="btn-primary" id="goSum">${ico('summary','ic-sm')} ملخص التسليم</button>
+    </footer>`;
+  const fl = document.getElementById('recFlip'); if(fl) fl.onclick = () => { recallFlipped=true; renderRecallView(); };
+  const ok = document.getElementById('recOk'); if(ok) ok.onclick = () => { recallIdx++; recallFlipped=false; renderRecallView(); };
+  const no = document.getElementById('recNo'); if(no) no.onclick = () => { if(!card.retried) recallQ.push({...card, retried:true}); recallIdx++; recallFlipped=false; renderRecallView(); };
+  const rs = document.getElementById('recRestart'); if(rs) rs.onclick = () => { recallQ=[]; renderRecallView(); };
+  document.getElementById('backSec').onclick = () => { view='section'; renderAll(); };
+  document.getElementById('goSum').onclick = () => { view='summary'; renderAll(); };
+}
+
+function renderSummaryView(){
+  checkHandler = revealHandler = null;
+  $ws.innerHTML = `
+    <div class="ws-head"><div class="ws-head-top"><div class="ws-heading"><span class="ws-sec-id">ملخص التسليم</span><h1>نقط مهمة تكتبها في «تقديم الحل» تحت</h1></div></div></div>
+    <div class="recall-wrap scroll" style="justify-content:flex-start">
+      <div class="insight tip" style="width:min(720px,100%)"><span class="insight-ico">${ico('tip')}</span><div><strong>إزاي تقفّل المهمة في CodeHub:</strong> افتح لوحة «تقديم الحل» تحت الشاشة واكتب ملخصك بأسلوبك مغطي النقط دي:</div></div>
+      <ul class="sum-list">${(LESSON.summary||[]).map((s,i)=>`<li><span class="sum-num">${ar(i+1)}</span><span>${esc(s)}</span></li>`).join('')}</ul>
+    </div>
+    <footer class="ws-dock">
+      <button class="btn-sec" id="backSec">ارجع للأقسام</button>
+      <div class="toast ok">إجمالي نقطك لحد دلوقتي: ${S.xp} XP</div>
+      <button class="btn-primary" id="goRec">${ico('cards','ic-sm')} بطاقات المراجعة</button>
+    </footer>`;
+  document.getElementById('backSec').onclick = () => { view='section'; renderAll(); };
+  document.getElementById('goRec').onclick = () => { view='recall'; renderAll(); };
+}
+
+/* ─── Input-Safe Global Keyboard Navigation ─────────────────────────────── */
+window.addEventListener('keydown', e => {
+  const tag = document.activeElement?.tagName;
+  if(tag === 'INPUT' || tag === 'TEXTAREA') return;
+  if(e.key === 'Escape'){
+    if(!$overlay.hidden){ e.preventDefault(); closeModal(); return; }
+    if(drawerOpen){ e.preventDefault(); closeDrawer(true); return; }
+  }
+  if(!$overlay.hidden || view !== 'section' || mode !== 'play') return;
+  if(e.key === 'Enter'){ const pb=document.getElementById('primaryBtn'); if(pb&&!pb.disabled){ e.preventDefault(); pb.click(); } }
+  else if(e.key.toLowerCase()==='h'){ const hb=document.getElementById('hintBtn'); if(hb&&!hb.disabled){ e.preventDefault(); hb.click(); } }
+  else if(/^[1-4]$/.test(e.key)){ const b=$ws.querySelector(`.opt-btn[data-oi="${+e.key-1}"]`); if(b&&!b.disabled){ e.preventDefault(); b.click(); } }
+});
+
+/* ─── Built-in QA Self-Audit (?qa=1 & window.__LG_QA) ───────────────────── */
+function runQA(){
+  const rows = [];
+  LESSON.levels.forEach((L, li) => {
+    if(L.docs?.length){
+      L.docs.forEach((d, di) => {
+        view='section'; curL=li; mode='explain'; curDoc=di; renderAll();
+        rows.push({ id:`${L.id}:doc${di}`, type:'explain', docY:Math.max(0,document.documentElement.scrollHeight-innerHeight), docX:Math.max(0,document.documentElement.scrollWidth-innerWidth) });
+      });
+    }
+    L.stages.forEach((st, si) => {
+      view='section'; curL=li; mode='play'; curS=si; renderAll();
+      rows.push({ id:st.id, type:st.type, docY:Math.max(0,document.documentElement.scrollHeight-innerHeight), docX:Math.max(0,document.documentElement.scrollWidth-innerWidth) });
+    });
+  });
+  view='recall'; renderAll();
+  rows.push({ id:'RECALL', type:'recall', docY:Math.max(0,document.documentElement.scrollHeight-innerHeight), docX:Math.max(0,document.documentElement.scrollWidth-innerWidth) });
+  view='summary'; renderAll();
+  rows.push({ id:'SUMMARY', type:'summary', docY:Math.max(0,document.documentElement.scrollHeight-innerHeight), docX:Math.max(0,document.documentElement.scrollWidth-innerWidth) });
+  selectSection(0, 'explain');
+  window.__LG_QA_RESULT = { viewport:`${innerWidth}x${innerHeight}`, rows };
+  return window.__LG_QA_RESULT;
+}
+window.__LG_QA = runQA;
+
+/* ─── Boot ──────────────────────────────────────────────────────────────── */
+selectSection(0);
+if(QA_MODE) setTimeout(()=> {
+  const r = runQA();
+  const bad = r.rows.filter(x=>x.docY>1||x.docX>1);
+  openModal(`QA (${r.viewport})`, `<p>Checked ${r.rows.length} views · Document overflows: <strong>${bad.length}</strong></p>`, `<button class="btn-primary" id="qaOk">تمام</button>`);
+  document.getElementById('qaOk').onclick = closeModal;
+}, 120);
+})();
+</script>
+</body>
+</html>
