@@ -13,36 +13,36 @@ Distilled from CodeHub's production compact learning studio and `TaskViewer.tsx`
 | **L3** | **Full-bleed 2-pane Studio with collapsible sidebar.** | Large desktop (`≥ 1120px`): persistent collapsible Right Chapter Sidebar (`308px`, zero decorative stars, 3-state status) + full Left Workspace (`minmax(0, 1fr)`). Inside workspace, balance a comfortable `62ch` editorial reading column + unified `.coding-lab` (`1fr 1.05fr`) and focused playfields (`max-width: 1040px`). | Tiny centered box wasting 50% of desktop, OR stretched 1800px unreadable lines. |
 | **L4** | **Open navigation, mount active pane only.** | Keep every section 100% unlocked and 1 click away (collapsible desktop rail → accessible RTL slide-over drawer `< 1120px` with backdrop & `Esc` dismiss). Render only the active view so hidden controls never trap Tab focus. | Forced linear locks; stacked walls of all sections. |
 | **L5** | **Harmonized workspace tabs & consolidated header.** | Pair **Explain (`افهم الشرح`)** and **Practice/Game (`العب وطبّق`)** inside one clean Lesson Header with restrained Petrol underline sub-topic/challenge tabs — avoid stacking competing horizontal bars or repeating headings. | Teaching docs hidden in modals, or cluttered multi-bar chrome. |
-| **L6** | **One primary action per dock.** | Exactly one high-contrast Petrol Teal CTA (`#0E7C90`, hover `#0A6576`, warm ivory text `#F9F8F4`, weight 700) in the bottom dock. Secondary actions stay quiet warm-ivory bordered buttons. | Competing bright buttons or loud neon gradients causing visual noise. |
+| **L6** | **One primary action per dock.** | Exactly one high-contrast Mediterranean Teal CTA (`#15808D`, hover `#0F6873`, warm cream text `#F8F2E4`, weight 600–700) in the bottom dock. Secondary actions stay quiet warm-cream bordered buttons. | Competing bright buttons or loud neon gradients causing visual noise. |
 | **L7** | **Contained internal scroll with editorial typography.** | Never crush fonts below `14px–15.5px` (`13px–13.5px` monospace) to avoid internal scroll. Use `overflow: auto; overscroll-behavior: contain; scrollbar-gutter: stable; scrollbar-width: thin;` on scrolling columns while keeping root document at `0` scroll. | Microscopic 11px text or scroll-chaining moving the outer page. |
 | **L8** | **Responsive tiers: Desktop → Medium Drawer → Mobile.** | `≥ 1120px`: persistent collapsible 308px sidebar; `768–1119px`: full-width workspace + slide-over RTL drawer; `< 960px`: vertical single-column stack (Editorial Content → Unified Coding Lab); `< 768px`: compact `46px` header, `≥ 44px` tap targets, and `env(safe-area-inset-bottom)`. | Squished sidebars, clipped prose, or unreachable CTAs on 390px phones. |
 | **L9** | **One overlay at a time.** | Maintain a single modal overlay slot (`Esc` closes, restores focus). Feedback lives in the non-blocking dock toast and docked code-inspector bar. | Stacked popup collisions. |
 | **L10** | **Tactile, restrained, reducible motion.** | Purposeful micro-interactions (≤ 220 ms hover/selection transitions, subtle state shifts), zero infinite bouncing/glowing animations, all disabled under `prefers-reduced-motion`. No AOS/GSAP/Three.js. | Heavy libraries or distracting AI-template animations. |
 | **L11** | **Egyptian microcopy, BiDi-safe English technical terms.** | Natural Egyptian Arabic UI and teaching voice; inline technical terms stay English wrapped in `<bdi>` (`الـ attribute`, `الـ browser`); code lines use single-pass syntax tokenizers and isolate Arabic text segments in `<bdi class="syn-ar">`. | Stiff formal Arabic, flipped punctuation in code, or broken syntax spans. |
-| **L12** | **CodeHub Editorial Warm Pearl Light visual system.** | Never use pure `#FFFFFF` as the dominant background. Layer warm linen `#F2F0EA` (main bg), warm pearl `#EAE7DF` (chrome/sidebar/bars), warm ivory `#F9F8F4` (cards/surfaces), soft code well `#F0EEE8`, paper preview `#FDFCF9`, crisp 1px borders `#DBD7CC` / `#C4BEB0`, dark charcoal ink `#182230` / `#2B3748`, `IBM Plex Sans Arabic` + `JetBrains Mono`, and restrained semantic accents (`#0E7C90` petrol, `#B3700B` amber, `#167E5C` emerald, `#C03943` crimson). | Pure-white eye strain, generic purple-blue AI cards, glassmorphism blur, or dark-theme leakage. |
+| **L12** | **CodeHub Warm Café Latte & Cheerful Daylight visual system.** | Never use pure `#FFFFFF` or blinding white backgrounds. Layer warm café latte `#E7DEC8` (main canvas), toasted biscotti `#DDD2B8` (chrome/sidebar/bars), warm cream `#F1E9D7` (cards/reading surfaces), cappuccino code well `#E3D8C2`, soft vanilla preview/inputs `#F5EFE0`, crisp 1px roast borders `#CCBEA2` / `#B6A484`, warm espresso ink `#2A211B` / `#3E3229`, `IBM Plex Sans Arabic` + `JetBrains Mono`, and cheerful eye-resting accents (`#15808D` Mediterranean teal, `#C47112` warm honey-caramel, `#1F855E` botanical sage emerald, `#C84B45` terracotta coral). | White-screen eye fatigue, generic purple-blue AI cards, glassmorphism blur, or dark-theme leakage. |
 
 ---
 
-## Editorial Warm Pearl Light Design Tokens
+## Warm Café Latte & Cheerful Daylight Design Tokens
 
 ```css
 :root {
-  --bg: #F2F0EA;           /* Main warm linen canvas (never pure #FFFFFF) */
-  --bg-2: #EAE7DF;         /* Secondary pearl chrome: topbar, sidebar, docks */
-  --surface: #F9F8F4;      /* Primary warm ivory cards & reading panels */
-  --surface-hi: #EDEAE2;   /* Warm alabaster hover / elevated active states */
-  --code-bg: #F0EEE8;      /* Light editorial code well (#1F2937 ink) */
-  --preview-bg: #FDFCF9;   /* Soft paper canvas for rendered previews */
-  --border: #DBD7CC;       /* Consistent 1px warm stone border */
-  --border-hi: #C4BEB0;    /* Stronger border for controls & inputs */
-  --text: #182230;         /* Primary headings & high-emphasis ink */
-  --text-body: #2B3748;    /* Comfortable reading body ink */
-  --text-soft: #4E5D73;    /* Secondary labels */
-  --muted: #69768C;        /* Quiet metadata */
-  --accent: #0E7C90;       /* Petrol Teal — interactive primary */
-  --amber: #B3700B;        /* Burnished Amber — XP, progress, active inspect */
-  --ok: #167E5C;           /* Forest Emerald — completion & success */
-  --bad: #C03943;          /* Muted Crimson — errors only */
+  --bg: #E7DEC8;           /* Main warm café latte canvas (zero white glare) */
+  --bg-2: #DDD2B8;         /* Toasted biscotti chrome: topbar, sidebar, docks */
+  --surface: #F1E9D7;      /* Warm steamed-cream cards & reading panels */
+  --surface-hi: #E4D8BE;   /* Warm almond hover / elevated active states */
+  --code-bg: #E3D8C2;      /* Shaded cappuccino code well (#2A211B ink) */
+  --preview-bg: #F5EFE0;   /* Soft vanilla cream for browser preview & inputs */
+  --border: #CCBEA2;       /* Consistent 1px warm roast border */
+  --border-hi: #B6A484;    /* Stronger café border for controls & inputs */
+  --text: #2A211B;         /* Warm espresso headings & high-emphasis ink */
+  --text-body: #3E3229;    /* Rich mocha reading ink */
+  --text-soft: #5F5043;    /* Warm cocoa secondary labels */
+  --muted: #746353;        /* Soft latte metadata */
+  --accent: #15808D;       /* Mediterranean Teal — cheerful interactive primary */
+  --amber: #C47112;        /* Warm Honey-Caramel — XP, progress, active inspect */
+  --ok: #1F855E;           /* Botanical Sage Emerald — completion & success */
+  --bad: #C84B45;          /* Warm Terracotta Coral — errors only */
 }
 ```
 
@@ -67,7 +67,7 @@ Every viewport MUST pass **`documentElement.scrollHeight <= innerHeight`** (`doc
 
 ## Mode B Checklist: Compacting & Restyling Any Existing Web UI / Component
 
-1. Apply the Editorial Warm Pearl Light token palette (`#F2F0EA` / `#EAE7DF` / `#F9F8F4` / `#F0EEE8` / `#DBD7CC` / `#182230`) consistently across every page, header, card, form input, code sample, and dialog — zero dark leftovers and zero pure `#FFFFFF` dominant backgrounds (L12).
+1. Apply the Warm Café Latte & Cheerful Daylight token palette (`#E7DEC8` / `#DDD2B8` / `#F1E9D7` / `#E3D8C2` / `#F5EFE0` / `#CCBEA2` / `#2A211B`) consistently across every page, header, card, form input, code sample, and dialog — zero dark leftovers and zero glaring white backgrounds (L12).
 2. For app-shell studios, lock root shell to `100dvh; overflow: hidden;` with `min-height: 0; min-width: 0;` on nested grid/flex containers, and add `flex-shrink: 0; min-height: auto;` on mobile stacked panes (L1–L2).
 3. For documentation/brief pages containing `<pre>` code blocks inside CSS Grid layouts, always set `grid-template-columns: minmax(0, 1fr)` and `min-width: 0; max-width: 100%;` on grid items so code scrolls cleanly inside its box without causing horizontal page overflow (L2).
 4. Replace vertical section stacks in studios with a collapsible Right Chapter Sidebar (`308px`) + Left Workspace (`minmax(0, 1fr)`), switching to an accessible RTL slide-over drawer below `1120px` (L3, L4, L8).

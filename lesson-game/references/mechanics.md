@@ -11,7 +11,7 @@ The studio engine (`assets/lesson-shell.html`) reads one JSON payload from `<scr
   "id": "basics-lect02",
   "title": "HTML من الألف للياء",
   "subtitle": "المحاضرة التانية — شرح تفاعلي + لعبة تطبيق بالعامية المصرية",
-  "accent": "#0E7C90",
+  "accent": "#15808D",
   "lang": "html",
   "readUrl": "draft/lect02.html",
   "summary": ["نقطة ١ للملخص", "نقطة ٢ للملخص"],
@@ -76,7 +76,7 @@ Each item in `docs[]` renders as an underline sub-topic tab inside a balanced **
 ```
 - `callout.kind`: `"analogy"` (burnished amber), `"tip"` (forest emerald), or `"warn"` (muted crimson).
 - `code` + `spots[]`: uses unified `[[0|snippet]]` X-ray markers rendered with subtle underlines (never heavy dashed boxes); clicking any highlighted token switches it to active Amber and explains it in the docked inspector directly beneath the code.
-- `preview`: renders inside the unified Coding Lab's light browser preview frame (`#FDFCF9`) with a clean address bar (`previewUrl`) and live status indicator — or use `console` for JavaScript output lines.
+- `preview`: renders inside the unified Coding Lab's soft vanilla-cream browser preview frame (`#F5EFE0`) with a clean address bar (`previewUrl`) and live status indicator — or use `console` for JavaScript output lines.
 
 ---
 

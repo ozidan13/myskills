@@ -1,12 +1,12 @@
 ---
 name: lesson-game
 description: >-
-  Turn any lesson or lecture into a compact, zero-scroll, single-file Egyptian-Arabic learning studio with CodeHub's Editorial Warm Pearl Light Theme (collapsible RTL sidebar + drawer, unified coding lab with live preview, and 8 tactile game mechanics) — or refactor any web UI using CodeHub's 12 Compact Viewport Laws.
+  Turn any lesson or lecture into a compact, zero-scroll, single-file Egyptian-Arabic learning studio with CodeHub's Warm Café Latte & Cheerful Daylight Theme (collapsible RTL sidebar + drawer, unified coding lab with live preview, and 8 tactile game mechanics) — or refactor any web UI using CodeHub's 12 Compact Viewport Laws.
 ---
 
 # Lesson Game Studio & CodeHub Compact UI/UX
 
-Turn long, scroll-heavy lessons into a **CodeHub Editorial Learning Studio** in Egyptian Arabic where **structured editorial teaching docs** and **tactile interactive games** harmonize side-by-side (`يتناغمو سوا`) with **open section navigation**, **zero page scroll**, and an **eye-friendly Editorial Warm Pearl Light Theme** — or refactor any web interface using CodeHub's 12 Compact Viewport Laws.
+Turn long, scroll-heavy lessons into a **CodeHub Editorial Learning Studio** in Egyptian Arabic where **structured editorial teaching docs** and **tactile interactive games** harmonize side-by-side (`يتناغمو سوا`) with **open section navigation**, **zero page scroll**, and an **eye-resting Warm Café Latte & Cheerful Daylight Theme** — or refactor any web interface using CodeHub's 12 Compact Viewport Laws.
 
 ## Choose Mode First
 
@@ -19,9 +19,9 @@ Stop reading Mode A steps if running Mode B.
 
 ## Mode A Architecture & Visual Principles (Non-Negotiable)
 
-- **Editorial Warm Pearl Light Aesthetic (Never Pure `#FFFFFF` Dominant Background)**:
-  - Layered warm surfaces: main canvas `#F2F0EA`, chrome/bars/sidebar `#EAE7DF`, reading cards `#F9F8F4`, elevated hover `#EDEAE2`, light editorial code well `#F0EEE8`, soft paper preview `#FDFCF9`, and crisp 1px borders `#DBD7CC` / `#C4BEB0`.
-  - High-contrast dark ink (`#182230` headings, `#2B3748` body, `#4E5D73` / `#69768C` muted) paired with restrained semantic accents: **Petrol Teal** (`#0E7C90`) for primary interactions, **Burnished Amber** (`#B3700B`) for XP/rewards/active code inspection, **Forest Emerald** (`#167E5C`) for completion/success, and **Muted Crimson** (`#C03943`) strictly for errors.
+- **Warm Café Latte & Cheerful Daylight Aesthetic (Zero White Glare, Eye-Comfort First)**:
+  - Layered warm café surfaces (never pure `#FFFFFF` or blinding off-white): main café-latte canvas `#E7DEC8`, toasted biscotti chrome/bars/sidebar `#DDD2B8`, warm steamed-cream reading surfaces `#F1E9D7`, warm almond hover `#E4D8BE`, shaded cappuccino code well `#E3D8C2`, soft vanilla-cream preview/inputs `#F5EFE0`, and crisp 1px roast borders `#CCBEA2` / `#B6A484`.
+  - Warm espresso ink (`#2A211B` headings, `#3E3229` body, `#5F5043` / `#746353` muted) paired with cheerful, eye-resting accents: **Mediterranean Teal** (`#15808D`) for primary interactions, **Warm Honey-Caramel** (`#C47112`) for XP/rewards/analogies/active inspection, **Botanical Sage Emerald** (`#1F855E`) for completion/success, and **Warm Terracotta Coral** (`#C84B45`) strictly for errors — plus gentle per-card accents (terracotta `#C45A32`, berry `#C24863`) in course portals.
   - Zero glassmorphism, zero neon borders/glows, zero heavy drop shadows, zero decorative rating stars, and zero purple-and-blue AI clichés.
   - Typography: `IBM Plex Sans Arabic` for Arabic UI/editorial prose + `JetBrains Mono` for code, counters, and badges.
 - **Open Navigation — Zero Locks**:
